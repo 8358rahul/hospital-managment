@@ -16,6 +16,9 @@ import AdminDashboard from "../pages/admin/Dashboard";
 import AdminPatients from "../pages/admin/Patients";
 import AdminDoctors from "../pages/admin/Doctors";
 import AdminAppointments from "../pages/admin/Appointments";
+import AdminReports from "../pages/admin/Reports";
+import GenerateReport from "../pages/admin/GenerateReport";
+import ViewReport from "../pages/admin/ViewReport";
 
 // Doctor Pages
 import DoctorDashboard from "../pages/doctor/Dashboard";
@@ -28,12 +31,9 @@ import PatientDoctors from "../pages/patient/Doctors";
 import PatientAppointments from "../pages/patient/Appointments";
 import BookAppointment from "../pages/patient/BookAppointment";
 import PatientRecords from "../pages/patient/Records";
-
-//othre
+import PatientReports from "../pages/patient/Reports";
+import ReportDetails from "../pages/patient/ReportDetails";
 import PatientBills from "../pages/patient/Bills";
-import AdminReports from "../pages/admin/Reports";
-import GenerateReport from "../pages/admin/GenerateReport";
-import ViewReport from "../pages/admin/ViewReport";
 import BillDetails from "../pages/patient/BillDetails";
 
 const AppRoutes = () => {
@@ -63,6 +63,9 @@ const AppRoutes = () => {
         <Route path="patients" element={<AdminPatients />} />
         <Route path="doctors" element={<AdminDoctors />} />
         <Route path="appointments" element={<AdminAppointments />} />
+        <Route path="reports" element={<AdminReports />} />
+        <Route path="reports/generate" element={<GenerateReport />} />
+        <Route path="reports/:id" element={<ViewReport />} />
       </Route>
 
       {/* Doctor Routes */}
@@ -97,6 +100,10 @@ const AppRoutes = () => {
         <Route path="appointments" element={<PatientAppointments />} />
         <Route path="book-appointment" element={<BookAppointment />} />
         <Route path="records" element={<PatientRecords />} />
+        <Route path="reports" element={<PatientReports />} />
+        <Route path="reports/:id" element={<ReportDetails />} />
+        <Route path="bills" element={<PatientBills />} />
+        <Route path="bills/:id" element={<BillDetails />} />
       </Route>
 
       {/* Default Route */}
@@ -107,36 +114,6 @@ const AppRoutes = () => {
 
       {/* Not Found Route */}
       <Route path="*" element={<NotFound />} />
-
-      {/* other */}
-      {/*  Update the patient routes */}
-      <Route
-        path="/patient"
-        element={
-          token && role === "patient" ? (
-            <PatientLayout />
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      >
-        {/* ... other routes ... */}
-        <Route path="bills" element={<PatientBills />} />
-        <Route path="bills/:id" element={<BillDetails />} />
-      </Route>
-
-      {/*  Update the admin routes */}
-      <Route
-        path="/admin"
-        element={
-          token && role === "admin" ? <AdminLayout /> : <Navigate to="/login" />
-        }
-      >
-        {/* ... other routes ... */}
-        <Route path="reports" element={<AdminReports />} />
-        <Route path="reports/generate" element={<GenerateReport />} />
-        <Route path="reports/:id" element={<ViewReport />} />
-      </Route>
     </Routes>
   );
 };

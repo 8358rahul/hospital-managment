@@ -6,7 +6,8 @@ import {
   MedicalServices as MedicalServicesIcon,
   Settings as SettingsIcon,
   ExitToApp as ExitToAppIcon, 
-  Receipt as ReceiptIcon
+  Receipt as ReceiptIcon,
+  Description as DescriptionIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
@@ -69,6 +70,14 @@ const PatientSidebar = () => {
               <ListItemText primary="Appointments" />
             </ListItemButton>
           </ListItem>
+          <ListItem disablePadding>
+  <ListItemButton component={Link} to="/patient/reports">
+    <ListItemIcon>
+      <DescriptionIcon />
+    </ListItemIcon>
+    <ListItemText primary="Medical Reports" />
+  </ListItemButton>
+</ListItem>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/patient/records">
               <ListItemIcon>

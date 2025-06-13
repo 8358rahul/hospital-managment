@@ -7,8 +7,8 @@ import { mockDoctors, mockPatients } from '../../utils/mockData';
 import { login } from '../../features/auth/authSlice';
 
 const Login = () => {
-  const [email, setEmail] = useState('patient@gmail.com');
-  const [password, setPassword] = useState('patient123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();

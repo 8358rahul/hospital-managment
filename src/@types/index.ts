@@ -75,3 +75,16 @@ export interface Report {
   data: any; // Can be more specific based on report type
   downloadUrl?: string;
 }
+
+export interface PatientReport {
+  id: string;
+  patientId: string;
+  doctorId: string;
+  date: string;
+  title: string;
+  type: 'lab' | 'diagnostic' | 'prescription' | 'summary';
+  content: string;
+  attachments?: string[]; // URLs to attached files
+  doctorName?: string;
+  isShared: boolean;
+}
