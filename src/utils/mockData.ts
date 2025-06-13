@@ -13,7 +13,133 @@ export const mockDoctors: Doctor[] = [
     availableHours: '9:00 AM - 5:00 PM',
     consultationFee: 200,
     avatar: '/avatars/doctor1.jpg',
-    status: 'active',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
+  },
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'Active',
   },
   // Add more doctors...
 ];
@@ -41,11 +167,56 @@ export const mockAppointments: Appointment[] = [
     doctorId: 'd1',
     date: '2023-06-15',
     time: '10:00 AM',
-    status: 'approved',
+    status: 'Approved',
     reason: 'Annual checkup',
     patientName: 'John Smith',
     doctorName: 'Dr. Sarah Johnson',
   },
+   {
+    id: 'a1',
+    patientId: 'p1',
+    doctorId: 'd1',
+    date: '2023-06-15',
+    time: '10:00 AM',
+    status: 'Approved',
+    reason: 'Annual checkup',
+    patientName: 'John Smith',
+    doctorName: 'Dr. Sarah Johnson',
+  },
+   {
+    id: 'a1',
+    patientId: 'p1',
+    doctorId: 'd1',
+    date: '2023-06-15',
+    time: '10:00 AM',
+    status: 'Approved',
+    reason: 'Annual checkup',
+    patientName: 'John Smith',
+    doctorName: 'Dr. Sarah Johnson',
+  },
+   {
+    id: 'a1',
+    patientId: 'p1',
+    doctorId: 'd1',
+    date: '2023-06-15',
+    time: '10:00 AM',
+    status: 'Approved',
+    reason: 'Annual checkup',
+    patientName: 'John Smith',
+    doctorName: 'Dr. Sarah Johnson',
+  },
+   {
+    id: 'a1',
+    patientId: 'p1',
+    doctorId: 'd1',
+    date: '2023-06-15',
+    time: '10:00 AM',
+    status: 'Approved',
+    reason: 'Annual checkup',
+    patientName: 'John Smith',
+    doctorName: 'Dr. Sarah Johnson',
+  },
+  
   // Add more appointments...
 ];
 
@@ -68,7 +239,232 @@ export const mockBills: Bill[] = [
     patientId: 'p1',
     date: '2023-06-15',
     totalAmount: 450,
-    status: 'paid',
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    paymentDate: '2023-06-15',
+    items: [
+      {
+        id: 'i1',
+        description: 'Consultation Fee',
+        quantity: 1,
+        unitPrice: 200,
+        amount: 200
+      },
+      {
+        id: 'i2',
+        description: 'Lab Tests',
+        quantity: 2,
+        unitPrice: 125,
+        amount: 250
+      }
+    ]
+  },
+   {
+    id: 'b1',
+    patientId: 'p1',
+    date: '2023-06-15',
+    totalAmount: 450,
+    status: 'Paid',
     paymentMethod: 'Credit Card',
     paymentDate: '2023-06-15',
     items: [

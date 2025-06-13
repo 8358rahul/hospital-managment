@@ -53,7 +53,7 @@ export interface Bill {
   date: string;
   items: BillItem[];
   totalAmount: number;
-  status: 'pending' | 'paid' | 'cancelled';
+  status: 'Pending' | 'Paid' | 'Cancelled';
   paymentMethod?: string;
   paymentDate?: string;
 }

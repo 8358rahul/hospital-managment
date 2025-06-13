@@ -1,5 +1,6 @@
 import { AppBar, Avatar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'; 
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital'; // Import hospital icon
 import { useState } from 'react';
 import AdminMenu from './AdminMenu';
 import { selectCurrentUser } from '../../features/auth/authSlice';
@@ -42,9 +43,12 @@ const AdminAppBar = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          Hospital Management System
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+          <LocalHospitalIcon sx={{ mr: 1 }} /> {/* Hospital icon */}
+          <Typography variant="h6" noWrap component="div">
+            Hospital Management System
+          </Typography>
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="body1" sx={{ mr: 2 }}>
             {user?.name}

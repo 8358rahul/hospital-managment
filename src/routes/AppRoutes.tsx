@@ -36,6 +36,9 @@ import ReportDetails from "../pages/patient/ReportDetails";
 import PatientBills from "../pages/patient/Bills";
 import BillDetails from "../pages/patient/BillDetails";
 import PatientDetails from "../pages/doctor/PatientDetails";
+import SettingsPage from "../pages/Setting";
+import ProfilePage from "../pages/Profile";
+
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
@@ -96,7 +99,7 @@ const AppRoutes = () => {
             <Navigate to="/login" />
           )
         }
-      >
+      > 
         <Route index element={<PatientDashboard />} />
         <Route path="doctors" element={<PatientDoctors />} />
         <Route path="appointments" element={<PatientAppointments />} />
@@ -106,6 +109,8 @@ const AppRoutes = () => {
         <Route path="reports/:id" element={<ReportDetails />} />
         <Route path="bills" element={<PatientBills />} />
         <Route path="bills/:id" element={<BillDetails />} />
+      <Route path="*" element={<SettingsPage/>}/>
+     <Route path="*" element={<ProfilePage/>}/>
       </Route>
 
       {/* Default Route */}
@@ -113,7 +118,7 @@ const AppRoutes = () => {
         path="/"
         element={<Navigate to={token ? `/${role}` : "/login"} />}
       />
-
+  
       {/* Not Found Route */}
       <Route path="*" element={<NotFound />} />
     </Routes>

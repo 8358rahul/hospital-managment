@@ -53,10 +53,10 @@ const AdminMenu = ({ anchorEl, handleClose }: AdminMenuProps) => {
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem component={Link} to="/admin/profile">
+      <MenuItem component={Link} to="/profile">
         Profile
       </MenuItem>
-      <MenuItem component={Link} to="/admin/settings">
+      <MenuItem component={Link} to="/settings">
         Settings
       </MenuItem>
       <MenuItem onClick={handleLogout}>
