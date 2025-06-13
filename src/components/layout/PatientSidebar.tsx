@@ -12,6 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
 import { logout } from '../../features/auth/authSlice';
+import hospitalLogo from "../../assets/1_AFo1fCc4zToskBIkRZU82g.webp";
 
 const drawerWidth = 240;
 
@@ -35,6 +36,15 @@ const PatientSidebar = () => {
         },
       }}
     >
+       <Toolbar sx={{ height: 64, backgroundColor: '#e0f7fa',  paddingLeft:"0px", paddingRight:"0px"}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+          <img 
+            src={hospitalLogo}
+            alt="Hospital Management Logo" 
+            style={{ height: '64px', width: '240px' }} 
+          />
+        </Box>
+      </Toolbar>
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>

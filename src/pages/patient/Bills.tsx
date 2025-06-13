@@ -1,5 +1,5 @@
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
-import { DataGrid,type GridColDef } from '@mui/x-data-grid';
+import { Box, Button, Card, CardContent, Container, Typography, Chip } from '@mui/material';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { useAppSelector } from '../../app/hooks';
 import { selectBillsByPatient } from '../../features/billing/billingSlice'; 
 import { Link } from 'react-router-dom';
@@ -12,34 +12,38 @@ const PatientBills = () => {
   );
 
   const columns: GridColDef[] = [
-    { field: 'date', headerName: 'Date', width: 120 },
+    { field: 'date', headerName: 'Date', width: 220 },
     { 
       field: 'totalAmount', 
       headerName: 'Amount', 
-      width: 120,
+      width: 250,
       valueFormatter: (params) => `$${params}`
     },
     { 
       field: 'status', 
       headerName: 'Status', 
-      width: 120,
+      width: 200,
       renderCell: (params) => (
-        <Typography 
-          color={
-            params.value === 'paid' ? 'success.main' : 
-            params.value === 'pending' ? 'warning.main' : 
-            'error.main'
-          }
-        >
-          {params.value}
-        </Typography>
+        <Chip 
+          label={params.value}
+          sx={{
+            backgroundColor: 
+              params.value === 'Paid' ? 'success.main' : 
+              params.value === 'Pending' ? 'warning.main' : 
+              'error.main',
+            color: 'white', // Text color
+            borderRadius: '16px', // Rounded corners
+            fontWeight: 'bold', // Bold text
+            padding: '0 8px', // Padding inside the badge
+          }}
+        />
       )
     },
-    { field: 'paymentMethod', headerName: 'Payment Method', width: 150 },
+    { field: 'paymentMethod', headerName: 'Payment Method', width: 220 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 150,
+      width: 200,
       renderCell: (params) => (
         <Button
           component={Link}

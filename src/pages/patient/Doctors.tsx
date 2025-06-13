@@ -1,10 +1,20 @@
-import { Box, Button, Card, CardContent, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Grid, Typography, Pagination } from '@mui/material';
 import { useAppSelector } from '../../app/hooks';
 import { Link } from 'react-router-dom';
 import { selectAllDoctors } from '../../features/doctor/doctorSlice';
+import { useState } from 'react';
 
 const PatientDoctors = () => {
   const doctors = useAppSelector(selectAllDoctors);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10; // Number of doctors per page
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  // Calculate the doctors to display based on the current page
+  const displayedDoctors = doctors.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   return (
     <Container maxWidth="lg">
@@ -14,7 +24,7 @@ const PatientDoctors = () => {
         </Typography>
         
         <Grid container spacing={3}>
-          {doctors.map((doctor) => (
+          {displayedDoctors.map((doctor) => (
             <Grid item xs={12} sm={6} md={4} key={doctor.id}>
               <Card>
                 <CardContent>
@@ -49,6 +59,16 @@ const PatientDoctors = () => {
             </Grid>
           ))}
         </Grid>
+
+        {/* Pagination */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Pagination
+            count={Math.ceil(doctors.length / itemsPerPage)} // Total number of pages
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
       </Box>
     </Container>
   );

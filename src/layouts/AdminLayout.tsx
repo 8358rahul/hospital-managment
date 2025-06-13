@@ -6,7 +6,7 @@ import AdminAppBar from '../components/layout/AdminAppBar';
 const AdminLayout = () => {
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <AdminAppBar />
       <AdminSidebar />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
