@@ -1,7 +1,77 @@
-import type { Doctor, Patient, Appointment, MedicalRecord, Bill, Report, PatientReport } from '../@types';
+import type { Doctor, Patient, Appointment, MedicalRecord, Bill, Report } from '../@types';
 
 export const mockDoctors: Doctor[] = [
   {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'active',
+  },
+   {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'active',
+  },
+   {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'active',
+  },
+   {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'active',
+  },
+   {
+    id: 'd1',
+    name: 'Dr. Sarah Johnson',
+    email: 'doctor@gmail.com',
+    role: 'doctor',
+    specialization: 'Cardiology',
+    qualifications: ['MD', 'PhD in Cardiology'],
+    experience: 15,
+    availableDays: ['Monday', 'Wednesday', 'Friday'],
+    availableHours: '9:00 AM - 5:00 PM',
+    consultationFee: 200,
+    avatar: '/avatars/doctor1.jpg',
+    status: 'active',
+  },
+   {
     id: 'd1',
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
@@ -161,42 +231,4 @@ export const mockReports: Report[] = [
       notes: 'Dr. Johnson continues to handle the highest patient load.'
     }
   }
-];
-
-export const mockPatientReports: PatientReport[] = [
-  {
-    id: 'pr1',
-    patientId: 'p1',
-    doctorId: 'd1',
-    date: '2023-06-15',
-    title: 'Blood Test Results',
-    type: 'lab',
-    content: 'Complete blood count results show normal ranges for all parameters. Hemoglobin levels are optimal at 14.2 g/dL.',
-    attachments: ['/reports/blood-test-p1-061523.pdf'],
-    doctorName: 'Dr. Sarah Johnson',
-    isShared: true
-  },
-  {
-    id: 'pr2',
-    patientId: 'p1',
-    doctorId: 'd2',
-    date: '2023-05-20',
-    title: 'Annual Checkup Summary',
-    type: 'summary',
-    content: 'Patient shows improvement in blood pressure management. Current medication appears effective. Recommended follow-up in 6 months.',
-    doctorName: 'Dr. Michael Chen',
-    isShared: true
-  },
-  {
-    id: 'pr3',
-    patientId: 'p1',
-    doctorId: 'd1',
-    date: '2023-04-10',
-    title: 'X-Ray Report',
-    type: 'diagnostic',
-    content: 'Chest X-ray shows clear lungs with no signs of infection or abnormalities. Heart size appears normal.',
-    attachments: ['/reports/xray-p1-041023.pdf'],
-    doctorName: 'Dr. Sarah Johnson',
-    isShared: false
-  },
 ];

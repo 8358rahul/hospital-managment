@@ -1,5 +1,5 @@
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
-import { DataGrid,type GridColDef } from '@mui/x-data-grid';
+import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { useAppSelector } from '../../app/hooks';
 import { selectBillsByPatient } from '../../features/billing/billingSlice'; 
 import { Link } from 'react-router-dom';
@@ -16,13 +16,13 @@ const PatientBills = () => {
     { 
       field: 'totalAmount', 
       headerName: 'Amount', 
-      width: 120,
+      width: 300,
       valueFormatter: (params) => `$${params}`
     },
     { 
       field: 'status', 
       headerName: 'Status', 
-      width: 120,
+      width: 300,
       renderCell: (params) => (
         <Typography 
           color={
@@ -54,7 +54,13 @@ const PatientBills = () => {
   ];
 
   return (
-    <Container maxWidth="lg">
+    <Box
+      sx={{
+        maxWidth: '100%', // Allow full width for larger screens
+        margin: '0 auto', // Center the content
+        padding: '16px', // Add padding for spacing
+      }}
+    >
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" gutterBottom>
           My Bills
@@ -74,7 +80,7 @@ const PatientBills = () => {
           </CardContent>
         </Card>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

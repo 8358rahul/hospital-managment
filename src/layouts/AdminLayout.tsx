@@ -3,6 +3,7 @@ import { Box, CssBaseline, Toolbar } from '@mui/material';
 import AdminSidebar from '../components/layout/AdminSidebar';
 import AdminAppBar from '../components/layout/AdminAppBar';
 
+const drawerWidth = 20;
 const AdminLayout = () => {
   return (
     <Box sx={{ display: 'flex' }}>

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'; 
 import { Box, Button, Card, CardContent, Container, Grid, Typography } from '@mui/material';
-import { DataGrid,type GridColDef } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PeopleIcon from '@mui/icons-material/People';
@@ -46,8 +46,8 @@ const PatientDashboard = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Card>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Upcoming Appointments
@@ -66,8 +66,8 @@ const PatientDashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Medical Records
@@ -86,8 +86,8 @@ const PatientDashboard = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
+        <Grid item xs={12} sm={6} md={4}>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Available Doctors

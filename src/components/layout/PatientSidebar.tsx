@@ -6,8 +6,7 @@ import {
   MedicalServices as MedicalServicesIcon,
   Settings as SettingsIcon,
   ExitToApp as ExitToAppIcon, 
-  Receipt as ReceiptIcon,
-  Description as DescriptionIcon
+  Receipt as ReceiptIcon
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
@@ -32,10 +31,10 @@ const PatientSidebar = () => {
           width: drawerWidth, 
           boxSizing: 'border-box',
           backgroundColor: '#f5f5f5',
+          marginTop: '64px', // Adjust this value based on the header height
         },
       }}
     >
-      <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>
           <ListItem disablePadding>
@@ -55,13 +54,13 @@ const PatientSidebar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-  <ListItemButton component={Link} to="/patient/bills">
-    <ListItemIcon>
-      <ReceiptIcon />
-    </ListItemIcon>
-    <ListItemText primary="Bills" />
-  </ListItemButton>
-</ListItem>
+            <ListItemButton component={Link} to="/patient/bills">
+              <ListItemIcon>
+                <ReceiptIcon />
+              </ListItemIcon>
+              <ListItemText primary="Bills" />
+            </ListItemButton>
+          </ListItem>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/patient/appointments">
               <ListItemIcon>
@@ -70,14 +69,6 @@ const PatientSidebar = () => {
               <ListItemText primary="Appointments" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-  <ListItemButton component={Link} to="/patient/reports">
-    <ListItemIcon>
-      <DescriptionIcon />
-    </ListItemIcon>
-    <ListItemText primary="Medical Reports" />
-  </ListItemButton>
-</ListItem>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/patient/records">
               <ListItemIcon>

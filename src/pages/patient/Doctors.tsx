@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
 import { useAppSelector } from '../../app/hooks';
 import { Link } from 'react-router-dom';
 import { selectAllDoctors } from '../../features/doctor/doctorSlice';
@@ -7,7 +7,13 @@ const PatientDoctors = () => {
   const doctors = useAppSelector(selectAllDoctors);
 
   return (
-    <Container maxWidth="lg">
+    <Box
+      sx={{
+        maxWidth: '100%', // Allow full width for larger screens
+        margin: '0 auto', // Center the content
+        padding: '16px', // Add padding for spacing
+      }}
+    >
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" gutterBottom>
           Available Doctors
@@ -50,7 +56,7 @@ const PatientDoctors = () => {
           ))}
         </Grid>
       </Box>
-    </Container>
+    </Box>
   );
 };
 
