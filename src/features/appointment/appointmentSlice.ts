@@ -1,5 +1,6 @@
 import { createSlice,type PayloadAction } from '@reduxjs/toolkit'; 
 import type { Appointment } from '../../@types';
+import type { RootState } from '../../app/store';
 
 interface AppointmentState {
   appointments: Appointment[];
@@ -62,5 +63,13 @@ export const selectAppointmentsByPatient = (state: { appointments: AppointmentSt
   state.appointments.appointments.filter(a => a.patientId === patientId);
 export const selectAppointmentsByDoctor = (state: { appointments: AppointmentState }, doctorId: string) => 
   state.appointments.appointments.filter(a => a.doctorId === doctorId);
+
+export const selectAppointmentsByPatientAndDoctor = (
+  state: RootState, 
+  patientId: string,
+  doctorId: string
+) => state.appointments.appointments.filter(
+  a => a.patientId === patientId && a.doctorId === doctorId
+);
 
 export default appointmentSlice.reducer;

@@ -35,6 +35,7 @@ import PatientReports from "../pages/patient/Reports";
 import ReportDetails from "../pages/patient/ReportDetails";
 import PatientBills from "../pages/patient/Bills";
 import BillDetails from "../pages/patient/BillDetails";
+import PatientDetails from "../pages/doctor/PatientDetails";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
@@ -82,6 +83,7 @@ const AppRoutes = () => {
         <Route index element={<DoctorDashboard />} />
         <Route path="appointments" element={<DoctorAppointments />} />
         <Route path="patients" element={<DoctorPatients />} />
+        <Route path="patients/:patientId" element={<PatientDetails />} />
       </Route>
 
       {/* Patient Routes */}
