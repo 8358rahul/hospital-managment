@@ -498,7 +498,7 @@ export const mockReports: HospitalReport[] = [
     data: {
       totalRevenue: 12500,
       paidBills: 28,
-      pendingBills: 5,
+      PendingBills: 5,
       revenueByService: {
         consultations: 6500,
         labTests: 4000,

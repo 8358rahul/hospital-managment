@@ -30,7 +30,7 @@ export interface Appointment {
   doctorId: string;
   date: string;
   time: string;
-  status: 'pending' | 'approved' | 'rejected' | 'completed';
+  status: 'Pending' | 'Approved' | 'rejected' | 'completed';
   reason: string;
   notes?: string;
   patientName?: string;

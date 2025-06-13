@@ -102,7 +102,7 @@ const ViewReport = () => {
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                           <Typography>Pending Bills:</Typography>
                           <Typography fontWeight="bold">
-                            {report.data.pendingBills || '0'}
+                            {report.data.PendingBills || '0'}
                           </Typography>
                         </Box>
                       </CardContent>

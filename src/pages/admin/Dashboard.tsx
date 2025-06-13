@@ -14,7 +14,7 @@ const AdminDashboard = () => {
     { title: 'Total Patients', value: patients.length, icon: <People fontSize="large" /> },
     { title: 'Total Doctors', value: doctors.length, icon: <MedicalServices fontSize="large" /> },
     { title: 'Today Appointments', value: appointments.length, icon: <CalendarToday fontSize="large" /> },
-    { title: 'Pending Requests', value: appointments.filter(a => a.status === 'pending').length, icon: <Assignment fontSize="large" /> },
+    { title: 'Pending Requests', value: appointments.filter(a => a.status === 'Pending').length, icon: <Assignment fontSize="large" /> },
   ];
 
   return (

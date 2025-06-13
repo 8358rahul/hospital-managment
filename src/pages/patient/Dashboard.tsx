@@ -25,8 +25,8 @@ const PatientDashboard = () => {
       renderCell: (params) => (
         <Typography 
           color={
-            params.value === 'approved' ? 'success.main' : 
-            params.value === 'pending' ? 'warning.main' : 
+            params.value === 'Approved' ? 'success.main' : 
+            params.value === 'Pending' ? 'warning.main' : 
             'error.main'
           }
         >
@@ -53,7 +53,7 @@ const PatientDashboard = () => {
                 Upcoming Appointments
               </Typography>
               <Typography variant="h4" component="div">
-                {appointments.filter(a => a.status === 'approved').length}
+                {appointments.filter(a => a.status === 'Approved').length}
               </Typography>
               <Button
                 component={Link}

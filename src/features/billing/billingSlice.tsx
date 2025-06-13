@@ -25,7 +25,7 @@ const billingSlice = createSlice({
     addBill: (state, action: PayloadAction<Bill>) => {
       state.bills.push(action.payload);
     },
-    updateBillStatus: (state, action: PayloadAction<{id: string, status: 'pending' | 'paid' | 'cancelled'}>) => {
+    updateBillStatus: (state, action: PayloadAction<{id: string, status: 'Pending' | 'paid' | 'cancelled'}>) => {
       const index = state.bills.findIndex(bill => bill.id === action.payload.id);
       if (index !== -1) {
         state.bills[index].status = action.payload.status;

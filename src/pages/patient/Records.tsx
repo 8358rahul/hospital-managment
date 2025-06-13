@@ -12,8 +12,8 @@ const PatientRecords = () => {
  
   
   const columns: GridColDef[] = [
-    { field: 'date', headerName: 'Date', width: 120 },
-    { field: 'doctorName', headerName: 'Doctor', width: 200 },
+    { field: 'date', headerName: 'Date', width: 250 },
+    { field: 'doctorName', headerName: 'Doctor', width: 250 },
     { field: 'diagnosis', headerName: 'Diagnosis', width: 250 },
     { field: 'prescription', headerName: 'Prescription', width: 250 },
   ];

@@ -6,27 +6,65 @@ import { useAppSelector } from '../../app/hooks';
 const AdminAppointments = () => {
   const appointments = useAppSelector(selectAllAppointments);
 
-  const columns: GridColDef[] = [
+   const columns: GridColDef[] = [
     { field: 'date', headerName: 'Date', width: 120 },
     { field: 'time', headerName: 'Time', width: 100 },
     { field: 'patientName', headerName: 'Patient', width: 200 },
-    { field: 'doctorName', headerName: 'Doctor', width: 200 },
     { field: 'reason', headerName: 'Reason', width: 200 },
     { 
       field: 'status', 
       headerName: 'Status', 
-      width: 120,
+      width: 150,
       renderCell: (params) => (
-        <Typography 
+        <Chip
+          label={params.value}
           color={
-            params.value === 'approved' ? 'success.main' : 
-            params.value === 'pending' ? 'warning.main' : 
-            'error.main'
+            params.value === 'Approved' ? 'success' : 
+            params.value === 'Pending' ? 'warning' : 
+            'error'
           }
-        >
-          {params.value}
-        </Typography>
+        />
       )
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 250,
+      renderCell: (params) => (
+        <Box>
+          {params.row.status === 'Pending' && (
+            <>
+              <Button
+                size="small"
+                variant="contained"
+                color="success"
+                sx={{ mr: 1 }}
+                onClick={() => handleStatusChange(params.row.id, 'Approved')}
+              >
+                Approve
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
+                color="error"
+                onClick={() => handleStatusChange(params.row.id, 'rejected')}
+              >
+                Reject
+              </Button>
+            </>
+          )}
+          {params.row.status === 'Approved' && (
+            <Button
+              size="small"
+              variant="outlined"
+              color="primary"
+              onClick={() => handleStatusChange(params.row.id, 'completed')}
+            >
+              Mark Completed
+            </Button>
+          )}
+        </Box>
+      ),
     },
   ];
 
@@ -34,7 +72,7 @@ const AdminAppointments = () => {
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Appointments
+          My Appointments
         </Typography>
         
         <Card>
@@ -54,5 +92,7 @@ const AdminAppointments = () => {
     </Container>
   );
 };
+
+
 
 export default AdminAppointments;

@@ -37,8 +37,8 @@ const DoctorAppointments = () => {
         <Chip
           label={params.value}
           color={
-            params.value === 'approved' ? 'success' : 
-            params.value === 'pending' ? 'warning' : 
+            params.value === 'Approved' ? 'success' : 
+            params.value === 'Pending' ? 'warning' : 
             'error'
           }
         />
@@ -50,14 +50,14 @@ const DoctorAppointments = () => {
       width: 250,
       renderCell: (params) => (
         <Box>
-          {params.row.status === 'pending' && (
+          {params.row.status === 'Pending' && (
             <>
               <Button
                 size="small"
                 variant="contained"
                 color="success"
                 sx={{ mr: 1 }}
-                onClick={() => handleStatusChange(params.row.id, 'approved')}
+                onClick={() => handleStatusChange(params.row.id, 'Approved')}
               >
                 Approve
               </Button>
@@ -71,7 +71,7 @@ const DoctorAppointments = () => {
               </Button>
             </>
           )}
-          {params.row.status === 'approved' && (
+          {params.row.status === 'Approved' && (
             <Button
               size="small"
               variant="outlined"

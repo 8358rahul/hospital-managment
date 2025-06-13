@@ -11,8 +11,8 @@ const DoctorDashboard = () => {
 
   const stats = [
     { title: 'Total Appointments', value: appointments.length, icon: <CalendarToday fontSize="large" /> },
-    { title: 'Approved', value: appointments.filter(a => a.status === 'approved').length, icon: <CheckCircle fontSize="large" /> },
-    { title: 'Pending', value: appointments.filter(a => a.status === 'pending').length, icon: <Pending fontSize="large" /> },
+    { title: 'Approved', value: appointments.filter(a => a.status === 'Approved').length, icon: <CheckCircle fontSize="large" /> },
+    { title: 'Pending', value: appointments.filter(a => a.status === 'Pending').length, icon: <Pending fontSize="large" /> },
     { title: 'Patients', value: new Set(appointments.map(a => a.patientId)).size, icon: <People fontSize="large" /> },
   ];
 

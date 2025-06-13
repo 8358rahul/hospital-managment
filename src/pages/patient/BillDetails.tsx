@@ -38,7 +38,7 @@ const BillDetails = () => {
                 <Typography variant="h6">
                   Status: <span style={{
                     color: bill.status === 'paid' ? 'green' : 
-                           bill.status === 'pending' ? 'orange' : 'red'
+                           bill.status === 'Pending' ? 'orange' : 'red'
                   }}>
                     {bill.status}
                   </span>
@@ -80,7 +80,7 @@ const BillDetails = () => {
                 </Table>
               </Grid>
 
-              {bill.status === 'pending' && (
+              {bill.status === 'Pending' && (
                 <Grid item xs={12} sx={{ textAlign: 'right' }}>
                   <Button variant="contained" color="primary">
                     Pay Now
