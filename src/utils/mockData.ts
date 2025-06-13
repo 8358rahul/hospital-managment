@@ -1,4 +1,4 @@
-import type { Doctor, Patient, Appointment, MedicalRecord, Bill, Report, PatientReport } from '../@types';
+import type { Doctor, Patient, Appointment, MedicalRecord, Bill, HospitalReport, PatientReport } from '../@types';
 
 export const mockDoctors: Doctor[] = [
   {
@@ -92,7 +92,7 @@ export const mockBills: Bill[] = [
 ];
 
  
-export const mockReports: Report[] = [
+export const mockReports: HospitalReport[] = [
   {
     id: 'r1',
     type: 'financial',

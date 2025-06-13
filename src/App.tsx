@@ -7,6 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { store } from './app/store';
 import AppRoutes from './routes/AppRoutes';
 import { initializeMockData } from './utils/initializeMockData';
+  import { ToastContainer } from 'react-toastify';
 
 const theme = createTheme({
   palette: {
@@ -50,6 +51,8 @@ function App() {
           <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
             <BrowserRouter>
               <AppRoutes />
+              <ToastContainer />
+
             </BrowserRouter>
           </SnackbarProvider>
         </LocalizationProvider>

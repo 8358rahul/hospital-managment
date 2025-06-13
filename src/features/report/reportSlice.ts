@@ -1,8 +1,9 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';  
 import type { RootState } from '../../app/store';
+import type { HospitalReport } from '../../@types';
 
 interface ReportState {
-  reports: Report[];
+  reports: HospitalReport[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
@@ -17,11 +18,11 @@ const reportSlice = createSlice({
   name: 'report',
   initialState,
   reducers: {
-    setReports: (state, action: PayloadAction<Report[]>) => {
+    setReports: (state, action: PayloadAction<HospitalReport []>) => {
       state.reports = action.payload;
       state.status = 'succeeded';
     },
-    addReport: (state, action: PayloadAction<Report>) => {
+    addReport: (state, action: PayloadAction<HospitalReport >) => {
       state.reports.push(action.payload);
     },
     setLoading: (state, action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>) => {

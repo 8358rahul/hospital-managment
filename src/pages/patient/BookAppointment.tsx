@@ -20,6 +20,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs'; 
 import { mockDoctors } from '../../utils/mockData';
+  import { toast } from 'react-toastify';
+import { useAppDispatch } from '../../app/hooks';
+import { addAppointment } from '../../features/appointment/appointmentSlice';
+import type { Appointment } from '../../@types';
+
 
 const BookAppointment = () => {
   const navigate = useNavigate();
@@ -27,11 +32,12 @@ const BookAppointment = () => {
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const [time, setTime] = useState<Dayjs | null>(dayjs().hour(10).minute(0));
   const [reason, setReason] = useState('');
+   
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real app, this would dispatch an action to save the appointment
-    alert('Appointment booked successfully!');
+  const handleSubmit = (e: React.FormEvent) => { 
+ 
+    e.preventDefault(); 
+    toast('Appointment booked successfully!');
     navigate('/patient/appointments');
   };
 

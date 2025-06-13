@@ -66,7 +66,7 @@ export interface BillItem {
   amount: number;
 }
 
-export interface Report {
+export interface HospitalReport  {
   id: string;
   type: 'financial' | 'appointments' | 'patient' | 'doctor';
   title: string;

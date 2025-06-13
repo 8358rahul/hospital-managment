@@ -17,7 +17,7 @@ export const store = configureStore({
     records: recordReducer,
     billing: billingReducer,
     report: reportReducer,
-        patientReport: patientReportReducer,
+    patientReport: patientReportReducer,
 
   },
 });

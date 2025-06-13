@@ -2,7 +2,7 @@ import { Box, Button, Card, CardContent, Container, Grid, Typography } from '@mu
 import { Download, Visibility } from '@mui/icons-material'; 
 import { Link } from 'react-router-dom';
 import type { RootState } from '../../app/store';
-import { selectSharedPatientReports } from '../../features/patientReport/patientReportSlice';
+import {  selectPatientReports, selectSharedPatientReports } from '../../features/patientReport/patientReportSlice';
 import { useAppSelector } from '../../app/hooks';
 
 const PatientReports = () => {
@@ -10,6 +10,10 @@ const PatientReports = () => {
   const reports = useAppSelector((state: RootState) => 
     selectSharedPatientReports(state, user?.id || '')
   );
+ 
+  const temp = useAppSelector(selectPatientReports)
+ 
+ 
 
   return (
     <Container maxWidth="lg">

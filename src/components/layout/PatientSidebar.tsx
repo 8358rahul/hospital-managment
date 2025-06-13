@@ -1,17 +1,27 @@
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from '@mui/material';
-import { 
+import {
+  Box,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+} from "@mui/material";
+import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   CalendarToday as CalendarTodayIcon,
   MedicalServices as MedicalServicesIcon,
   Settings as SettingsIcon,
-  ExitToApp as ExitToAppIcon, 
+  ExitToApp as ExitToAppIcon,
   Receipt as ReceiptIcon,
-  Description as DescriptionIcon
-} from '@mui/icons-material';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux'; 
-import { logout } from '../../features/auth/authSlice';
+  Description as DescriptionIcon,
+} from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 
 const drawerWidth = 240;
 
@@ -28,15 +38,15 @@ const PatientSidebar = () => {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { 
-          width: drawerWidth, 
-          boxSizing: 'border-box',
-          backgroundColor: '#f5f5f5',
+        [`& .MuiDrawer-paper`]: {
+          width: drawerWidth,
+          boxSizing: "border-box",
+          backgroundColor: "#f5f5f5",
         },
       }}
     >
       <Toolbar />
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflow: "auto" }}>
         <List>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/patient">
@@ -55,13 +65,13 @@ const PatientSidebar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-  <ListItemButton component={Link} to="/patient/bills">
-    <ListItemIcon>
-      <ReceiptIcon />
-    </ListItemIcon>
-    <ListItemText primary="Bills" />
-  </ListItemButton>
-</ListItem>
+            <ListItemButton component={Link} to="/patient/bills">
+              <ListItemIcon>
+                <ReceiptIcon />
+              </ListItemIcon>
+              <ListItemText primary="Bills" />
+            </ListItemButton>
+          </ListItem>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/patient/appointments">
               <ListItemIcon>
@@ -71,13 +81,13 @@ const PatientSidebar = () => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-  <ListItemButton component={Link} to="/patient/reports">
-    <ListItemIcon>
-      <DescriptionIcon />
-    </ListItemIcon>
-    <ListItemText primary="Medical Reports" />
-  </ListItemButton>
-</ListItem>
+            <ListItemButton component={Link} to="/patient/reports">
+              <ListItemIcon>
+                <DescriptionIcon />
+              </ListItemIcon>
+              <ListItemText primary="Medical Reports" />
+            </ListItemButton>
+          </ListItem>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/patient/records">
               <ListItemIcon>
