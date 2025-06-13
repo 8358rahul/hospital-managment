@@ -25,14 +25,14 @@ const DoctorAppointments = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: 'date', headerName: 'Date', width: 120 },
-    { field: 'time', headerName: 'Time', width: 100 },
+    { field: 'date', headerName: 'Date', width: 180 },
+    { field: 'time', headerName: 'Time', width: 200 },
     { field: 'patientName', headerName: 'Patient', width: 200 },
-    { field: 'reason', headerName: 'Reason', width: 200 },
+    { field: 'reason', headerName: 'Reason', width: 180 },
     { 
       field: 'status', 
       headerName: 'Status', 
-      width: 150,
+      width: 180,
       renderCell: (params) => (
         <Chip
           label={params.value}
@@ -47,7 +47,7 @@ const DoctorAppointments = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 250,
+      width: 200,
       renderCell: (params) => (
         <Box>
           {params.row.status === 'Pending' && (

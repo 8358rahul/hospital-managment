@@ -1,28 +1,38 @@
-import { Box, Card, CardContent, Container, Typography } from '@mui/material';
-import { DataGrid,type GridColDef } from '@mui/x-data-grid'; 
+import { Box, Card, CardContent, Container, Typography, Chip, Button } from '@mui/material';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid'; 
 import { selectAllAppointments } from '../../features/appointment/appointmentSlice';
 import { useAppSelector } from '../../app/hooks';
- 
+
 const AdminAppointments = () => {
   const appointments = useAppSelector(selectAllAppointments);
 
-   const columns: GridColDef[] = [
-    { field: 'date', headerName: 'Date', width: 120 },
-    { field: 'time', headerName: 'Time', width: 100 },
+  const handleStatusChange = (id: string, newStatus: string) => {
+    // Add logic to update the status of the appointment
+    console.log(`Appointment ID: ${id}, New Status: ${newStatus}`);
+  };
+
+  const columns: GridColDef[] = [
+    { field: 'date', headerName: 'Date', width: 200 },
+    { field: 'time', headerName: 'Time', width: 180 },
     { field: 'patientName', headerName: 'Patient', width: 200 },
     { field: 'reason', headerName: 'Reason', width: 200 },
     { 
       field: 'status', 
       headerName: 'Status', 
-      width: 150,
+      width: 200,
       renderCell: (params) => (
         <Chip
           label={params.value}
-          color={
-            params.value === 'Approved' ? 'success' : 
-            params.value === 'Pending' ? 'warning' : 
-            'error'
-          }
+          sx={{
+            backgroundColor: 
+              params.value === 'Approved' ? 'success.main' : 
+              params.value === 'Pending' ? 'warning.main' : 
+              'error.main',
+            color: 'white', // Text color
+            borderRadius: '16px', // Rounded corners
+            fontWeight: 'bold', // Bold text
+            padding: '0 8px', // Padding inside the badge
+          }}
         />
       )
     },
@@ -47,7 +57,7 @@ const AdminAppointments = () => {
                 size="small"
                 variant="contained"
                 color="error"
-                onClick={() => handleStatusChange(params.row.id, 'rejected')}
+                onClick={() => handleStatusChange(params.row.id, 'Rejected')}
               >
                 Reject
               </Button>
@@ -58,7 +68,7 @@ const AdminAppointments = () => {
               size="small"
               variant="outlined"
               color="primary"
-              onClick={() => handleStatusChange(params.row.id, 'completed')}
+              onClick={() => handleStatusChange(params.row.id, 'Completed')}
             >
               Mark Completed
             </Button>
@@ -92,7 +102,5 @@ const AdminAppointments = () => {
     </Container>
   );
 };
-
-
 
 export default AdminAppointments;
