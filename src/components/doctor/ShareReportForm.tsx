@@ -13,7 +13,7 @@ const ShareReportForm = ({ patientId, onShare }: ShareReportFormProps) => {
     type: 'lab' as const,
     content: '',
     attachments: ['']
-  });
+  });    
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
