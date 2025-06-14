@@ -21,29 +21,7 @@ const DoctorSidebar = () => {
     dispatch(logout());
   };
 
-    return (
-      <>  
-          <Drawer
-            variant="permanent"
-            open={open}
-            sx={{
-              width: open ? drawerWidthOpen : drawerWidthClosed,
-              flexShrink: 0,
-              whiteSpace: "nowrap",
-              "& .MuiDrawer-paper": {
-                width: open ? drawerWidthOpen : drawerWidthClosed,
-                boxSizing: "border-box",
-                overflowX: "hidden",
-                backgroundColor: "#f9f9f9",
-                transition: "width 0.3s",
-              },
-            }}
-          >
-            {drawerContent}
-          </Drawer> 
-      </>
-    );
-    
+  
   return (
     <Drawer
       variant="permanent"
