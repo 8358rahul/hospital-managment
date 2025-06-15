@@ -3,6 +3,7 @@ import { useState } from 'react';
 import AdminAppBar from '../components/layout/AdminAppBar';
 import AdminSidebar from '../components/layout/AdminSidebar';
 import { Box, Toolbar } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 
 const AdminLayout = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
