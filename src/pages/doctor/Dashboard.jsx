@@ -1,52 +1,171 @@
-import { Box, Card, CardContent, Container, Grid, Typography } from '@mui/material';
-import { CalendarToday, People, CheckCircle, Pending } from '@mui/icons-material';
-import { useAppSelector } from '../../app/hooks';
-import { selectAppointmentsByDoctor } from '../../features/appointment/appointmentSlice';
+import React from 'react';
+import {
+  Box,
+  Card,
+  Grid,
+  Typography,
+  Avatar,
+} from '@mui/material';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import PeopleIcon from '@mui/icons-material/People';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
+import dashboardBg from '../../assets/dashboard.jpg';
+
+const DashboardCard = ({ title, count, icon, color }) => (
+  <Card
+    sx={{
+      width: '475px',        // Fixed width
+      height: '170px',       // Increased height
+      boxShadow: 6,
+      borderRadius: 3,
+      px: 3,
+      py: 4,
+      display: 'flex',
+      alignItems: 'center',
+    }}
+  >
+    <Box display="flex" alignItems="center" gap={3}>
+      <Avatar sx={{ bgcolor: color, width: 60, height: 60 }}>{icon}</Avatar>
+      <Box>
+        <Typography variant="h6" fontWeight="bold" color="text.secondary">
+          {title}
+        </Typography>
+        <Typography variant="h4" fontWeight="bold" mt={1}>
+          {count}
+        </Typography>
+      </Box>
+    </Box>
+  </Card>
+);
+
+
+const COLORS = ['#ff9800', '#4caf50', '#1976d2', '#d32f2f', '#00acc1'];
 
 const DoctorDashboard = () => {
-  const { user } = useAppSelector((state) => state.auth);
-  const appointments = useAppSelector((state) => 
-    selectAppointmentsByDoctor(state, user?.id || '')
-  );
+  const totalDoctors = 12;
+  const totalPatients = 58;
+  const totalAppointments = 25;
+  const totalRequests = 7;
 
-  const stats = [
-    { title: 'Total Appointments', value: appointments.length, icon: <CalendarToday fontSize="large" /> },
-    { title: 'Approved', value: appointments.filter(a => a.status === 'approved').length, icon: <CheckCircle fontSize="large" /> },
-    { title: 'Pending', value: appointments.filter(a => a.status === 'pending').length, icon: <Pending fontSize="large" /> },
-    { title: 'Patients', value: new Set(appointments.map(a => a.patientId)).size, icon: <People fontSize="large" /> },
+  const reports = [
+    
+    
+    {
+      title: 'Patient Report',
+      data: [
+        { name: 'Week 1', Last: 20, Current: 25 },
+        { name: 'Week 2', Last: 30, Current: 35 },
+        { name: 'Week 3', Last: 40, Current: 50 },
+        { name: 'Week 4', Last: 45, Current: 60 },
+      ],
+      color: ['#2e7d32', '#81c784']
+    },
+    {
+      title: 'Appointment Report',
+      data: [
+        { name: 'Week 1', Last: 10, Current: 12 },
+        { name: 'Week 2', Last: 15, Current: 18 },
+        { name: 'Week 3', Last: 20, Current: 25 },
+        { name: 'Week 4', Last: 22, Current: 30 },
+      ],
+      color: ['#d32f2f', '#ef9a9a']
+    },
   ];
 
+  const todayAppointments = [
+    { name: 'Completed', value: 10 },
+    { name: 'Pending', value: 8 },
+  ];
+
+
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Doctor Dashboard
-      </Typography>
-      <Typography variant="h6" gutterBottom sx={{ mb: 4 }}>
-        Welcome, Dr. {user?.name}
+    <Box px={{ xs: 2, sm: 4 }} py={4}  sx={{
+        backgroundImage: `linear-gradient(rgba(224, 246, 246, 0.85), rgba(255,255,255,0.95)), url(${dashboardBg})`,
+        backgroundSize: 'cover',
+        borderRadius:'5px',
+        backgroundPosition: 'center',
+        minHeight: '100vh',
+        px: { xs: 2, sm: 4 },
+        py: 4,
+      }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+       Welcome Dr Darshan, 
       </Typography>
 
-      <Grid container spacing={3}>
-        {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card>
-              <CardContent>
-                <Box display="flex" justifyContent="space-between">
-                  <div>
-                    <Typography color="textSecondary" gutterBottom>
-                      {stat.title}
-                    </Typography>
-                    <Typography variant="h5">{stat.value}</Typography>
-                  </div>
-                  <Box color="primary.main">
-                    {stat.icon}
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+      <Grid container spacing={3} mb={5}>
+       
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardCard title="Total Patients" count={totalPatients} icon={<PeopleIcon />} color="#2e7d32" />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardCard title="Total Appointments" count={totalAppointments} icon={<EventNoteIcon />} color="#ed6c02" />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <DashboardCard title="Total Requests" count={totalRequests} icon={<HelpOutlineIcon />} color="#d32f2f" />
+        </Grid>
+      </Grid>
+
+      <Grid container spacing={3} justifyContent="">
+        {[...reports, { title: 'Today’s Appointments Status', isPie: true, data: todayAppointments },
+                      ]
+          .map((chart, idx) => (
+            <Grid item xs={12} sm={6} md="auto" key={idx}>
+              <Box sx={{ width: "475px", borderRadius:"5px"}}>
+                <Card sx={{ p: 3, boxShadow: 4, height: '100%' }}>
+                  <Typography variant="h6" fontWeight="bold" mb={2}>
+                    {chart.title}
+                  </Typography>
+                  <ResponsiveContainer width="100%" height={250}>
+                    {chart.isPie ? (
+                      <PieChart>
+                        <Pie
+                          data={chart.data}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={90}
+                          label
+                        >
+                          {chart.data.map((entry, index) => (
+                            <Cell key={`cell-${idx}-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    ) : (
+                      <LineChart data={chart.data}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="Last" stroke={chart.color[0]} strokeWidth={2} />
+                        <Line type="monotone" dataKey="Current" stroke={chart.color[1]} strokeWidth={2} />
+                      </LineChart>
+                    )}
+                  </ResponsiveContainer>
+                </Card>
+              </Box>
+            </Grid>
         ))}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

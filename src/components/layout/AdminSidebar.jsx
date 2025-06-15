@@ -1,114 +1,149 @@
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from '@mui/material';
-import { 
+import {
+  Box,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar
+} from '@mui/material';
+import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   MedicalServices as MedicalServicesIcon,
   CalendarToday as CalendarTodayIcon,
-  Settings as SettingsIcon,
   ExitToApp as ExitToAppIcon,
   Assessment as AssessmentIcon
 } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux'; 
+import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
 import hospitalLogo from "../../assets/1_AFo1fCc4zToskBIkRZU82g.webp";
 
 const drawerWidth = 240;
 
-const AdminSidebar = () => {
+const navItemStyles = {
+  '&.active': {
+    backgroundColor: '#88c4f357',
+    color: 'black',
+    fontWeight: 'bold',
+    borderRadius: '4px',
+    '& .MuiListItemIcon-root': {
+      color: 'black',
+    },
+  },
+};
+
+const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { 
-          width: drawerWidth, 
-          boxSizing: 'border-box',
-          backgroundColor: '#f5f5f5',
-        },
-      }}
-    >
-      <Toolbar sx={{ height: 64, backgroundColor: '#e0f7fa',  paddingLeft:"0px", paddingRight:"0px"}}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-          <img 
+  const drawerContent = (
+    <>
+      <Toolbar sx={{ height: 64, px: 0 }}>
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
             src={hospitalLogo}
-            alt="Hospital Management Logo" 
-            style={{ height: '64px', width: '240px' }} 
+            alt="Hospital Logo"
+            style={{ height: '64px', width: '240px', objectFit: 'cover' }}
           />
         </Box>
       </Toolbar>
       <Divider />
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ px: 2, overflow: 'auto' }}>
         <List>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/admin">
-              <ListItemIcon>
-                <DashboardIcon />
-              </ListItemIcon>
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/admin" sx={navItemStyles} end>
+              <ListItemIcon><DashboardIcon /></ListItemIcon>
               <ListItemText primary="Dashboard" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/admin/patients">
-              <ListItemIcon>
-                <PeopleIcon />
-              </ListItemIcon>
+
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/admin/patients" sx={navItemStyles}>
+              <ListItemIcon><PeopleIcon /></ListItemIcon>
               <ListItemText primary="Patients" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/admin/doctors">
-              <ListItemIcon>
-                <MedicalServicesIcon />
-              </ListItemIcon>
+
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/admin/doctors" sx={navItemStyles}>
+              <ListItemIcon><MedicalServicesIcon /></ListItemIcon>
               <ListItemText primary="Doctors" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/admin/reports">
-              <ListItemIcon>
-                <AssessmentIcon />
-              </ListItemIcon>
+
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/admin/reports" sx={navItemStyles}>
+              <ListItemIcon><AssessmentIcon /></ListItemIcon>
               <ListItemText primary="Reports" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={Link} to="/admin/appointments">
-              <ListItemIcon>
-                <CalendarTodayIcon />
-              </ListItemIcon>
+
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/admin/appointments" sx={navItemStyles}>
+              <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
               <ListItemText primary="Appointments" />
             </ListItemButton>
           </ListItem>
         </List>
-        <Divider />
+
+        <Divider sx={{ my: 2 }} />
+
         <List>
           <ListItem disablePadding>
-            <ListItemButton component={Link} to="/admin/settings">
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
             <ListItemButton onClick={handleLogout}>
-              <ListItemIcon>
-                <ExitToAppIcon />
-              </ListItemIcon>
+              <ListItemIcon><ExitToAppIcon /></ListItemIcon>
               <ListItemText primary="Logout" />
             </ListItemButton>
           </ListItem>
         </List>
       </Box>
-    </Drawer>
+    </>
+  );
+
+  return (
+    <>
+      {/* Permanent Drawer */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            backgroundColor: '#ffffff',
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+
+      {/* Temporary Drawer */}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: 'block', sm: 'none' },
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            backgroundColor: '#ffffff',
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+    </>
   );
 };
 

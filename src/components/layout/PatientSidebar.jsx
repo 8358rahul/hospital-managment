@@ -1,164 +1,147 @@
 import {
-  Box,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-  useTheme,
-  useMediaQuery,
+  Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar
 } from "@mui/material";
 import {
-  Dashboard,
-  People,
-  CalendarToday,
-  MedicalServices,
-  Settings,
-  ExitToApp,
-  Receipt,
-  Description,
-  Menu,
-  ChevronLeft,
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+  MedicalServices as MedicalServicesIcon,
+  CalendarToday as CalendarTodayIcon,
+  ExitToApp as ExitToAppIcon,
+  Assessment as AssessmentIcon
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 import { useEffect, useState } from "react";
 import hospitalLogo from "../../assets/1_AFo1fCc4zToskBIkRZU82g.webp";
+import { NavLink } from 'react-router-dom';
 
-const drawerWidthOpen = 240;
+const drawerWidth = 240;
 const drawerWidthClosed = 72;
 
-const PatientSidebar = ({ open, setOpen }) => { 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const location = useLocation();
-  const dispatch = useDispatch();
+const navItemStyles = {
+  '&.active': {
+    backgroundColor: '#88c4f357',
+    color: 'black',
+    fontWeight: 'bold',
+    borderRadius: '4px',
+    '& .MuiListItemIcon-root': {
+      color: 'black',
+    },
+  },
+};
 
-  useEffect(() => {
-    if (isMobile) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  }, [isMobile]);
+const PatientSidebar = ({ mobileOpen, handleDrawerToggle }) => {
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
-  const menuItems = [
-    { text: "Dashboard", icon: <Dashboard />, path: "/patient" },
-    { text: "Doctors", icon: <People />, path: "/patient/doctors" },
-    { text: "Bills", icon: <Receipt />, path: "/patient/bills" },
-    { text: "Appointments", icon: <CalendarToday />, path: "/patient/appointments" },
-    { text: "Medical Reports", icon: <Description />, path: "/patient/reports" },
-    { text: "Medical Records", icon: <MedicalServices />, path: "/patient/records" },
-    { text: "Settings", icon: <Settings />, path: "/patient/settings" },
-  ];
-
   const drawerContent = (
-    <Box height="100%" display="flex" flexDirection="column">
-      <Toolbar
-        sx={{
-          display: "flex",
-          justifyContent: open ? "space-between" : "center",
-          alignItems: "center",
-          px: 2,
-          backgroundColor: "#e0f7fa",
-        }}
-      >
-        {open && (
-          <Box display="flex" alignItems="center" gap={1}>
-            <img src={hospitalLogo} alt="Logo" style={{ height: 36 }} />
-            <Typography variant="h6" noWrap>
-              HMS
-            </Typography>
-          </Box>
-        )}
-        <IconButton onClick={() => setOpen(!open)}>
-          {open ? <ChevronLeft /> : <Menu />}
-        </IconButton>
+    <>
+      <Toolbar sx={{ height: 64, px: 0 }}>
+        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={hospitalLogo}
+            alt="Hospital Logo"
+            style={{ height: '64px', width: '240px', objectFit: 'cover' }}
+          />
+        </Box>
       </Toolbar>
+      <Divider />
+      <Box sx={{ px: 2, overflow: 'auto' }}>
+        <List>
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/patient" sx={navItemStyles} end>
+              <ListItemIcon><DashboardIcon /></ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+          </ListItem>
 
-      <Divider />
-      <List sx={{ flexGrow: 1 }}>
-        {menuItems.map(({ text, icon, path }) => {
-          const isActive = location.pathname === path;
-          return (
-            <ListItem key={text} disablePadding>
-              <ListItemButton
-                component={Link}
-                to={path}
-                sx={{
-                  justifyContent: open ? "initial" : "center",
-                  px: 2,
-                  backgroundColor: isActive ? "#e0f2f1" : "transparent",
-                  borderRadius: 2,
-                  mx: 1,
-                }}
-              >
-                <ListItemIcon
-                  sx={{ minWidth: 0, mr: open ? 2 : "auto", justifyContent: "center" }}
-                >
-                  {icon}
-                </ListItemIcon>
-                {open && <ListItemText primary={text} />}
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
-      <Divider />
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              justifyContent: open ? "initial" : "center",
-              px: 2,
-              mx: 1,
-              borderRadius: 2,
-            }}
-          >
-            <ListItemIcon
-              sx={{ minWidth: 0, mr: open ? 2 : "auto", justifyContent: "center" }}
-            >
-              <ExitToApp />
-            </ListItemIcon>
-            {open && <ListItemText primary="Logout" />}
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </Box>
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/patient/doctors" sx={navItemStyles} end>
+              <ListItemIcon><PeopleIcon /></ListItemIcon>
+              <ListItemText primary="Doctor" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/patient/appointments" sx={navItemStyles}>
+              <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+              <ListItemText primary="Appointments" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/patient/bills" sx={navItemStyles}>
+              <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+              <ListItemText primary="Bills" />
+            </ListItemButton>
+          </ListItem>
+
+
+          <ListItem disablePadding sx={{ mb: 1 }}>
+            <ListItemButton component={NavLink} to="/patient/reports" sx={navItemStyles}>
+              <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
+              <ListItemText primary="Medical Reports" />
+            </ListItemButton>
+          </ListItem>
+
+
+
+        </List>
+
+        <Divider sx={{ my: 2 }} />
+
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleLogout}>
+              <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Box>
+    </>
   );
 
   return (
-    <>  
-        <Drawer
-          variant="permanent"
-          open={open}
-          sx={{
-            width: open ? drawerWidthOpen : drawerWidthClosed,
-            flexShrink: 0,
-            whiteSpace: "nowrap",
-            "& .MuiDrawer-paper": {
-              width: open ? drawerWidthOpen : drawerWidthClosed,
-              boxSizing: "border-box",
-              overflowX: "hidden",
-              backgroundColor: "#f9f9f9",
-              transition: "width 0.3s",
-            },
-          }}
-        >
-          {drawerContent}
-        </Drawer> 
-    </>
+     <>
+          {/* Permanent Drawer */}
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              width: drawerWidth,
+              flexShrink: 0,
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+                backgroundColor: '#ffffff',
+              },
+            }}
+          >
+            {drawerContent}
+          </Drawer>
+    
+          {/* Temporary Drawer */}
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+                backgroundColor: '#ffffff',
+              },
+            }}
+          >
+            {drawerContent}
+          </Drawer>
+        </>
+    
   );
 };
 

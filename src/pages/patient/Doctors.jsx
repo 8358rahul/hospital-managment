@@ -43,9 +43,7 @@ const PatientDoctors = () => {
                   <Typography variant="body2" paragraph>
                     Consultation Fee: ${doctor.consultationFee}
                   </Typography>
-                  <Typography variant="body2" paragraph>
-                    Availability: {doctor.availableDays.join(', ')} {doctor.availableHours}
-                  </Typography>
+                 
                   <Button
                     component={Link}
                     to={`/patient/book-appointment?doctorId=${doctor.id}`}

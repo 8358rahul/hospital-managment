@@ -63,7 +63,7 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<AdminDashboard />} />
-        <Route path="patients" element={<AdminPatients />} />
+        <Route path="/admin/patients" element={<AdminPatients />} />
         <Route path="doctors" element={<AdminDoctors />} />
         <Route path="appointments" element={<AdminAppointments />} />
         <Route path="reports" element={<AdminReports />} />

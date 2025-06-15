@@ -4,12 +4,16 @@ import PatientAppBar from '../components/layout/PatientAppBar';
 import PatientSidebar from '../components/layout/PatientSidebar';
 import { useState } from 'react';
 const PatientLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+const [mobileOpen, setMobileOpen] = useState(false);
+  
+    const handleDrawerToggle = () => {
+      setMobileOpen(!mobileOpen);
+    };
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-       <PatientAppBar open={sidebarOpen} setOpen={setSidebarOpen} />
-      <PatientSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      {/* <CssBaseline /> */}
+       <PatientAppBar handleDrawerToggle={handleDrawerToggle}/>
+      <PatientSidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle}/>
       <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
         <Toolbar />
         <Outlet />

@@ -1,66 +1,145 @@
-import { Box, Button, Card, CardContent, Container, Grid, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';  
+// AdminReports.jsx
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+  Paper,
+  Modal,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
 import { selectAllReports } from '../../features/report/reportSlice';
+import { motion } from 'framer-motion';
+import backgroundImageUrl from '../../assets/health-still-life-with-copy-space.jpg';
+import ReportPopup from './ReportPopup';
+import { useState } from 'react';
+
+const reportTypes = [
+  { type: 'Financial', description: 'Track revenue, expenses and profits.' },
+  { type: 'Inventory', description: 'Monitor stock and inventory levels.' },
+  { type: 'Patient', description: 'View patient statistics and history.' },
+  { type: 'Appointment', description: 'Manage appointment records.' },
+];
 
 const AdminReports = () => {
   const reports = useAppSelector(selectAllReports);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
 
-  const columns = [
-    { field: 'title', headerName: 'Report', width: 300 },
-    { field: 'type', headerName: 'Type', width: 150 },
-    { field: 'period', headerName: 'Period', width: 150 },
-    { field: 'generatedDate', headerName: 'Generated Date', width: 150 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 150,
-      renderCell: (params) => (
-        <Button
-          component={Link}
-          to={`/admin/reports/${params.row.id}`}
-          variant="outlined"
-          size="small"
-        >
-          View
-        </Button>
-      ),
-    },
-  ];
+  const handleOpenPopup = (reportType) => {
+    setSelectedReport(reportType);
+    setOpenPopup(true);
+  };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Reports
-        </Typography>
-        
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button
-            variant="contained"
-            component={Link}
-            to="/admin/reports/generate"
-          >
-            Generate New Report
-          </Button>
-        </Box>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+        px: 2,
+      }}
+    >
+      <Container maxWidth="xl" sx={{ py: 5 }}>
+        <Paper
+          elevation={6}
+          sx={{
+            borderRadius: 2,
+            p: 2,
+            mb: 3,
+            maxWidth: 500,
+            mx: 'auto',
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(8px)',
+            textAlign: 'center',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" color="#0d47a1" gutterBottom>
+            Reports Dashboard
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#0d47a1', fontSize: '0.85rem' }}>
+            Access and manage different types of system reports below.
+          </Typography>
+        </Paper>
 
-        <Card>
-          <CardContent>
-            <Box sx={{ height: 600, width: '100%' }}>
-              <DataGrid
-                rows={reports}
-                columns={columns}
-                pageSize={10}
-                rowsPerPageOptions={[10]}
-                getRowId={(row) => row.id}
-              />
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+        <Grid container spacing={4} justifyContent="center">
+          {reportTypes.map((report) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={report.type}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 300 }}>
+                <Card
+                  sx={{
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), #ffffff)',
+                    border: '1px solid #ccc',
+                    borderRadius: 4,
+                    boxShadow: 5,
+                    height: { xs: 260, sm: 280, md: 300 },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    p: 3,
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant="h6"
+                      fontWeight="bold"
+                      mb={1}
+                      sx={{ color: '#0d47a1', borderBottom: '1px solid #888', pb: 1 }}
+                    >
+                      {report.type} Report
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#333', mt: 1, fontSize: '0.95rem', minHeight: 60 }}>
+                      {report.description}
+                    </Typography>
+                  </CardContent>
+
+                  <Box textAlign="right">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        background: '#1565c0',
+                        color: '#fff',
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        px: 2,
+                        py: 0.8,
+                        fontSize: '0.875rem',
+                        '&:hover': {
+                          background: '#0d47a1',
+                        },
+                      }}
+                      onClick={() => handleOpenPopup(report.type)}
+                    >
+                      View Reports
+                    </Button>
+                  </Box>
+                </Card>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
+
+        {openPopup && (
+          <ReportPopup open={openPopup} onClose={() => setOpenPopup(false)} reportType={selectedReport} />
+        )}
+      </Container>
+    </Box>
   );
 };
 
