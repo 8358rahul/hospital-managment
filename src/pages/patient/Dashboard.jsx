@@ -1,128 +1,145 @@
-import { useEffect } from 'react'; 
-import { Box, Button, Card, CardContent, Container, Grid, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { Link } from 'react-router-dom';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import PeopleIcon from '@mui/icons-material/People';
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
-import { mockAppointments, mockMedicalRecords } from '../../utils/mockData';
-import { useAppSelector } from '../../app/hooks';
+import React from 'react';
+import {
+  Box,
+  Card,
+  Grid,
+  Typography,
+  Avatar,
+  Container,
+} from '@mui/material';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import BloodtypeIcon from '@mui/icons-material/Bloodtype';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
+import dashboardBg from '../../assets/dashboard.jpg';
+
+const DashboardCard = ({ title, count, icon, color }) => (
+  <Card
+    sx={{
+      height: '180px',
+      width: '365px',
+      boxShadow: 6,
+      borderRadius: 3,
+      px: 3,
+      py: 4,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      transition: 'transform 0.3s ease',
+      '&:hover': {
+        transform: 'scale(1.02)',
+      },
+    }}
+  >
+    <Box display="flex" alignItems="center" gap={3}>
+      <Avatar sx={{ bgcolor: color, width: 60, height: 60 }}>{icon}</Avatar>
+      <Box>
+        <Typography variant="h6" fontWeight="bold" color="text.secondary">
+          {title}
+        </Typography>
+        <Typography variant="h4" fontWeight="bold" mt={1}>
+          {count}
+        </Typography>
+      </Box>
+    </Box>
+  </Card>
+);
 
 const PatientDashboard = () => {
-  const { user } = useAppSelector((state) => state.auth);
-  const appointments = mockAppointments.filter(a => a.patientId === user?.id);
-  const records = mockMedicalRecords.filter(r => r.patientId === user?.id);
-
-  const appointmentColumns = [
-    { field: 'date', headerName: 'Date', width: 120 },
-    { field: 'time', headerName: 'Time', width: 100 },
-    { field: 'doctorName', headerName: 'Doctor', width: 200 },
-    { field: 'reason', headerName: 'Reason', width: 200 },
-    { 
-      field: 'status', 
-      headerName: 'Status', 
-      width: 120,
-      renderCell: (params) => (
-        <Typography 
-          color={
-            params.value === 'approved' ? 'success.main' : 
-            params.value === 'pending' ? 'warning.main' : 
-            'error.main'
-          }
-        >
-          {params.value}
-        </Typography>
-      )
-    },
-  ];
+  const totalDoctors = 12;
+  const totalAppointments = 25;
+  const totalRequests = 7;
+  const bloodGroup = 'O+';
+  const heartBeats = 72;
+  const weight = '65 kg';
+  const userName = 'John Doe'; // 👈 Replace with dynamic user data
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Patient Dashboard
-      </Typography>
-      <Typography variant="h6" gutterBottom sx={{ mb: 4 }}>
-        Welcome back, {user?.name}
-      </Typography>
+    <Box
+      sx={{
+        backgroundImage: `linear-gradient(rgba(224, 246, 246, 0.85), rgba(255,255,255,0.95)), url(${dashboardBg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        minHeight: '100vh',
+        py: { xs: 4, sm: 6 },
+      }}
+    >
+      <Container maxWidth="lg">
+        {/* Welcome Card */}
+        <Card
+          sx={{
+            mb: 5,
+            p: { xs: 3, sm: 4 },
+            boxShadow: 3,
+            borderRadius: 3,
+            textAlign: 'center',
+            background: 'linear-gradient(90deg, #549ee9, #00acc1)',
+            color: '#fff',
+          }}
+        >
+          <Typography variant="h4" fontWeight="bold">
+            Welcome, {userName}
+          </Typography>
+          <Typography variant="subtitle1" mt={1}>
+            Here's a quick overview of your hospital statistics
+          </Typography>
+        </Card>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Upcoming Appointments
-              </Typography>
-              <Typography variant="h4" component="div">
-                {appointments.filter(a => a.status === 'approved').length}
-              </Typography>
-              <Button
-                component={Link}
-                to="/patient/appointments"
-                startIcon={<CalendarTodayIcon />}
-                sx={{ mt: 2 }}
-              >
-                View Appointments
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Dashboard Cards */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardCard
+              title="Available Doctors"
+              count={totalDoctors}
+              icon={<LocalHospitalIcon />}
+              color="#1976d2"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardCard
+              title="Total Appointments"
+              count={totalAppointments}
+              icon={<EventNoteIcon />}
+              color="#ed6c02"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardCard
+              title="Total Requests"
+              count={totalRequests}
+              icon={<HelpOutlineIcon />}
+              color="#d32f2f"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardCard
+              title="Blood Group"
+              count={bloodGroup}
+              icon={<BloodtypeIcon />}
+              color="#9c27b0"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardCard
+              title="Heart Beats"
+              count={heartBeats}
+              icon={<FavoriteIcon />}
+              color="#e91e63"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardCard
+              title="Weight"
+              count={weight}
+              icon={<MonitorWeightIcon />}
+              color="#009688"
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Medical Records
-              </Typography>
-              <Typography variant="h4" component="div">
-                {records.length}
-              </Typography>
-              <Button
-                component={Link}
-                to="/patient/records"
-                startIcon={<MedicalServicesIcon />}
-                sx={{ mt: 2 }}
-              >
-                View Records
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Available Doctors
-              </Typography>
-              <Typography variant="h4" component="div">
-                12
-              </Typography>
-              <Button
-                component={Link}
-                to="/patient/doctors"
-                startIcon={<PeopleIcon />}
-                sx={{ mt: 2 }}
-              >
-                Find Doctors
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          Recent Appointments
-        </Typography>
-        <Box sx={{ height: 400, width: '100%' }}>
-          <DataGrid
-            rows={appointments}
-            columns={appointmentColumns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            getRowId={(row) => row.id}
-          />
-        </Box>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
