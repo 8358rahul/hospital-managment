@@ -14,6 +14,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { mockDoctors, mockPatients } from '../../utils/mockData';
 import { login } from '../../features/auth/authSlice';
 import loginImage from '../../assets/loginImage.svg';
+import { loginUser } from '../../features/auth/authSlice'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -52,7 +53,7 @@ const Login = () => {
     }
 
   if (user) {
-    dispatch(login({ user, token: 'mock-token', role }));
+    dispatch(loginUser({ user, token: 'mock-token', role }));
     navigate(`/${role}`);
   } else {
     setError('Invalid email or password');

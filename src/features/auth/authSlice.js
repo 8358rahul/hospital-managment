@@ -1,46 +1,110 @@
-import { createSlice  } from '@reduxjs/toolkit'; 
- 
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL; // ✅ Works with Vite
+
+
+// Initial state
 const initialState = {
   user: null,
-  token: null,
+  token: localStorage.getItem('token') || null,
   role: null,
   status: 'idle',
   error: null,
 };
 
+// Async thunk for login
+export const loginUser = createAsyncThunk(
+  'auth/loginUser',
+  async ({ email, password }, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/login`, { email, password });
+      const { token, user, role } = response.data;
+
+      localStorage.setItem('token', token);
+      return { token, user, role };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Login failed');
+    }
+  }
+);
+
+// Async thunk for register
+export const registerUser = createAsyncThunk(
+  'auth/registerUser',
+  async (userData, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/register`, userData);
+      const { token, user, role } = response.data;
+
+      localStorage.setItem('token', token);
+      return { token, user, role };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration failed');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLoading: (state, action) => {
-      state.status = action.payload;
-    },
-    login: (
-      state, 
-      action ) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.role = action.payload.role;
-      state.status = 'succeeded';
-      state.error = null;
-    },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.role = null;
       state.status = 'idle';
       state.error = null;
+      localStorage.removeItem('token');
     },
-    setError: (state, action ) => {
+    setError: (state, action) => {
       state.error = action.payload;
       state.status = 'failed';
     },
+    setLoading: (state, action) => {
+      state.status = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // loginUser
+      .addCase(loginUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+        state.status = 'succeeded';
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+
+      // registerUser
+      .addCase(registerUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.role = action.payload.role;
+        state.status = 'succeeded';
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
   },
 });
 
-export const { login, logout, setLoading, setError } = authSlice.actions;
+// Action exports
+export const { logout, setError, setLoading } = authSlice.actions;
 
+// Selector exports
 export const selectCurrentUser = (state) => state.auth.user;
 export const selectCurrentToken = (state) => state.auth.token;
 export const selectCurrentRole = (state) => state.auth.role;

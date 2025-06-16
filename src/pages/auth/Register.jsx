@@ -15,6 +15,8 @@ import {
   useTheme,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser, selectAuthError, selectAuthStatus } from '../../features/auth/authSlice';
 import { toast } from 'react-toastify';
 import registerImage from '../../assets/loginImage.svg';
 
@@ -26,25 +28,48 @@ const Register = () => {
     confirmPassword: '',
     role: 'patient',
   });
+
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const dispatch = useDispatch();
+  const authStatus = useSelector(selectAuthStatus);
+  const authError = useSelector(selectAuthError);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    toast('Registration successful! Please login.');
-    navigate('/login');
+
+    try {
+      const resultAction = await dispatch(registerUser({
+        name: formData.fullname,
+        username:formData.fullname,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        confirm_password:formData.password
+      }));
+
+      if (registerUser.fulfilled.match(resultAction)) {
+        toast.success('Registration successful!');
+        navigate('/login');
+      } else {
+        toast.error(resultAction.payload || 'Registration failed');
+      }
+    } catch (err) {
+      toast.error('Something went wrong');
+    }
   };
 
   return (
@@ -82,14 +107,14 @@ const Register = () => {
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
               <Box display="flex" flexDirection="column" gap={2}>
                 <TextField
-                  autoComplete="name"
-                  name="name"
+                  autoComplete="fullname"
+                  name="fullname"
                   required
                   fullWidth
-                  id="name"
+                  id="fullname"
                   label="Full Name"
                   autoFocus
-                  value={formData.name}
+                  value={formData?.fullname}
                   onChange={handleChange}
                 />
                 <TextField
@@ -139,9 +164,9 @@ const Register = () => {
                 />
               </Box>
 
-              {error && (
+              {(error || authError) && (
                 <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-                  {error}
+                  {error || authError}
                 </Typography>
               )}
 
@@ -150,8 +175,9 @@ const Register = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, py: 1.3, borderRadius: 2 }}
+                disabled={authStatus === 'loading'}
               >
-                Sign Up
+                {authStatus === 'loading' ? 'Registering...' : 'Sign Up'}
               </Button>
 
               <Box textAlign="center">
