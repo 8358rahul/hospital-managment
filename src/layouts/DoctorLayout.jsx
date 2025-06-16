@@ -11,11 +11,11 @@ const DoctorLayout = () => {
       setMobileOpen(!mobileOpen);
     };
   return (
-    <Box sx={{ display: 'flex' }}>
+       <Box sx={{ display: 'flex', minHeight: '100vh', overflowX: 'hidden' }}>
       {/* <CssBaseline /> */}
       <DoctorAppBar handleDrawerToggle={handleDrawerToggle}/>
       <DoctorSidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle}/>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: 'hidden' }}>
         <Toolbar />
         <Outlet />
       </Box>

@@ -117,7 +117,9 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <Box px={{ xs: 2, sm: 4 }} py={4}  sx={{
+    <Box
+
+    px={{ xs: 2, sm: 4 }} py={4}  sx={{
         backgroundImage: `linear-gradient(rgba(224, 246, 246, 0.85), rgba(255,255,255,0.95)), url(${dashboardBg})`,
         backgroundSize: 'cover',
         borderRadius:'5px',

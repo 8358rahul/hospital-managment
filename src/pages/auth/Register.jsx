@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { toast } from 'react-toastify';
-import registerImage from '../../assets/hospital-management.jpg';
+import registerImage from '../../assets/loginImage.svg';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -56,7 +56,7 @@ const Register = () => {
           height: { xs: '40vh', md: '100%' },
           backgroundImage: `url(${registerImage})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center',  
         }}
       />
 
@@ -67,11 +67,11 @@ const Register = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#f0f4ff',
+          backgroundColor: '#fff',
           py: { xs: 4, md: 0 },
         }}
       >
-        <Paper elevation={6} sx={{ p: 4, width: '90%', maxWidth: 420, backgroundColor: '#f0f4ff', }}>
+        <Paper elevation={1} sx={{ p: 4, width: '90%', maxWidth: 420, backgroundColor: '#fff', }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
               <LockOutlinedIcon />

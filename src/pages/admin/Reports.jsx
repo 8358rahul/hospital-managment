@@ -7,12 +7,7 @@ import {
   Container,
   Grid,
   Typography,
-  Paper,
-  Modal,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
+  Paper
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
@@ -78,21 +73,22 @@ const AdminReports = () => {
           </Typography>
         </Paper>
 
-        <Grid container spacing={4} justifyContent="center">
+        <Grid container spacing={4} justifyContent="center" >
           {reportTypes.map((report) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={report.type}>
+            <Grid item key={report.type} width={{ xs: '100%', sm: '50%', md: '33.33%',lg:"35%" }} >
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 300 }}>
                 <Card
                   sx={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), #ffffff)',
-                    border: '1px solid #ccc',
-                    borderRadius: 4,
-                    boxShadow: 5,
-                    height: { xs: 260, sm: 280, md: 300 },
+                    height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-between', 
+                     background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), #ffffff)',
+                    border: '1px solid #ccc',
+                    borderRadius: 4,
+                    boxShadow: 5,   
                     p: 3,
+                   
                   }}
                 >
                   <CardContent sx={{ flexGrow: 1 }}>

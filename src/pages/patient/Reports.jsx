@@ -71,7 +71,7 @@ const PatientBills = () => {
       field: 'totalAmount',
       headerName: 'Amount',
       width: 250,
-      valueFormatter: (params) => `$${params.value}`,
+      valueFormatter: (params) => `$${params}`,
     },
     {
       field: 'status',
@@ -101,10 +101,7 @@ const PatientBills = () => {
       headerName: 'Actions',
       width: 220,
       renderCell: (params) => (
-        <Box>
-          <Button variant="outlined" size="small" onClick={() => handleViewDetails(params.row)}>
-            View Bill
-          </Button>
+        <Box> 
           <Button
             variant="outlined"
             size="small"

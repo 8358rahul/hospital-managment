@@ -13,7 +13,7 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { mockDoctors, mockPatients } from '../../utils/mockData';
 import { login } from '../../features/auth/authSlice';
-import loginImage from '../../assets/hospital-management.jpg';
+import loginImage from '../../assets/loginImage.svg';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -79,11 +79,11 @@ return (
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f0f4ff',
+        backgroundColor: '#fff',
         py: { xs: 4, md: 0 },
       }}
     >
-      <Paper elevation={6} sx={{ p: 4, width: '90%', maxWidth: 420, backgroundColor: '#f0f4ff' }}>
+      <Paper elevation={1} sx={{ p: 4, width: '90%', maxWidth: 420, backgroundColor: '#fff' }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
             <LockOutlinedIcon />

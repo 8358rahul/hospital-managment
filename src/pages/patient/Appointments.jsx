@@ -84,31 +84,7 @@ const PatientAppointments = () => {
            />
          );
        },
-     },
-     {
-       field: 'appointment_status',
-       headerName: 'Appointment Status',
-       width: 160,
-       renderCell: (params) => {
-         const value = params.value?.toLowerCase();
-         const label = value.charAt(0).toUpperCase() + value.slice(1);
-         return (
-           <Chip
-             label={label}
-             size="small"
-             sx={{
-               backgroundColor: value === 'completed' ? '#c8e6c9' : '#fff3cd',
-               color: value === 'completed' ? '#256029' : '#856404',
-               fontWeight: 600,
-               px: 1.5,
-               borderRadius: '6px',
-               fontSize: '0.75rem',
-               textTransform: 'capitalize',
-             }}
-           />
-         );
-       },
-     },
+     }
    ];
    const filteredAppointments = appointments.filter((a) =>
      a.patientName?.toLowerCase().includes(search.toLowerCase()) ||

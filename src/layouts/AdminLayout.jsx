@@ -13,10 +13,10 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', overflowX: 'hidden' }}>
       <AdminAppBar handleDrawerToggle={handleDrawerToggle} />
       <AdminSidebar mobileOpen={mobileOpen} handleDrawerToggle={handleDrawerToggle} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, overflowX: 'hidden' }}>
         <Toolbar /> {/* to offset the AppBar height */}
         <Outlet />
       

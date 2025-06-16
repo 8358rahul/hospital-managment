@@ -41,7 +41,7 @@ const PatientBills = () => {
       field: 'totalAmount',
       headerName: 'Amount',
       width: 250,
-      valueFormatter: (params) => `$${params.value}`,
+      valueFormatter: (params) => `$${params}`,
     },
     {
       field: 'status',

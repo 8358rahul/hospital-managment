@@ -130,23 +130,23 @@ const AdminPatients = () => {
           <IconButton onClick={() => handleEdit(params.row)}>
             <EditIcon color="primary" />
           </IconButton>
-          {/* <IconButton onClick={() => handleDelete(params.row.id)}>
+          <IconButton onClick={() => handleDelete(params.row.id)}>
             <DeleteIcon color="error" />
-          </IconButton> */}
+          </IconButton>
         </Box>
       ),
+        cellClassName: 'sticky-action-col',
+
     },
   ];
 
-  return (
-    // <Container maxWidth="lg">
+  return ( 
+  <Container maxWidth="xl" disableGutters>
       <Box
         sx={{
-          width: '100%',
-          px: { xs: 1, sm: 2, lg: 4 },
+          px: { xs: 1, sm: 2, lg: 0 },
           py: 4,
-          boxSizing: 'border-box',
-          maxWidth: '100%'
+          width: '100%',
         }}
       >
         <Typography
@@ -272,8 +272,8 @@ const AdminPatients = () => {
           onClose={() => setAddPatientOpen(false)}
           onSave={handleAddPatient}
         />
-      </Box>
-    // </Container>
+      </Box> 
+    </Container>
   );
 };
 

@@ -114,7 +114,7 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
         variant="permanent"
         sx={{
           display: { xs: 'none', sm: 'block' },
-          width: drawerWidth,
+          width: drawerWidth, 
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
