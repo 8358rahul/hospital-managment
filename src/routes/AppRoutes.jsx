@@ -1,6 +1,7 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
+  alreadyLoggedIn,
   selectCurrentRole,
   selectCurrentToken,
 } from "../features/auth/authSlice";
@@ -38,21 +39,41 @@ import BillDetails from "../pages/patient/BillDetails";
 import PatientDetails from "../pages/doctor/PatientDetails";
 import SettingsPage from "../pages/Setting";
 import ProfilePage from "../pages/Profile";
+import { useEffect } from "react";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
   const role = useSelector(selectCurrentRole);
+  const dispatch = useDispatch()
+
+  console.log('role',role)
+
+  useEffect(()=>{
+    const checkUserIsLoggedIn = ()=>{
+     try { 
+       const user = localStorage.getItem("user") 
+      dispatch(alreadyLoggedIn(JSON.parse(user))) 
+      
+     } catch (error) {
+      console.log(error)
+      
+     }
+    }
+    checkUserIsLoggedIn()
+  },[])
+
+  
 
   return (
     <Routes>
       {/* Public Routes */}
       <Route
         path="/login"
-        element={!token ? <Login /> : <Navigate to={`/${role}`} />}
+        element={!token || !role ? <Login /> : <Navigate to={`/${role}`} />}
       />
       <Route
         path="/register"
-        element={!token ? <Register /> : <Navigate to={`/${role}`} />}
+        element={!token || !role ? <Register /> : <Navigate to={`/${role}`} />}
       />
 
       {/* Admin Routes */}

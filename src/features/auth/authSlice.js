@@ -12,19 +12,21 @@ const initialState = {
   status: 'idle',
   error: null,
 };
-
-// Async thunk for login
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { email, password });
-      const { token, user, role } = response.data;
+      const response = await axios.post(`${API_URL}/accounts/login/`, {
+        email,
+        password,
+      });
 
-      localStorage.setItem('token', token);
-      return { token, user, role };
+     return response.data; 
+    
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Login failed');
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || 'Login failed'
+      );
     }
   }
 );
@@ -34,7 +36,7 @@ export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/register`, userData);
+      const response = await axios.post(`${API_URL}/accounts/register/`, userData);
       const { token, user, role } = response.data;
 
       localStorage.setItem('token', token);
@@ -55,8 +57,9 @@ const authSlice = createSlice({
       state.role = null;
       state.status = 'idle';
       state.error = null;
-      localStorage.removeItem('token');
-    },
+      localStorage.removeItem('user');
+
+    }, 
     setError: (state, action) => {
       state.error = action.payload;
       state.status = 'failed';
@@ -64,6 +67,12 @@ const authSlice = createSlice({
     setLoading: (state, action) => {
       state.status = action.payload;
     },
+    alreadyLoggedIn:(state,action)=>{
+        state.token = action.payload.access;
+        state.user = action.payload.user;
+        state.role = action.payload.role;  
+        localStorage.setItem("user",JSON.stringify(action?.payload)) 
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -73,13 +82,10 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.token = action.payload.token;
+        state.token = action.payload.access;
         state.user = action.payload.user;
-        state.role = action.payload.role;
-        state.status = 'succeeded';
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = 'failed';
+        state.role = action.payload.role;  
+        localStorage.setItem("user",JSON.stringify(action?.payload))
         state.error = action.payload;
       })
 
@@ -102,7 +108,7 @@ const authSlice = createSlice({
 });
 
 // Action exports
-export const { logout, setError, setLoading } = authSlice.actions;
+export const { logout, setError, setLoading ,alreadyLoggedIn} = authSlice.actions;
 
 // Selector exports
 export const selectCurrentUser = (state) => state.auth.user;
