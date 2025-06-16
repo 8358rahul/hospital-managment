@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { mockDoctors, mockPatients } from '../../utils/mockData';
-import { login } from '../../features/auth/authSlice';
+import { loginUser } from '../../features/auth/authSlice';
 import loginImage from '../../assets/hospital-management.jpg';
 
 const Login = () => {
@@ -52,7 +52,7 @@ const Login = () => {
     }
 
   if (user) {
-    dispatch(login({ user, token: 'mock-token', role }));
+    dispatch(loginUser({ user, token: 'mock-token', role }));
     navigate(`/${role}`);
   } else {
     setError('Invalid email or password');
