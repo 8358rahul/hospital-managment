@@ -14,7 +14,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { mockDoctors, mockPatients } from '../../utils/mockData';
 import { login } from '../../features/auth/authSlice';
 import loginImage from '../../assets/loginImage.svg';
-import { loginUser } from '../../features/auth/authSlice'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
