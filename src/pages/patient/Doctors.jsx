@@ -14,6 +14,8 @@ import {
   DialogActions,
   TextField,
   Avatar,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useAppSelector } from '../../app/hooks';
 import { selectAllDoctors } from '../../features/doctor/doctorSlice';
@@ -31,6 +33,8 @@ const PatientDoctors = () => {
   });
 
   const itemsPerPage = 6;
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -62,8 +66,13 @@ const PatientDoctors = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 5 }}>
-        <Typography variant="h4" gutterBottom align="center" fontWeight="bold">
-          Available Doctors
+        <Typography
+          variant={isSmallScreen ? 'h5' : 'h4'}
+          fontWeight="bold"
+          align="center"
+          mb={4}
+        >
+          Our Expert Doctors
         </Typography>
 
         <Grid container spacing={4}>
@@ -71,49 +80,45 @@ const PatientDoctors = () => {
             <Grid item xs={12} sm={6} md={4} key={doctor.id}>
               <Card
                 sx={{
-                  height: 330,
+                  height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: 6,
-                  borderRadius: 3,
-                  px: 4,
-                  pt: 2,
-                  
+                  borderRadius: 4,
+                  boxShadow: 4,
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: 6,
+                  },
                 }}
               >
-                <Box display="flex" flexDirection="column" alignItems="center">
-                  <Avatar
-                    sx={{
-                      bgcolor: '#1976d2',
-                      width: 70,
-                      height: 70,
-                      mb: 2,
-                    }}
-                  >
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 3 }}>
+                  <Avatar sx={{ bgcolor: '#1976d2', width: 70, height: 70, mb: 2 }}>
                     <LocalHospitalIcon fontSize="large" />
                   </Avatar>
                   <Typography variant="h6" fontWeight="bold">
                     {doctor.name}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="body2" color="text.secondary" mb={2}>
                     {doctor.specialization}
                   </Typography>
                 </Box>
 
-                <CardContent>
-                  <Typography variant="body2" mb={0.5}>
+                <CardContent sx={{ px: 3, pt: 0 }}>
+                  <Typography variant="body2" gutterBottom>
                     <strong>Qualifications:</strong> {doctor.qualifications.join(', ')}
                   </Typography>
-                  <Typography variant="body2" mb={0.5}>
+                  <Typography variant="body2" gutterBottom>
                     <strong>Experience:</strong> {doctor.experience} years
                   </Typography>
-                  <Typography variant="body2" mb={1}>
+                  <Typography variant="body2" gutterBottom>
                     <strong>Consultation Fee:</strong> ${doctor.consultationFee}
                   </Typography>
                   <Button
                     variant="contained"
                     fullWidth
+                    sx={{ mt: 2 }}
                     onClick={() => handleOpenDialog(doctor)}
                   >
                     Book Appointment
@@ -124,20 +129,23 @@ const PatientDoctors = () => {
           ))}
         </Grid>
 
-        {/* Pagination */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
           <Pagination
             count={Math.ceil(doctors.length / itemsPerPage)}
             page={page}
             onChange={handlePageChange}
             color="primary"
+            size={isSmallScreen ? 'small' : 'medium'}
+            shape="rounded"
           />
         </Box>
       </Box>
 
       {/* Appointment Dialog */}
       <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-        <DialogTitle>Book Appointment with {selectedDoctor?.name}</DialogTitle>
+        <DialogTitle>
+          Book Appointment with <strong>{selectedDoctor?.name}</strong>
+        </DialogTitle>
         <DialogContent dividers>
           <Box display="flex" flexDirection="column" gap={2} py={1}>
             <TextField
