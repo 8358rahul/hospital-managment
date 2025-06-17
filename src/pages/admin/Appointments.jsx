@@ -9,18 +9,39 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  CircularProgress,
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { selectAllAppointments } from '../../features/appointment/appointmentSlice';
+import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchAppointments,
+  addNewAppointment,
+  selectAllAppointments,
+  selectAppointmentStatus,
+} from '../../features/appointment/appointmentSlice';
+import { selectCurrentToken } from '../../features/auth/authSlice';
+import AddAppointmentForm from './AddAppointmentForm';
 
 const AdminAppointments = () => {
-  const appointments = useAppSelector(selectAllAppointments);
+  const dispatch = useDispatch();
+  const token = useSelector(selectCurrentToken);
+  const appointments = useSelector(selectAllAppointments);
+ 
+  const status = useSelector(selectAppointmentStatus);
+
   const [search, setSearch] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [addPatientOpen, setAddPatientOpen] = useState(false);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchAppointments(token));
+    }
+  }, [dispatch, token]);
 
   const handleChipClick = (params) => {
     setSelectedAppointment(params.row);
@@ -38,7 +59,16 @@ const AdminAppointments = () => {
     // Add real dispatch or API call here
   };
 
- const columns = [
+  const handleAddAppointment = async (newPatient) => {
+    try {
+      await dispatch(addNewAppointment(newPatient)).unwrap();
+      setAddPatientOpen(false);
+    } catch (err) {
+      console.error('Failed to add appointment:', err);
+    }
+  };
+
+  const columns = [
     { field: 'date', headerName: 'Date', width: 110 },
     { field: 'time', headerName: 'Time', width: 100 },
     { field: 'patientName', headerName: 'Patient', flex: 1, minWidth: 140 },
@@ -55,17 +85,12 @@ const AdminAppointments = () => {
       width: 130,
       renderCell: (params) => {
         const status = params.value?.toLowerCase();
-        let color = '', bg = '';
-        switch (status) {
-          case 'approved':
-            color = '#256029'; bg = '#c8e6c9'; break;
-          case 'pending':
-            color = '#856404'; bg = '#fff3cd'; break;
-          case 'rejected':
-            color = '#a94442'; bg = '#f8d7da'; break;
-          default:
-            color = '#000'; bg = '#e0e0e0';
-        }
+        const colorMap = {
+          approved: ['#256029', '#c8e6c9'],
+          pending: ['#856404', '#fff3cd'],
+          rejected: ['#a94442', '#f8d7da'],
+        };
+        const [color, bg] = colorMap[status] || ['#000', '#e0e0e0'];
         return (
           <Chip
             label={status.charAt(0).toUpperCase() + status.slice(1)}
@@ -77,7 +102,6 @@ const AdminAppointments = () => {
               px: 1.5,
               borderRadius: '6px',
               fontSize: '0.75rem',
-              textTransform: 'capitalize',
               cursor: 'pointer',
             }}
             onClick={() => handleChipClick(params)}
@@ -85,52 +109,17 @@ const AdminAppointments = () => {
         );
       },
     },
-    {
-      field: 'appointment_status',
-      headerName: 'Appointment Status',
-      width: 160,
-      renderCell: (params) => {
-        const value = params.value?.toLowerCase();
-        const label = value.charAt(0).toUpperCase() + value.slice(1);
-        return (
-          <Chip
-            label={label}
-            size="small"
-            sx={{
-              backgroundColor: value === 'completed' ? '#c8e6c9' : '#fff3cd',
-              color: value === 'completed' ? '#256029' : '#856404',
-              fontWeight: 600,
-              px: 1.5,
-              borderRadius: '6px',
-              fontSize: '0.75rem',
-              textTransform: 'capitalize',
-            }}
-          />
-        );
-      },
-    },
+   
   ];
+
   const filteredAppointments = appointments.filter((a) =>
     a.patientName?.toLowerCase().includes(search.toLowerCase()) ||
     a.doctorName?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        px: { xs: 1, sm: 2, lg: 4 },
-        py: 4,
-        boxSizing: 'border-box',
-        maxWidth: '100%',
-      }}
-    >
-      <Typography
-        variant="h5"
-        fontWeight="bold"
-        gutterBottom
-        sx={{ textAlign: { xs: 'center', sm: 'left' } }}
-      >
+    <Box sx={{ width: '100%', px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
+      <Typography variant="h5" fontWeight="bold" gutterBottom>
         Appointment Management
       </Typography>
 
@@ -142,7 +131,6 @@ const AdminAppointments = () => {
           alignItems: 'center',
           gap: 2,
           mb: 2,
-          flexWrap: 'wrap',
         }}
       >
         <TextField
@@ -160,45 +148,30 @@ const AdminAppointments = () => {
             ),
           }}
         />
+        {/* <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddPatientOpen(true)}>
+          Add Appointment
+        </Button> */}
       </Box>
 
-      <Box
-        sx={{
-          width: '100%',
-          overflowX: 'auto',
-          '& .MuiDataGrid-root': {
-            backgroundColor: 'white',
-          },
-          '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#ffffff',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            borderBottom: '1px solid #e0e0e0',
-          },
-          '& .MuiDataGrid-columnHeader': {
-            borderRight: '1px solid #e0e0e0',
-          },
-          '& .MuiDataGrid-cell': {
-            fontSize: '14px',
-            borderRight: '1px solid #e0e0e0',
-          },
-          '& .MuiDataGrid-row': {
-            borderBottom: '1px solid #f0f0f0',
-          },
-        }}
-      >
-        <DataGrid
-          rows={filteredAppointments}
-          columns={columns}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-          }}
-          pageSizeOptions={[10]}
-          getRowId={(row) => row.id}
-          autoHeight
-          disableRowSelectionOnClick
-        />
-      </Box>
+      {status === 'loading' ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box sx={{ width: '100%', overflowX: 'auto' }}>
+          <DataGrid
+            rows={filteredAppointments}
+            columns={columns}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            }}
+            pageSizeOptions={[10]}
+            getRowId={(row) => row.id}
+            autoHeight
+            disableRowSelectionOnClick
+          />
+        </Box>
+      )}
 
       {/* Status Dialog */}
       <Dialog open={openDialog} onClose={handleClose} maxWidth="xs" fullWidth>
@@ -214,42 +187,33 @@ const AdminAppointments = () => {
         <DialogActions sx={{ justifyContent: 'space-between', p: 2 }}>
           {selectedAppointment?.status === 'Pending' && (
             <>
-              <Button
-                variant="contained"
-                color="success"
-                onClick={() => handleUpdateStatus('Approved')}
-              >
+              <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
                 Approve
               </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => handleUpdateStatus('Rejected')}
-              >
+              <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
                 Reject
               </Button>
             </>
           )}
           {selectedAppointment?.status === 'Approved' && (
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleUpdateStatus('Rejected')}
-            >
+            <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
               Mark as Rejected
             </Button>
           )}
           {selectedAppointment?.status === 'Rejected' && (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={() => handleUpdateStatus('Approved')}
-            >
+            <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
               Re-Approve
             </Button>
           )}
         </DialogActions>
       </Dialog>
+
+      <AddAppointmentForm
+        open={addPatientOpen}
+        onClose={() => setAddPatientOpen(false)}
+        onSave={handleAddAppointment}
+        token={token}
+      />
     </Box>
   );
 };

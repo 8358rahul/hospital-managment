@@ -18,18 +18,27 @@ import {
 import { useAppSelector } from '../../app/hooks';
 import { selectAllDoctors } from '../../features/doctor/doctorSlice';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import { addNewAppointment } from '../../features/appointment/appointmentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentToken } from '../../features/auth/authSlice';
 
 const PatientDoctors = () => {
+    const token = useSelector(selectCurrentToken);
   const doctors = useAppSelector(selectAllDoctors);
+  const dispatch=useDispatch()
   const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [appointmentData, setAppointmentData] = useState({
+   const [appointmentData, setAppointmentData] = useState({
+    doctor:null,
+  
     date: '',
     time: '',
     reason: '',
+    patient: '', // added patient field
   });
-
+console.log("selectedDoctor", selectedDoctor)
+console.log('appointmentData', appointmentData)
   const itemsPerPage = 6;
 
   const handlePageChange = (event, value) => {
@@ -51,10 +60,25 @@ const PatientDoctors = () => {
     setAppointmentData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitAppointment = () => {
-    console.log('Booking appointment with:', selectedDoctor);
-    console.log('Appointment Data:', appointmentData);
-    handleCloseDialog();
+   const handleSubmitAppointment = async () => {
+   
+
+    try {
+      await dispatch(
+        addNewAppointment({
+          newAppointment: {
+            ...appointmentData,
+            doctor: selectedDoctor.id,
+          },
+          token,
+        })
+      ).unwrap();
+
+      handleCloseDialog();
+    } catch (error) {
+      console.error('Booking failed:', error);
+      alert('Failed to book appointment.');
+    }
   };
 
   const displayedDoctors = doctors.slice((page - 1) * itemsPerPage, page * itemsPerPage);

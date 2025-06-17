@@ -1,4 +1,4 @@
-import { useState } from 'react'; 
+import { useEffect, useState } from 'react'; 
 import { 
     Box,
   Typography,
@@ -15,11 +15,16 @@ import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import { mockAppointments } from '../../utils/mockData';
 import { useAppSelector } from '../../app/hooks';
-import { selectAllAppointments } from '../../features/appointment/appointmentSlice';
+import { fetchAppointments, fetchDoctorAppointments, selectAllAppointments, selectAppointmentsByDoctor } from '../../features/appointment/appointmentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentToken } from '../../features/auth/authSlice';
 
 
 const DoctorAppointments = () => {
- const appointments = useAppSelector(selectAllAppointments);
+    const dispatch = useDispatch();
+    const token = useSelector(selectCurrentToken);
+ const appointments = useAppSelector(selectAppointmentsByDoctor);
+
    const [search, setSearch] = useState('');
    const [openDialog, setOpenDialog] = useState(false);
    const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -33,6 +38,12 @@ const DoctorAppointments = () => {
      setOpenDialog(false);
      setSelectedAppointment(null);
    };
+
+    useEffect(() => {
+        if (token) {
+          dispatch(fetchDoctorAppointments({token, "doctor_id":1}));
+        }
+      }, [dispatch, token]);
  
    const handleUpdateStatus = (newStatus) => {
      alert(`Updated status to ${newStatus} for appointment ID: ${selectedAppointment.id}`);
@@ -87,35 +98,12 @@ const DoctorAppointments = () => {
          );
        },
      },
-     {
-       field: 'appointment_status',
-       headerName: 'Appointment Status',
-       width: 160,
-       renderCell: (params) => {
-         const value = params.value?.toLowerCase();
-         const label = value.charAt(0).toUpperCase() + value.slice(1);
-         return (
-           <Chip
-             label={label}
-             size="small"
-             sx={{
-               backgroundColor: value === 'completed' ? '#c8e6c9' : '#fff3cd',
-               color: value === 'completed' ? '#256029' : '#856404',
-               fontWeight: 600,
-               px: 1.5,
-               borderRadius: '6px',
-               fontSize: '0.75rem',
-               textTransform: 'capitalize',
-             }}
-           />
-         );
-       },
-     },
+    
    ];
-   const filteredAppointments = appointments.filter((a) =>
-     a.patientName?.toLowerCase().includes(search.toLowerCase()) ||
-     a.doctorName?.toLowerCase().includes(search.toLowerCase())
-   );
+  //  const filteredAppointments = appointments?.filter((a) =>
+  //    a.patientName?.toLowerCase().includes(search.toLowerCase()) ||
+  //    a.doctorName?.toLowerCase().includes(search.toLowerCase())
+  //  );
  
 
   return (
@@ -191,7 +179,7 @@ const DoctorAppointments = () => {
         }}
       >
         <DataGrid
-          rows={filteredAppointments}
+          rows={appointments}
           columns={columns}
           initialState={{
             pagination: { paginationModel: { pageSize: 10, page: 0 } },

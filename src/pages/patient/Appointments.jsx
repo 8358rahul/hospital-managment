@@ -12,12 +12,17 @@ import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { useAppSelector } from '../../app/hooks';
-import { selectAppointmentsByPatient } from '../../features/appointment/appointmentSlice';
+import { fetchAppointments, fetchPatientAppointments, selectAppointmentsByPatient } from '../../features/appointment/appointmentSlice';
 import { selectAllAppointments } from '../../features/appointment/appointmentSlice';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentToken } from '../../features/auth/authSlice';
 
 const PatientAppointments = () => {
+    const dispatch = useDispatch();
+    const token = useSelector(selectCurrentToken);
  const appointments = useAppSelector(selectAllAppointments);
+console.log("appointments", appointments)
    const [search, setSearch] = useState('');
    const [openDialog, setOpenDialog] = useState(false);
    const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -26,7 +31,11 @@ const PatientAppointments = () => {
      setSelectedAppointment(params.row);
      setOpenDialog(true);
    };
- 
+useEffect(() => {
+  if (token) {
+    dispatch(fetchPatientAppointments({ token, "patient_id":5 }));
+  }
+}, [dispatch, token]);
    const handleClose = () => {
      setOpenDialog(false);
      setSelectedAppointment(null);
