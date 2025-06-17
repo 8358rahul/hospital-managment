@@ -27,10 +27,15 @@ import {
   addNewPatient,
   deletePatientById,
 } from '../../features/patient/patientSlice';
+import { selectAppointmentsByPatient } from '../../features/appointment/appointmentSlice';
+import { useSelector } from 'react-redux';
+import { selectCurrentToken } from '../../features/auth/authSlice';
 
 const AdminPatients = () => {
   const dispatch = useAppDispatch();
-  const patients = useAppSelector(selectAllPatients);
+  const token = useSelector(selectCurrentToken);
+
+  const patients = useAppSelector(selectAppointmentsByPatient);
   const [search, setSearch] = useState('');
   const [localPatients, setLocalPatients] = useState([]);
 
@@ -217,7 +222,7 @@ const AdminPatients = () => {
         </Dialog>
 
         {/* Add Patient Dialog */}
-        <AddPatientForm open={addPatientOpen} onClose={() => setAddPatientOpen(false)} onSave={handleAddPatient} />
+        <AddPatientForm open={addPatientOpen} onClose={() => setAddPatientOpen(false)} onSave={handleAddPatient} token={token}/>
       </Box>
     </Container>
   );

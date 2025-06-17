@@ -1,7 +1,7 @@
  
 export const mockDoctors  = [
   {
-    id: 'd1',
+    id: 1,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -16,7 +16,7 @@ export const mockDoctors  = [
 
   },
   {
-    id: 'd1',
+    id: 2,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -30,7 +30,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 3,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -44,7 +44,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 4,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -58,7 +58,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 5,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -72,7 +72,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 6,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -86,7 +86,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 7,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -100,7 +100,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 8,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -114,7 +114,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 9,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',
@@ -128,7 +128,7 @@ export const mockDoctors  = [
     status: 'Active',
   },
   {
-    id: 'd1',
+    id: 10,
     name: 'Dr. Sarah Johnson',
     email: 'doctor@gmail.com',
     role: 'doctor',

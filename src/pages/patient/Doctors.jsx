@@ -22,17 +22,22 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlice';
  
 const PatientDoctors = () => {
+    const token = useAppSelector(selectCurrentToken);
   const doctors = useAppSelector(selectAllDoctors);
  
   const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [appointmentData, setAppointmentData] = useState({
+   const [appointmentData, setAppointmentData] = useState({
+    doctor:null,
+  
     date: '',
     time: '',
     reason: '',
+    patient: '', // added patient field
   });
-
+console.log("selectedDoctor", selectedDoctor)
+console.log('appointmentData', appointmentData)
   const itemsPerPage = 6;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -65,10 +70,25 @@ const PatientDoctors = () => {
     setAppointmentData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitAppointment = () => {
-    console.log('Booking appointment with:', selectedDoctor);
-    console.log('Appointment Data:', appointmentData);
-    handleCloseDialog();
+   const handleSubmitAppointment = async () => {
+   
+
+    try {
+      await dispatch(
+        addNewAppointment({
+          newAppointment: {
+            ...appointmentData,
+            doctor: selectedDoctor.id,
+          },
+          token,
+        })
+      ).unwrap();
+
+      handleCloseDialog();
+    } catch (error) {
+      console.error('Booking failed:', error);
+      alert('Failed to book appointment.');
+    }
   };
 
     const displayedDoctors = doctors.slice((page - 1) * itemsPerPage, page * itemsPerPage);
