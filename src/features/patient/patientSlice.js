@@ -10,7 +10,7 @@ export const fetchPatients = createAsyncThunk(
   'patients/fetchPatients',
   async (token, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/appointments/appointments/`, {
+      const response = await axios.get(`${API_URL}/adminpanel/patients_list/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
