@@ -179,7 +179,7 @@ const DoctorAppointments = () => {
         }}
       >
         <DataGrid
-          rows={appointments}
+          rows={appointments?.results}
           columns={columns}
           initialState={{
             pagination: { paginationModel: { pageSize: 10, page: 0 } },

@@ -20,6 +20,9 @@ import {
 import { useAppDispatch, useAppSelector } from '../../app/hooks'; 
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlice';
+import { selectCurrentToken } from '../../features/auth/authSlice';
+import { addNewAppointment, fetchAppointments } from '../../features/appointment/appointmentSlice';
+import { toast } from 'react-toastify';
  
 const PatientDoctors = () => {
     const token = useAppSelector(selectCurrentToken);
@@ -35,9 +38,8 @@ const PatientDoctors = () => {
     time: '',
     reason: '',
     patient: '', // added patient field
-  });
-console.log("selectedDoctor", selectedDoctor)
-console.log('appointmentData', appointmentData)
+  }); 
+
   const itemsPerPage = 6;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -71,8 +73,10 @@ console.log('appointmentData', appointmentData)
   };
 
    const handleSubmitAppointment = async () => {
-   
-
+    if(appointmentData.date === '' || appointmentData.time === '' || appointmentData.reason === '') {
+      toast.error('Please fill in all the fields.');
+      return;
+    }
     try {
       await dispatch(
         addNewAppointment({
@@ -83,7 +87,7 @@ console.log('appointmentData', appointmentData)
           token,
         })
       ).unwrap();
-
+        toast.success("Appointment Booked Successfully");
       handleCloseDialog();
     } catch (error) {
       console.error('Booking failed:', error);
