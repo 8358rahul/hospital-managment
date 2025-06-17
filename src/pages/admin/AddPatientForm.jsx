@@ -9,6 +9,8 @@ import {
   DialogActions,
   Button
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { addNewPatient } from '../../features/patient/patientSlice'; // adjust path if needed
 
 const initialFormState = {
   name: '',
@@ -23,17 +25,23 @@ const initialFormState = {
 const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const genders = ['Male', 'Female', 'Other'];
 
-const AddPatientForm = ({ open, onClose, onSave }) => {
+const AddPatientForm = ({ open, onClose }) => {
   const [formData, setFormData] = useState(initialFormState);
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    onSave(formData);
-    setFormData(initialFormState); // Reset form after save
+  const handleSubmit = async () => {
+    try {
+      await dispatch(addNewPatient(formData)).unwrap();
+      setFormData(initialFormState);
+      onClose(); // Close dialog on success
+    } catch (error) {
+      console.error('Failed to add patient:', error);
+    }
   };
 
   return (
@@ -84,35 +92,34 @@ const AddPatientForm = ({ open, onClose, onSave }) => {
           />
         </Box>
       </DialogContent>
-     <DialogActions sx={{ px: 3, pb: 2 }}>
-  <Button
-    onClick={onClose}
-    variant="contained"
-    sx={{
-      backgroundColor: '#e0e0e0',
-      color: '#333',
-      borderRadius: '6px',
-      textTransform: 'none',
-      '&:hover': {
-        backgroundColor: '#d5d5d5',
-      },
-    }}
-  >
-    Cancel
-  </Button>
-  <Button
-    onClick={handleSubmit}
-    variant="contained"
-    color="primary"
-    sx={{
-      borderRadius: '6px',
-      textTransform: 'none',
-    }}
-  >
-    Save
-  </Button>
-</DialogActions>
-
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button
+          onClick={onClose}
+          variant="contained"
+          sx={{
+            backgroundColor: '#e0e0e0',
+            color: '#333',
+            borderRadius: '6px',
+            textTransform: 'none',
+            '&:hover': {
+              backgroundColor: '#d5d5d5',
+            },
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+          sx={{
+            borderRadius: '6px',
+            textTransform: 'none',
+          }}
+        >
+          Save
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
