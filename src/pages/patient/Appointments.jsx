@@ -7,6 +7,8 @@ import {  Box,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Pagination,
+  Container,
   Button, } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,7 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useAppSelector } from '../../app/hooks';
 import { fetchAppointments, fetchPatientAppointments, selectAppointmentsByPatient } from '../../features/appointment/appointmentSlice';
 import { selectAllAppointments } from '../../features/appointment/appointmentSlice';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentToken } from '../../features/auth/authSlice';
 
@@ -26,7 +28,8 @@ console.log("appointments", appointments)
    const [search, setSearch] = useState('');
    const [openDialog, setOpenDialog] = useState(false);
    const [selectedAppointment, setSelectedAppointment] = useState(null);
- 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
    const handleChipClick = (params) => {
      setSelectedAppointment(params.row);
      setOpenDialog(true);
@@ -66,7 +69,7 @@ useEffect(() => {
          const status = params.value?.toLowerCase();
          let color = '', bg = '';
          switch (status) {
-           case 'approved':
+           case 'accepted':
              color = '#256029'; bg = '#c8e6c9'; break;
            case 'pending':
              color = '#856404'; bg = '#fff3cd'; break;
@@ -95,13 +98,25 @@ useEffect(() => {
        },
      }
    ];
-   const filteredAppointments = appointments.filter((a) =>
-     a.patientName?.toLowerCase().includes(search.toLowerCase()) ||
-     a.doctorName?.toLowerCase().includes(search.toLowerCase())
-   );
- 
+   const allRows = Array.isArray(appointments?.results) ? appointments.results : [];
+  
+    const filteredRows = useMemo(() => {
+      return allRows.filter((row) =>
+        row.patientName?.toLowerCase().includes(search.toLowerCase()) ||
+        row.doctorName?.toLowerCase().includes(search.toLowerCase())
+      );
+    }, [allRows, search]);
+  
+    const paginatedRows = useMemo(() => {
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      return allRows.slice(start, end);
+    }, [allRows, currentPage]);
+  
+    const totalPages = Math.ceil(allRows.length / rowsPerPage);
 
   return (
+     <Container maxWidth="xl" disableGutters>
     <Box
       sx={{
         width: '100%',
@@ -148,43 +163,56 @@ useEffect(() => {
         />
       </Box>
 
-      <Box
-        sx={{
-          width: '100%',
-          overflowX: 'auto',
-          '& .MuiDataGrid-root': {
-            backgroundColor: 'white',
-          },
-          '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#ffffff',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            borderBottom: '1px solid #e0e0e0',
-          },
-          '& .MuiDataGrid-columnHeader': {
-            borderRight: '1px solid #e0e0e0',
-          },
-          '& .MuiDataGrid-cell': {
-            fontSize: '14px',
-            borderRight: '1px solid #e0e0e0',
-          },
-          '& .MuiDataGrid-row': {
-            borderBottom: '1px solid #f0f0f0',
-          },
-        }}
-      >
-        <DataGrid
-          rows={filteredAppointments}
-          columns={columns}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-          }}
-          pageSizeOptions={[10]}
-          getRowId={(row) => row.id}
-          autoHeight
-          disableRowSelectionOnClick
-        />
-      </Box>
+         {status === 'loading' ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <>
+                  <Box
+                     sx={{
+                  width: '100%',
+                  overflowX: 'auto',
+                  '& .MuiDataGrid-root': {
+                    backgroundColor: 'white',
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#ffffff',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    borderBottom: '1px solid #e0e0e0',
+                  },
+                  '& .MuiDataGrid-columnHeader': {
+                    borderRight: '1px solid #e0e0e0',
+                  },
+                  '& .MuiDataGrid-cell': {
+                    fontSize: '14px',
+                    borderRight: '1px solid #e0e0e0',
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #f0f0f0',
+                  }}}
+                  >
+                    <DataGrid
+                      rows={paginatedRows}
+                      columns={columns}
+                      getRowId={(row) => row.id}
+                      autoHeight
+                      disableRowSelectionOnClick
+                      hideFooter
+                    />
+                  </Box>
+      
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination
+                      count={totalPages}
+                      page={currentPage}
+                      onChange={(e, value) => setCurrentPage(value)}
+                      color="primary"
+                    />
+                  </Box>
+                </>
+              )}
 
       {/* Status Dialog */}
       <Dialog open={openDialog} onClose={handleClose} maxWidth="xs" fullWidth>
@@ -237,6 +265,7 @@ useEffect(() => {
         </DialogActions>
       </Dialog>
     </Box>
+    </Container>
   );
 };
 

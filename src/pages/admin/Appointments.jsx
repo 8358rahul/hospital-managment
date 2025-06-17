@@ -10,11 +10,13 @@ import {
   DialogActions,
   Button,
   CircularProgress,
+  Container,
+  Pagination
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchAppointments,
@@ -29,9 +31,11 @@ const AdminAppointments = () => {
   const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
   const appointments = useSelector(selectAllAppointments);
- 
+ console.log("appointments", appointments)
   const status = useSelector(selectAppointmentStatus);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
   const [search, setSearch] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -102,9 +106,8 @@ const AdminAppointments = () => {
               px: 1.5,
               borderRadius: '6px',
               fontSize: '0.75rem',
-              cursor: 'pointer',
+              // cursor: 'pointer',
             }}
-            onClick={() => handleChipClick(params)}
           />
         );
       },
@@ -112,110 +115,158 @@ const AdminAppointments = () => {
    
   ];
 
-  const filteredAppointments = appointments.filter((a) =>
-    a.patientName?.toLowerCase().includes(search.toLowerCase()) ||
-    a.doctorName?.toLowerCase().includes(search.toLowerCase())
-  );
+ 
+  const allRows = Array.isArray(appointments?.results) ? appointments.results : [];
 
-  return (
-    <Box sx={{ width: '100%', px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Appointment Management
-      </Typography>
+  const filteredRows = useMemo(() => {
+    return allRows.filter((row) =>
+      row.patientName?.toLowerCase().includes(search.toLowerCase()) ||
+      row.doctorName?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [allRows, search]);
 
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 2,
-          mb: 2,
-        }}
-      >
-        <TextField
-          variant="outlined"
-          size="small"
-          placeholder="Search by name"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ width: { xs: '100%', sm: '300px' }, backgroundColor: '#fff' }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return allRows.slice(start, end);
+  }, [allRows, currentPage]);
+
+  const totalPages = Math.ceil(allRows.length / rowsPerPage);
+
+ return (
+    <Container maxWidth="xl" disableGutters>
+      <Box sx={{ width: '100%', px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Appointment Management
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            mb: 2,
+            flexWrap: 'wrap',
           }}
-        />
-        {/* <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddPatientOpen(true)}>
-          Add Appointment
-        </Button> */}
-      </Box>
-
-      {status === 'loading' ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Box sx={{ width: '100%', overflowX: 'auto' }}>
-          <DataGrid
-            rows={filteredAppointments}
-            columns={columns}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
+        >
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Search by name"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
             }}
-            pageSizeOptions={[10]}
-            getRowId={(row) => row.id}
-            autoHeight
-            disableRowSelectionOnClick
+            sx={{ width: { xs: '100%', sm: '300px' }, backgroundColor: '#fff' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
           />
         </Box>
-      )}
 
-      {/* Status Dialog */}
-      <Dialog open={openDialog} onClose={handleClose} maxWidth="xs" fullWidth>
-        <DialogTitle>Status Options</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" gutterBottom>
-            Appointment ID: {selectedAppointment?.id}
-          </Typography>
-          <Typography variant="body1" fontWeight="bold">
-            Current Status: {selectedAppointment?.status}
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'space-between', p: 2 }}>
-          {selectedAppointment?.status === 'Pending' && (
-            <>
-              <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
-                Approve
-              </Button>
+        {status === 'loading' ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Box
+               sx={{
+            width: '100%',
+            overflowX: 'auto',
+            '& .MuiDataGrid-root': {
+              backgroundColor: 'white',
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#ffffff',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              borderBottom: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              borderRight: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-cell': {
+              fontSize: '14px',
+              borderRight: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-row': {
+              borderBottom: '1px solid #f0f0f0',
+            }}}
+            >
+              <DataGrid
+                rows={paginatedRows}
+                columns={columns}
+                getRowId={(row) => row.id}
+                autoHeight
+                disableRowSelectionOnClick
+                hideFooter
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={(e, value) => setCurrentPage(value)}
+                color="primary"
+              />
+            </Box>
+          </>
+        )}
+
+        {/* Status Dialog */}
+        <Dialog open={openDialog} onClose={handleClose} maxWidth="xs" fullWidth>
+          <DialogTitle>Status Options</DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" gutterBottom>
+              Appointment ID: {selectedAppointment?.id}
+            </Typography>
+            <Typography variant="body1" fontWeight="bold">
+              Current Status: {selectedAppointment?.status}
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: 'space-between', p: 2 }}>
+            {selectedAppointment?.status === 'Pending' && (
+              <>
+                <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
+                  Approve
+                </Button>
+                <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
+                  Reject
+                </Button>
+              </>
+            )}
+            {selectedAppointment?.status === 'Approved' && (
               <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
-                Reject
+                Mark as Rejected
               </Button>
-            </>
-          )}
-          {selectedAppointment?.status === 'Approved' && (
-            <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
-              Mark as Rejected
-            </Button>
-          )}
-          {selectedAppointment?.status === 'Rejected' && (
-            <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
-              Re-Approve
-            </Button>
-          )}
-        </DialogActions>
-      </Dialog>
+            )}
+            {selectedAppointment?.status === 'Rejected' && (
+              <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
+                Re-Approve
+              </Button>
+            )}
+          </DialogActions>
+        </Dialog>
 
-      <AddAppointmentForm
-        open={addPatientOpen}
-        onClose={() => setAddPatientOpen(false)}
-        onSave={handleAddAppointment}
-        token={token}
-      />
-    </Box>
+        <AddAppointmentForm
+          open={addPatientOpen}
+          onClose={() => setAddPatientOpen(false)}
+          onSave={handleAddAppointment}
+          token={token}
+        />
+      </Box>
+    </Container>
   );
 };
+
 
 export default AdminAppointments;
