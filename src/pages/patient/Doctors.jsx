@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -17,12 +17,13 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { useAppSelector } from '../../app/hooks';
-import { selectAllDoctors } from '../../features/doctor/doctorSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks'; 
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-
+import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlice';
+ 
 const PatientDoctors = () => {
   const doctors = useAppSelector(selectAllDoctors);
+ 
   const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -35,6 +36,15 @@ const PatientDoctors = () => {
   const itemsPerPage = 6;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+   const dispatch = useAppDispatch();
+
+   
+    useEffect(() => {
+      const getDoctors = async () => {
+        await dispatch(fetchDoctors());
+      };
+      getDoctors();
+    }, []);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -61,8 +71,10 @@ const PatientDoctors = () => {
     handleCloseDialog();
   };
 
-  const displayedDoctors = doctors.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    const displayedDoctors = doctors.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
+
+ 
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 5 }}>
@@ -75,9 +87,9 @@ const PatientDoctors = () => {
           Our Expert Doctors
         </Typography>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} alignItems={'center'} justifyContent={'center'} >
           {displayedDoctors.map((doctor) => (
-            <Grid item xs={12} sm={6} md={4} key={doctor.id}>
+            <Grid item xs={12} sm={6} md={4} key={doctor.id} width={"300px"} height={"350px"} >
               <Card
                 sx={{
                   height: '100%',
@@ -98,7 +110,7 @@ const PatientDoctors = () => {
                     <LocalHospitalIcon fontSize="large" />
                   </Avatar>
                   <Typography variant="h6" fontWeight="bold">
-                    {doctor.name}
+                    {doctor?.fullname}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" mb={2}>
                     {doctor.specialization}
@@ -107,13 +119,13 @@ const PatientDoctors = () => {
 
                 <CardContent sx={{ px: 3, pt: 0 }}>
                   <Typography variant="body2" gutterBottom>
-                    <strong>Qualifications:</strong> {doctor.qualifications.join(', ')}
+                    <strong>Qualifications:</strong> {doctor.qualifications?.join(', ')}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     <strong>Experience:</strong> {doctor.experience} years
                   </Typography>
                   <Typography variant="body2" gutterBottom>
-                    <strong>Consultation Fee:</strong> ${doctor.consultationFee}
+                    <strong>Consultation Fee:</strong> ${doctor.consultation_fee}
                   </Typography>
                   <Button
                     variant="contained"

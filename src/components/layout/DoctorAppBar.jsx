@@ -15,8 +15,6 @@ const DoctorAppBar = ({ handleDrawerToggle }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
 
-
-
   return (
     <AppBar
       position="fixed"

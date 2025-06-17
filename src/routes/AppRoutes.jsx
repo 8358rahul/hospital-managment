@@ -40,29 +40,24 @@ import PatientDetails from "../pages/doctor/PatientDetails";
 import SettingsPage from "../pages/Setting";
 import ProfilePage from "../pages/Profile";
 import { useEffect } from "react";
+import Profile from "../pages/doctor/Profile";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
   const role = useSelector(selectCurrentRole);
-  const dispatch = useDispatch()
-
-  console.log('role',role)
-
-  useEffect(()=>{
-    const checkUserIsLoggedIn = ()=>{
-     try { 
-       const user = localStorage.getItem("user") 
-      dispatch(alreadyLoggedIn(JSON.parse(user))) 
-      
-     } catch (error) {
-      console.log(error)
-      
-     }
-    }
-    checkUserIsLoggedIn()
-  },[])
-
-  
+  const dispatch = useDispatch();
+ 
+  useEffect(() => {
+    const checkUserIsLoggedIn = () => {
+      try {
+        const user = localStorage.getItem("user"); 
+        dispatch(alreadyLoggedIn(JSON.parse(user)));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    checkUserIsLoggedIn();
+  }, []);
 
   return (
     <Routes>
@@ -107,6 +102,7 @@ const AppRoutes = () => {
         <Route path="appointments" element={<DoctorAppointments />} />
         <Route path="patients" element={<DoctorPatients />} />
         <Route path="patients/:patientId" element={<PatientDetails />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* Patient Routes */}

@@ -1,6 +1,6 @@
 import { Menu, MenuItem ,Avatar, Typography, Box } from '@mui/material';
 import { Logout } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../app/hooks';
 import { logout, selectCurrentUser } from '../../features/auth/authSlice';
@@ -10,6 +10,7 @@ const DoctorMenu = ({ anchorEl, handleClose }) => {
  const dispatch = useDispatch();
   const open = Boolean(anchorEl);
   const user = useAppSelector(selectCurrentUser); // Get the logged-in user's info
+  const navigation  = useNavigate()
 
   const handleLogout = () => {
     dispatch(logout());
@@ -61,9 +62,11 @@ const DoctorMenu = ({ anchorEl, handleClose }) => {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       <MenuItem>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }} onClick={()=>{
+          navigation('profile')
+        }}>
           <Avatar alt={user?.name} src={user?.avatar}>
-            {!user?.avatar && getInitials(user?.name)} {/* Show initials if avatar is not available */}
+            {!user?.avatar && getInitials(user?.name)} 
           </Avatar>
           <Box sx={{ ml: 1 }}>
             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
