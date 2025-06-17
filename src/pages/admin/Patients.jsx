@@ -28,14 +28,15 @@ import {
   deletePatientById,
 } from '../../features/patient/patientSlice';
 import { selectAppointmentsByPatient } from '../../features/appointment/appointmentSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentToken } from '../../features/auth/authSlice';
 
 const AdminPatients = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
 
-  const patients = useAppSelector(selectAppointmentsByPatient);
+  const patients = useAppSelector(selectAllPatients);
+
   const [search, setSearch] = useState('');
   const [localPatients, setLocalPatients] = useState([]);
 
@@ -49,7 +50,7 @@ const AdminPatients = () => {
 
   // Fetch patients on mount
   useEffect(() => {
-    dispatch(fetchPatients());
+    dispatch(fetchPatients(token));
   }, [dispatch]);
 
   // Sync local copy
@@ -84,9 +85,9 @@ const AdminPatients = () => {
 
   const handleSearchChange = (e) => setSearch(e.target.value);
 
-  const filteredPatients = localPatients.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // const filteredPatients = localPatients.filter((p) =>
+  //   p.name.toLowerCase().includes(search.toLowerCase())
+  // );
 
   const handleAddPatient = async (newPatient) => {
     try {
@@ -187,7 +188,7 @@ const AdminPatients = () => {
 
         <Box sx={{ width: '100%', overflowX: 'auto', '& .MuiDataGrid-root': { backgroundColor: 'white' } }}>
           <DataGrid
-            rows={filteredPatients}
+            rows={patients}
             columns={columns}
             pageSizeOptions={[10]}
             getRowId={(row) => row.id}

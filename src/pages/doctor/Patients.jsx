@@ -17,11 +17,15 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { useAppSelector } from '../../app/hooks';
 import { selectAppointmentsByDoctor } from '../../features/appointment/appointmentSlice';
-import { selectAllPatients } from '../../features/patient/patientSlice';
+import { fetchPatients, selectAllPatients } from '../../features/patient/patientSlice';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { selectCurrentToken } from '../../features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DoctorPatients = () => {
+  const dispatch =useDispatch()
+    const token = useSelector(selectCurrentToken);
  const patients = useAppSelector(selectAllPatients);
    const [search, setSearch] = useState('');
    const [localPatients, setLocalPatients] = useState(patients);
@@ -30,6 +34,11 @@ const DoctorPatients = () => {
    const [selectedPatientId, setSelectedPatientId] = useState(null);
    const [selectedPatientStatus, setSelectedPatientStatus] = useState('');
    const [confirmDelete, setConfirmDelete] = useState({ open: false, doctorId: null });
+
+     // Fetch patients on mount
+     useEffect(() => {
+       dispatch(fetchPatients(token));
+     }, [dispatch]);
  
    const handleStatusToggle = (id) => {
      const patient = localPatients.find((p) => p.id === id);
@@ -59,9 +68,9 @@ const DoctorPatients = () => {
      setSelectedPatientStatus('');
    };
  
-   const filteredPatients = localPatients.filter((p) =>
-     p.name.toLowerCase().includes(search.toLowerCase())
-   );
+  //  const filteredPatients = localPatients.filter((p) =>
+  //    p.name.toLowerCase().includes(search.toLowerCase())
+  //  );
    const [addPatientOpen, setAddPatientOpen] = useState(false);
  
    const handleAddPatient = (newPatient) => {
@@ -229,7 +238,7 @@ const DoctorPatients = () => {
           }}
         >
           <DataGrid
-            rows={filteredPatients}
+            rows={patients}
             columns={columns}
             initialState={{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },
