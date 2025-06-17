@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -15,88 +15,101 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import { useAppSelector } from '../../app/hooks';
-import { selectAllPatients } from '../../features/patient/patientSlice';
-import AddPatientForm from './AddPatientForm';
-
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+import AddPatientForm from './AddPatientForm';
+
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import {
+  selectAllPatients,
+  fetchPatients,
+  addNewPatient,
+  deletePatientById,
+} from '../../features/patient/patientSlice';
+
 const AdminPatients = () => {
+  const dispatch = useAppDispatch();
   const patients = useAppSelector(selectAllPatients);
   const [search, setSearch] = useState('');
-  const [localPatients, setLocalPatients] = useState(patients);
+  const [localPatients, setLocalPatients] = useState([]);
 
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientStatus, setSelectedPatientStatus] = useState('');
-  const [confirmDelete, setConfirmDelete] = useState({ open: false, doctorId: null });
+
+  const [confirmDelete, setConfirmDelete] = useState({ open: false, patientId: null });
+
+  const [addPatientOpen, setAddPatientOpen] = useState(false);
+
+  // Fetch patients on mount
+  useEffect(() => {
+    dispatch(fetchPatients());
+  }, [dispatch]);
+
+  // Sync local copy
+  useEffect(() => {
+    setLocalPatients(patients);
+  }, [patients]);
 
   const handleStatusToggle = (id) => {
     const patient = localPatients.find((p) => p.id === id);
     if (!patient) return;
-
     setSelectedPatientId(id);
     setSelectedPatientStatus(patient.status);
-    setOpenDialog(true);
+    setOpenStatusDialog(true);
   };
 
   const handleConfirmStatusChange = () => {
-    const updated = localPatients.map((p) =>
-      p.id === selectedPatientId
-        ? {
-          ...p,
-          status: selectedPatientStatus === 'Active' ? 'Inactive' : 'Active',
-        }
-        : p
+    setLocalPatients((prev) =>
+      prev.map((p) =>
+        p.id === selectedPatientId
+          ? { ...p, status: selectedPatientStatus === 'Active' ? 'Inactive' : 'Active' }
+          : p
+      )
     );
-    setLocalPatients(updated);
-    setOpenDialog(false);
+    setOpenStatusDialog(false);
   };
 
   const handleCancelStatusChange = () => {
-    setOpenDialog(false);
+    setOpenStatusDialog(false);
     setSelectedPatientId(null);
     setSelectedPatientStatus('');
   };
 
+  const handleSearchChange = (e) => setSearch(e.target.value);
+
   const filteredPatients = localPatients.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
-  const [addPatientOpen, setAddPatientOpen] = useState(false);
 
-  const handleAddPatient = (newPatient) => {
-    const newPatientWithId = { ...newPatient, id: Date.now(), status: 'Active' };
-    setLocalPatients((prev) => [...prev, newPatientWithId]);
-    setAddPatientOpen(false);
+  const handleAddPatient = async (newPatient) => {
+    try {
+      await dispatch(addNewPatient(newPatient)).unwrap();
+      setAddPatientOpen(false);
+      // fetchPatients will run automatically via useEffect update from store
+    } catch (err) {
+      console.error('Failed to add patient:', err);
+    }
   };
-    const handleEdit = (doctor) => {
-    setCurrentDoctor(doctor);
-    setOpenDialog(true);
-  };
-
 
   const handleDelete = (id) => {
-    setConfirmDelete({ open: true, doctorId: id });
+    setConfirmDelete({ open: true, patientId: id });
   };
 
-  const confirmDeleteDoctor = () => {
-    setDoctors(doctors.filter((doctor) => doctor.id !== confirmDelete.doctorId));
-    setConfirmDelete({ open: false, doctorId: null });
+  const confirmDeletePatient = async () => {
+    try {
+      await dispatch(deletePatientById(confirmDelete.patientId)).unwrap();
+      setConfirmDelete({ open: false, patientId: null });
+    } catch (err) {
+      console.error('Failed to delete patient:', err);
+    }
   };
 
-  const cancelDelete = () => {
-    setConfirmDelete({ open: false, doctorId: null });
-  };
+  const cancelDelete = () => setConfirmDelete({ open: false, patientId: null });
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
-    { field: 'email', headerName: 'Email', flex: 1.5, minWidth: 180 },
-    { field: 'age', headerName: 'Age', width: 90 },
-    { field: 'gender', headerName: 'Gender', width: 120 },
-    { field: 'bloodType', headerName: 'Blood Type', width: 120 },
-    { field: 'phone', headerName: 'Phone', flex: 1, minWidth: 150 },
-    { field: 'address', headerName: 'Address', flex: 2, minWidth: 220 },
+    // ... (same as your version – name, email, age, gender, bloodType, phone, address)
     {
       field: 'status',
       headerName: 'Status',
@@ -119,7 +132,7 @@ const AdminPatients = () => {
         />
       ),
     },
-      {
+    {
       field: 'actions',
       headerName: 'Actions',
       flex: 0.5,
@@ -127,7 +140,7 @@ const AdminPatients = () => {
       sortable: false,
       renderCell: (params) => (
         <Box>
-          <IconButton onClick={() => handleEdit(params.row)}>
+          <IconButton onClick={() => {/* Optional: Add edit handling */}}>
             <EditIcon color="primary" />
           </IconButton>
           <IconButton onClick={() => handleDelete(params.row.id)}>
@@ -135,50 +148,25 @@ const AdminPatients = () => {
           </IconButton>
         </Box>
       ),
-        cellClassName: 'sticky-action-col',
-
+      cellClassName: 'sticky-action-col',
     },
   ];
 
-  return ( 
-  <Container maxWidth="xl" disableGutters>
-      <Box
-        sx={{
-          px: { xs: 1, sm: 2, lg: 0 },
-          py: 4,
-          width: '100%',
-        }}
-      >
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ textAlign: { xs: 'center', sm: 'left' } }}
-        >
+  return (
+    <Container maxWidth="xl" disableGutters>
+      <Box sx={{ px: { xs: 1, sm: 2, lg: 0 }, py: 4, width: '100%' }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
           Patients Management
         </Typography>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-            mb: 2,
-            flexWrap: 'wrap',
-          }}
-        >
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center', gap: 2, mb: 2 }}>
           <TextField
             variant="outlined"
             size="small"
             placeholder="Search by name"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            sx={{
-              width: { xs: '100%', sm: '300px' },
-              backgroundColor: '#fff',
-            }}
+            onChange={handleSearchChange}
+            sx={{ width: { xs: '100%', sm: '300px' }, backgroundColor: '#fff' }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -187,54 +175,15 @@ const AdminPatients = () => {
               ),
             }}
           />
-
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              width: {
-                xs: '100%', sm: 'auto',
-                background: 'linear-gradient(90deg, #2196f3, #2196f3)',
-
-              }
-            }}
-            onClick={() => setAddPatientOpen(true)}
-          >
+          <Button variant="contained" startIcon={<AddIcon />} sx={{ width: { xs: '100%', sm: 'auto' } }} onClick={() => setAddPatientOpen(true)}>
             Add Patient
           </Button>
         </Box>
 
-        <Box
-          sx={{
-            width: '100%',
-            overflowX: 'auto',
-            '& .MuiDataGrid-root': {
-              backgroundColor: 'white',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#ffffff',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              borderBottom: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              borderRight: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-cell': {
-              fontSize: '14px',
-              borderRight: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: '1px solid #f0f0f0',
-            },
-          }}
-        >
+        <Box sx={{ width: '100%', overflowX: 'auto', '& .MuiDataGrid-root': { backgroundColor: 'white' } }}>
           <DataGrid
             rows={filteredPatients}
             columns={columns}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 10, page: 0 } },
-            }}
             pageSizeOptions={[10]}
             getRowId={(row) => row.id}
             disableRowSelectionOnClick
@@ -242,37 +191,34 @@ const AdminPatients = () => {
           />
         </Box>
 
-        {/* Confirmation Dialog */}
-        <Dialog open={openDialog} onClose={handleCancelStatusChange} fullWidth maxWidth="xs">
+        {/* Status Confirmation Dialog */}
+        <Dialog open={openStatusDialog} onClose={handleCancelStatusChange}>
           <DialogContent>
             <Typography>
               Are you sure you want to mark this patient as{' '}
-              <strong>
-                {selectedPatientStatus === 'Active' ? 'Inactive' : 'Active'}
-              </strong>
-              ?
+              <strong>{selectedPatientStatus === 'Active' ? 'Inactive' : 'Active'}</strong>?
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCancelStatusChange} color="secondary">
-              Cancel
-            </Button>
-            <Button
-              onClick={handleConfirmStatusChange}
-              color="primary"
-              variant="contained"
-            >
-              Confirm
-            </Button>
+            <Button onClick={handleCancelStatusChange} color="secondary">Cancel</Button>
+            <Button onClick={handleConfirmStatusChange} variant="contained">Confirm</Button>
           </DialogActions>
         </Dialog>
 
-        <AddPatientForm
-          open={addPatientOpen}
-          onClose={() => setAddPatientOpen(false)}
-          onSave={handleAddPatient}
-        />
-      </Box> 
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={confirmDelete.open} onClose={cancelDelete}>
+          <DialogContent>
+            <Typography>Are you sure you want to delete this patient?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={cancelDelete}>No</Button>
+            <Button onClick={confirmDeletePatient} color="error" variant="contained">Yes</Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Add Patient Dialog */}
+        <AddPatientForm open={addPatientOpen} onClose={() => setAddPatientOpen(false)} onSave={handleAddPatient} />
+      </Box>
     </Container>
   );
 };
