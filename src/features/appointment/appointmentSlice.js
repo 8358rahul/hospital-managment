@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
+import API from '../api';
 
 // Helper to get headers with token
 const getAuthHeaders = () => {
@@ -88,29 +89,13 @@ export const addNewAppointment = createAsyncThunk(
     }
   }
 );
-
-export const updateAppointmentById = createAsyncThunk(
-  'appointments/update',
-  async ({ id, updatedAppointment }, { rejectWithValue }) => {
+ 
+export const appointmentsStatus = createAsyncThunk(
+  'appointments/status',
+  async (data, { rejectWithValue,dispatch }) => { 
     try {
-      const response = await axios.put(
-        `${API_URL}/appointments/appointments/${id}/`,
-        updatedAppointment,
-        getAuthHeaders()
-      );
-      return response.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
-  }
-);
-
-export const deleteAppointmentById = createAsyncThunk(
-  'appointments/delete',
-  async (id, { rejectWithValue }) => {
-    try {
-      await axios.delete(`${API_URL}/appointments/appointments/${id}/`, getAuthHeaders());
-      return id;
+      await API.patch(`${API_URL}/appointments/update-status/${data.id}/`,{status:data.status});
+      dispatch(fetchAppointments());
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -181,20 +166,7 @@ const appointmentSlice = createSlice({
       .addCase(addNewAppointment.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
-      })
-
-      // Update
-      .addCase(updateAppointmentById.fulfilled, (state, action) => {
-        const index = state.appointments.findIndex((a) => a.id === action.payload.id);
-        if (index !== -1) {
-          state.appointments[index] = action.payload;
-        }
-      })
-
-      // Delete
-      .addCase(deleteAppointmentById.fulfilled, (state, action) => {
-        state.appointments = state.appointments.filter((a) => a.id !== action.payload);
-      });
+      }) 
   },
 });
 
