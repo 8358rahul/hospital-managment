@@ -37,25 +37,27 @@ import { useAppSelector } from '../../app/hooks';
 import { selectCurrentToken } from '../../features/auth/authSlice';
 
 const DashboardCard = ({ title, count, icon, color }) => (
-  
+
   <Card
     sx={{
-      width: '250px',
-      height: '180px',
-      boxShadow: 6,
-      borderRadius: 3,
+      height: "100%",
       px: 3,
       py: 4,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      textAlign: 'center',
-      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-      '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: 8,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      boxShadow: 4,
+      borderRadius: 3,
+      textAlign: "center",
+      transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      "&:hover": {
+        transform: "translateY(-4px)",
+        boxShadow: 6,
       },
+      // make the width responsive all screen sizes 
+      width: "280px"
+
     }}
   >
     <Avatar sx={{ bgcolor: color, width: 60, height: 60, mb: 2 }}>
@@ -133,6 +135,7 @@ const AdminDashboard = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         minHeight: '100vh',
+        // minWidth:'100vw'
       }}
     >
       <Container maxWidth="lg">
@@ -153,93 +156,94 @@ const AdminDashboard = () => {
             fontWeight="bold"
             gutterBottom
           >
-            Welcome, 
+            Welcome,
           </Typography>
           <Typography variant="subtitle1">
             Here's a quick overview of your hospital statistics
           </Typography>
         </Card>
 
-      {/* Cards Section */}
-      <Grid container spacing={4} justifyContent="center" mb={5} mt={2}>
-        <Grid item>
-          <DashboardCard title="Total Doctors" count={totalDoctors} icon={<LocalHospitalIcon fontSize="large" />} color="#1976d2" />
-        </Grid>
-        <Grid item>
-          <DashboardCard title="Total Patients" count={totalPatients} icon={<PeopleIcon fontSize="large" />} color="#009688" />
-        </Grid>
-        <Grid item>
-          <DashboardCard title="Total Appointments" count={totalAppointments} icon={<EventNoteIcon fontSize="large" />} color="#ed6c02" />
-        </Grid>
-        <Grid item>
-          <DashboardCard title="Total Requests" count={totalRequests} icon={<HelpOutlineIcon fontSize="large" />} color="#d32f2f" />
-        </Grid>
-      </Grid>
-
-      {/* Chart Section */}
-      <Grid container spacing={4}>
-        {[...reports, {
-          title: 'Doctors by Specialization',
-          isPie: true,
-          data: doctorSpecializations,
-        }].map((chart, idx) => (
-          <Grid item xs={6} md={6} key={idx}>
-            <Card  sx={{
-        height: '100%',
-        px: 3,
-        py: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        boxShadow: 4,
-        borderRadius: 3,
-        textAlign: 'center',
-        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 6,
-        },
-        width: '450px',
-      }}>
-              <Typography variant="h6" fontWeight="bold" mb={2}>
-                {chart.title}
-              </Typography>
-              <ResponsiveContainer width="100%" height={250}>
-                {chart.isPie ? (
-                  <PieChart>
-                    <Pie
-                      data={chart.data}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={90}
-                      label
-                    >
-                      {chart.data.map((entry, index) => (
-                        <Cell key={`cell-${idx}-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                ) : (
-                  <LineChart data={chart.data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="Last" stroke={chart.color[0]} strokeWidth={2} />
-                    <Line type="monotone" dataKey="Current" stroke={chart.color[1]} strokeWidth={2} />
-                  </LineChart>
-                )}
-              </ResponsiveContainer>
-            </Card>
+        {/* Cards Section */}
+        <Grid container spacing={4} justifyContent="center" mb={5} mt={2}>
+          <Grid item>
+            <DashboardCard title="Total Doctors" count={totalDoctors} icon={<LocalHospitalIcon fontSize="large" />} color="#1976d2" />
           </Grid>
-        ))}
-      </Grid>
-         </Container>
+          <Grid item>
+            <DashboardCard title="Total Patients" count={totalPatients} icon={<PeopleIcon fontSize="large" />} color="#009688" />
+          </Grid>
+          <Grid item>
+            <DashboardCard title="Total Appointments" count={totalAppointments} icon={<EventNoteIcon fontSize="large" />} color="#ed6c02" />
+          </Grid>
+          <Grid item>
+            <DashboardCard title="Total Requests" count={totalRequests} icon={<HelpOutlineIcon fontSize="large" />} color="#d32f2f" />
+          </Grid>
+        </Grid>
+
+        {/* Chart Section */}
+        <Grid container spacing={4} mt={4} justifyContent={'center'}>
+          {[...reports, {
+            title: 'Doctors by Specialization',
+            isPie: true,
+            data: doctorSpecializations,
+          }].map((chart, idx) => (
+            <Grid item xs={12} sm={6} md={6} lg={4} key={idx}>
+              <Box
+                sx={{
+                  width: "100%",
+                  borderRadius: 2,
+                }}
+              >
+
+                <Card sx={{
+                  p: 2,
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}>
+                  <Typography variant="h6" fontWeight="bold" mb={2}>
+                    {chart.title}
+                  </Typography>
+                    <Box sx={{ width: "280px", height: { xs: 250, sm: 300, md: 280 } }}>
+                  <ResponsiveContainer width="100%" height={250}>
+                    {chart.isPie ? (
+                      <PieChart>
+                        <Pie
+                          data={chart.data}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={90}
+                          label
+                        >
+                          {chart.data.map((entry, index) => (
+                            <Cell key={`cell-${idx}-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    ) : (
+                      <LineChart data={chart.data}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="Last" stroke={chart.color[0]} strokeWidth={2} />
+                        <Line type="monotone" dataKey="Current" stroke={chart.color[1]} strokeWidth={2} />
+                      </LineChart>
+                    )}
+                  </ResponsiveContainer>
+                  </Box>
+                </Card>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
     </Box>
   );
 };

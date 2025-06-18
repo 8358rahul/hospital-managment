@@ -239,10 +239,11 @@ const DoctorsManagement = () => {
             backgroundColor: 'white',
           },
           '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#ffffff',
-            fontWeight: 'bold',
-            fontSize: '16px',
-            borderBottom: '1px solid #e0e0e0',
+             backgroundColor: '#cbebe2',
+              fontWeight: 'bold',
+              color:'black',
+              fontSize: '18px',
+              borderBottom: '1px solid #e0e0e0',
           },
           '& .MuiDataGrid-columnHeader': {
             borderRight: '1px solid #e0e0e0',

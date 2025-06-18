@@ -192,9 +192,10 @@ const AdminAppointments = () => {
               backgroundColor: 'white',
             },
             '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#ffffff',
+              backgroundColor: '#cbebe2',
               fontWeight: 'bold',
-              fontSize: '16px',
+              color:'black',
+              fontSize: '18px',
               borderBottom: '1px solid #e0e0e0',
             },
             '& .MuiDataGrid-columnHeader': {
