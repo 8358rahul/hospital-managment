@@ -11,7 +11,8 @@ import {
   Pagination,
   Container,
   Button,
-  CircularProgress, } from '@mui/material';
+  CircularProgress,
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -25,7 +26,8 @@ import { selectCurrentToken } from '../../features/auth/authSlice';
 const PatientAppointments = () => {
   const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
-  const appointments = useSelector(selectAllAppointments); 
+  const appointments = useSelector(selectAllAppointments);
+
   const status = useSelector(selectAppointmentStatus);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,11 +36,11 @@ const PatientAppointments = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [addPatientOpen, setAddPatientOpen] = useState(false);
-useEffect(() => {
-  if (token) {
-    dispatch(fetchPatientAppointments({ token, "patient_id":5 }));
-  }
-}, [dispatch, token]);
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchPatientAppointments({ token, "patient_id": 5 }));
+    }
+  }, [dispatch, token]);
 
 
   const handleChipClick = (params) => {
@@ -106,18 +108,18 @@ useEffect(() => {
         );
       },
     },
-   
+
   ];
 
- 
- const allRows = useMemo(() => {
-  if (!Array.isArray(appointments?.results)) return [];
-  return appointments.results.map((item) => ({
-    ...item,
-    patientName: item?.patient?.first_name || 'N/A',
-    doctorName: item?.doctor?.first_name || 'N/A',
-  }));
-}, [appointments]);
+
+  const allRows = useMemo(() => {
+    if (!Array.isArray(appointments?.results)) return [];
+    return appointments.results.map((item) => ({
+      ...item,
+      patientName: item?.patient?.first_name || 'N/A',
+      doctorName: item?.doctor?.first_name || 'N/A',
+    }));
+  }, [appointments]);
 
   const filteredRows = useMemo(() => {
     return allRows.filter((row) =>
@@ -134,7 +136,7 @@ useEffect(() => {
 
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
- return (
+  return (
     <Container maxWidth="xl" disableGutters>
       <Box sx={{ width: '100%', px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -179,28 +181,30 @@ useEffect(() => {
         ) : (
           <>
             <Box
-               sx={{
-            width: '100%',
-            overflowX: 'auto',
-            '& .MuiDataGrid-root': {
-              backgroundColor: 'white',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#ffffff',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              borderBottom: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              borderRight: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-cell': {
-              fontSize: '14px',
-              borderRight: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: '1px solid #f0f0f0',
-            }}}
+              sx={{
+                width: '100%',
+                overflowX: 'auto',
+                '& .MuiDataGrid-root': {
+                  backgroundColor: 'white',
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#cbebe2',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  fontSize: '18px',
+                  borderBottom: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeader': {
+                  borderRight: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: '14px',
+                  borderRight: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-row': {
+                  borderBottom: '1px solid #f0f0f0',
+                }
+              }}
             >
               <DataGrid
                 rows={paginatedRows}
@@ -258,7 +262,7 @@ useEffect(() => {
           </DialogActions>
         </Dialog>
 
-       
+
       </Box>
     </Container>
   );
