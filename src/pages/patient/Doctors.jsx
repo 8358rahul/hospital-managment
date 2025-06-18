@@ -32,6 +32,7 @@ const PatientDoctors = () => {
   const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  console.log("ssss", selectedDoctor)
    const [appointmentData, setAppointmentData] = useState({
     doctor:null,
   
@@ -40,7 +41,7 @@ const PatientDoctors = () => {
     reason: '',
     patient: '', // added patient field
   }); 
-
+console.log("appointmentData", appointmentData)
   const itemsPerPage = 6;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -58,10 +59,15 @@ const PatientDoctors = () => {
     setPage(value);
   };
 
-  const handleOpenDialog = (doctor) => {
-    setSelectedDoctor(doctor);
-    setOpenDialog(true);
-  };
+const handleOpenDialog = (doctor) => {
+  setSelectedDoctor(doctor);
+  setAppointmentData((prev) => ({
+    ...prev,
+    doctor: doctor.id, // ensure the doctor ID is set
+  }));
+  setOpenDialog(true);
+};
+
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -83,7 +89,7 @@ const PatientDoctors = () => {
         addNewAppointment({
           newAppointment: {
             ...appointmentData,
-            doctor: selectedDoctor.id,
+            // doctor: selectedDoctor?.id,
           },
           token,
         })

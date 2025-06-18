@@ -156,7 +156,7 @@ const AdminDashboard = () => {
             fontWeight="bold"
             gutterBottom
           >
-            Welcome,
+            Welcome, Admin
           </Typography>
           <Typography variant="subtitle1">
             Here's a quick overview of your hospital statistics
