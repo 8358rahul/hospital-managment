@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import API from '../api';
 
 const API_URL = import.meta.env.VITE_API_URL; // Adjust endpoint if needed
 
@@ -8,13 +9,9 @@ const API_URL = import.meta.env.VITE_API_URL; // Adjust endpoint if needed
 // 1. Fetch Patients
 export const fetchPatients = createAsyncThunk(
   'patients/fetchPatients',
-  async (token, { rejectWithValue }) => {
+  async ( _, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/adminpanel/patients_list/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await API.get(`${API_URL}/adminpanel/patients_list/`);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

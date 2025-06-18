@@ -3,18 +3,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 import API from '../api';
-
-// Helper to get headers with token
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
-
-// Thunks
+ 
 
 export const fetchAppointments = createAsyncThunk(
   'appointments/fetchAll',
@@ -53,16 +42,9 @@ export const fetchPatientAppointments = createAsyncThunk(
 
 export const fetchDoctorAppointments = createAsyncThunk(
   'appointments/fetchByDoctor',
-  async ({ token, doctor_id }, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/appointments/appointments/?doctor_id=${doctor_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await API.get(`${API_URL}/appointments/appointments/?doctor_id=${id}`);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -95,7 +77,7 @@ export const appointmentsStatus = createAsyncThunk(
   async (data, { rejectWithValue,dispatch }) => { 
     try {
       await API.patch(`${API_URL}/appointments/update-status/${data.id}/`,{status:data.status});
-      dispatch(fetchAppointments());
+      dispatch(fetchDoctorAppointments(data?.doctor_id));
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
