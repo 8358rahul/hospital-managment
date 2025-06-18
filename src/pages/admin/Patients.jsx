@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Button,
@@ -10,7 +10,8 @@ import {
   DialogContent,
   DialogActions,
   Container,
-  IconButton
+  IconButton,
+  Pagination,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
@@ -27,33 +28,30 @@ import {
   addNewPatient,
   deletePatientById,
 } from '../../features/patient/patientSlice';
-import { selectAppointmentsByPatient } from '../../features/appointment/appointmentSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectCurrentToken } from '../../features/auth/authSlice';
 
 const AdminPatients = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const token = useSelector(selectCurrentToken);
-
   const patients = useAppSelector(selectAllPatients);
 
   const [search, setSearch] = useState('');
   const [localPatients, setLocalPatients] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(10);
 
   const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientStatus, setSelectedPatientStatus] = useState('');
 
   const [confirmDelete, setConfirmDelete] = useState({ open: false, patientId: null });
-
   const [addPatientOpen, setAddPatientOpen] = useState(false);
 
-  // Fetch patients on mount
   useEffect(() => {
     dispatch(fetchPatients(token));
-  }, [dispatch]);
+  }, [dispatch, token]);
 
-  // Sync local copy
   useEffect(() => {
     setLocalPatients(patients);
   }, [patients]);
@@ -83,17 +81,15 @@ const AdminPatients = () => {
     setSelectedPatientStatus('');
   };
 
-  const handleSearchChange = (e) => setSearch(e.target.value);
-
-  // const filteredPatients = localPatients.filter((p) =>
-  //   p.name.toLowerCase().includes(search.toLowerCase())
-  // );
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1); // Reset page on search
+  };
 
   const handleAddPatient = async (newPatient) => {
     try {
       await dispatch(addNewPatient(newPatient)).unwrap();
       setAddPatientOpen(false);
-      // fetchPatients will run automatically via useEffect update from store
     } catch (err) {
       console.error('Failed to add patient:', err);
     }
@@ -114,58 +110,87 @@ const AdminPatients = () => {
 
   const cancelDelete = () => setConfirmDelete({ open: false, patientId: null });
 
-  const columns = [
-    // ... (same as your version – name, email, age, gender, bloodType, phone, address)
-    {
-      field: 'status',
-      headerName: 'Status',
-      width: 130,
-      renderCell: (params) => (
-        <Chip
-          label={params.value === 'Active' ? 'Active' : 'Inactive'}
-          size="small"
-          onClick={() => handleStatusToggle(params.row.id)}
-          sx={{
-            backgroundColor: params.value === 'Active' ? '#c8e6c9' : '#f8d7da',
-            color: params.value === 'Active' ? '#256029' : '#a94442',
-            fontWeight: 600,
-            px: 1.5,
-            borderRadius: '6px',
-            fontSize: '0.75rem',
-            textTransform: 'capitalize',
-            cursor: 'pointer',
-          }}
-        />
+  const filtered = useMemo(() => {
+    return localPatients.filter((p) =>
+      p.fullname?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [localPatients, search]);
+
+  const totalPages = Math.ceil(filtered.length / rowsPerPage);
+  const paginated = useMemo(
+    () =>
+      filtered.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
       ),
-    },
+    [filtered, currentPage, rowsPerPage]
+  );
+
+  const columns = [
+    { field: 'fullname', headerName: 'Name', flex: 1 },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'birth_date', headerName: 'Birth Date', flex: 0.5 },
+    { field: 'gender', headerName: 'Gender', flex: 0.5 },
+    { field: 'blood_type', headerName: 'Blood Group', flex: 0.5 },
+    { field: 'phone', headerName: 'Phone', flex: 1 },
+    { field: 'address', headerName: 'Address', flex: 1 },
+
+    // {
+    //   field: 'status',
+    //   headerName: 'Status',
+    //   width: 130,
+    //   renderCell: (params) => (
+    //     <Chip
+    //       label={params.value === 'Active' ? 'Active' : 'Inactive'}
+    //       size="small"
+    //       onClick={() => handleStatusToggle(params.row.id)}
+    //       sx={{
+    //         backgroundColor: params.value === 'Active' ? '#c8e6c9' : '#f8d7da',
+    //         color: params.value === 'Active' ? '#256029' : '#a94442',
+    //         fontWeight: 600,
+    //         px: 1.5,
+    //         borderRadius: '6px',
+    //         fontSize: '0.75rem',
+    //         cursor: 'pointer',
+    //       }}
+    //     />
+    //   ),
+    // },
     {
       field: 'actions',
       headerName: 'Actions',
       flex: 0.5,
-      minWidth: 110,
       sortable: false,
       renderCell: (params) => (
         <Box>
-          <IconButton onClick={() => {/* Optional: Add edit handling */}}>
+          <IconButton onClick={() => {}}>
             <EditIcon color="primary" />
           </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
+          {/* <IconButton onClick={() => handleDelete(params.row.id)}>
             <DeleteIcon color="error" />
-          </IconButton>
+          </IconButton> */}
         </Box>
       ),
-      cellClassName: 'sticky-action-col',
     },
   ];
 
   return (
     <Container maxWidth="xl" disableGutters>
-      <Box sx={{ px: { xs: 1, sm: 2, lg: 0 }, py: 4, width: '100%' }}>
+      <Box sx={{ px: { xs: 1, sm: 2 }, py: 4, width: '100%' }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Patients Management
         </Typography>
 
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            mb: 2,
+          }}
+        >
           <TextField
             variant="outlined"
             size="small"
@@ -181,49 +206,103 @@ const AdminPatients = () => {
               ),
             }}
           />
-          <Button variant="contained" startIcon={<AddIcon />} sx={{ width: { xs: '100%', sm: 'auto' } }} onClick={() => setAddPatientOpen(true)}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+            onClick={() => setAddPatientOpen(true)}
+          >
             Add Patient
           </Button>
         </Box>
 
-        <Box sx={{ width: '100%', overflowX: 'auto', '& .MuiDataGrid-root': { backgroundColor: 'white' } }}>
+        <Box
+          sx={{
+            width: '100%',
+            overflowX: 'auto',
+            '& .MuiDataGrid-root': { backgroundColor: 'white' },
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#ffffff',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              borderBottom: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              borderRight: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-cell': {
+              fontSize: '14px',
+              borderRight: '1px solid #e0e0e0',
+            },
+            '& .MuiDataGrid-row': {
+              borderBottom: '1px solid #f0f0f0',
+            },
+          }}
+        >
           <DataGrid
-            rows={patients}
+            rows={paginated}
             columns={columns}
-            pageSizeOptions={[10]}
             getRowId={(row) => row.id}
-            disableRowSelectionOnClick
             autoHeight
+            disableRowSelectionOnClick
+            hideFooter
           />
         </Box>
 
-        {/* Status Confirmation Dialog */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(e, value) => setCurrentPage(value)}
+            color="primary"
+          />
+        </Box>
+
+        {/* Status Dialog */}
         <Dialog open={openStatusDialog} onClose={handleCancelStatusChange}>
           <DialogContent>
             <Typography>
               Are you sure you want to mark this patient as{' '}
-              <strong>{selectedPatientStatus === 'Active' ? 'Inactive' : 'Active'}</strong>?
+              <strong>
+                {selectedPatientStatus === 'Active' ? 'Inactive' : 'Active'}
+              </strong>
+              ?
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCancelStatusChange} color="secondary">Cancel</Button>
-            <Button onClick={handleConfirmStatusChange} variant="contained">Confirm</Button>
+            <Button onClick={handleCancelStatusChange} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmStatusChange} variant="contained">
+              Confirm
+            </Button>
           </DialogActions>
         </Dialog>
 
-        {/* Delete Confirmation Dialog */}
+        {/* Delete Dialog */}
         <Dialog open={confirmDelete.open} onClose={cancelDelete}>
           <DialogContent>
             <Typography>Are you sure you want to delete this patient?</Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={cancelDelete}>No</Button>
-            <Button onClick={confirmDeletePatient} color="error" variant="contained">Yes</Button>
+            <Button
+              onClick={confirmDeletePatient}
+              color="error"
+              variant="contained"
+            >
+              Yes
+            </Button>
           </DialogActions>
         </Dialog>
 
-        {/* Add Patient Dialog */}
-        <AddPatientForm open={addPatientOpen} onClose={() => setAddPatientOpen(false)} onSave={handleAddPatient} token={token}/>
+        {/* Add Patient Form */}
+        <AddPatientForm
+          open={addPatientOpen}
+          onClose={() => setAddPatientOpen(false)}
+          onSave={handleAddPatient}
+          token={token}
+        />
       </Box>
     </Container>
   );

@@ -2,17 +2,20 @@ import {
   Avatar,
   Box,
   Button,
+  IconButton,
+  InputAdornment,
+  Link,
   Paper,
   TextField,
   Typography,
-  Link,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {  loginUser } from '../../features/auth/authSlice';
+import { loginUser } from '../../features/auth/authSlice';
 import loginImage from '../../assets/loginImage.svg';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -21,6 +24,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -36,7 +40,7 @@ const Login = () => {
       try {
         const result = await dispatch(loginUser(values));
         if (loginUser.fulfilled.match(result)) {
-          const { role } = result.payload;  
+          const { role } = result.payload;
           toast.success("Login success");
           navigate(`/${role}`);
         } else {
@@ -49,6 +53,10 @@ const Login = () => {
       }
     },
   });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <Box sx={{ display: 'flex', height: '100vh', flexDirection: { xs: 'column', md: 'row' } }}>
@@ -83,7 +91,6 @@ const Login = () => {
               Sign In
             </Typography>
 
-            {/* <Button  title='press' onClick={()=>navigate('/doctor')}>check</Button> */}
             <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3, width: '100%' }}>
               <TextField
                 fullWidth
@@ -101,6 +108,7 @@ const Login = () => {
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
               />
+
               <TextField
                 fullWidth
                 label={
@@ -110,13 +118,22 @@ const Login = () => {
                 }
                 name="password"
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 margin="normal"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.password && Boolean(formik.errors.password)}
                 helperText={formik.touched.password && formik.errors.password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               {submitError && (
