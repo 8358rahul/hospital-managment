@@ -91,50 +91,50 @@ const DoctorAppointments = () => {
       flex: 1.2,
       minWidth: 140,
     },
-    // {
-    //   field: "status",
-    //   headerName: "Status",
-    //   width: 130,
+    {
+      field: "status",
+      headerName: "Status",
+      width: 130,
 
-    //   renderCell: (params) => {
-    //     const status = params.value?.toLowerCase();
-    //     let color = "",
-    //       bg = "";
-    //     switch (status) {
-    //       case "accepted":
-    //         color = "#256029";
-    //         bg = "#c8e6c9";
-    //         break;
-    //       case "pending":
-    //         color = "#856404";
-    //         bg = "#fff3cd";
-    //         break;
-    //       case "rejected":
-    //         color = "#a94442";
-    //         bg = "#f8d7da";
-    //         break;
-    //       default:
-    //         color = "#000";
-    //         bg = "#e0e0e0";
-    //     }
-    //     return (
-    //       <Chip
-    //         label={status.charAt(0).toUpperCase() + status.slice(1)}
-    //         size="small"
-    //         sx={{
-    //           backgroundColor: bg,
-    //           color: color,
-    //           fontWeight: 600,
-    //           px: 1.5,
-    //           borderRadius: "6px",
-    //           fontSize: "0.75rem",
-    //           textTransform: "capitalize",
-    //           cursor: "pointer",
-    //         }}
-    //       />
-    //     );
-    //   },
-    // },
+      renderCell: (params) => {
+        const status = params.value?.toLowerCase();
+        let color = "",
+          bg = "";
+        switch (status) {
+          case "accepted":
+            color = "#256029";
+            bg = "#c8e6c9";
+            break;
+          case "pending":
+            color = "#856404";
+            bg = "#fff3cd";
+            break;
+          case "rejected":
+            color = "#a94442";
+            bg = "#f8d7da";
+            break;
+          default:
+            color = "#000";
+            bg = "#e0e0e0";
+        }
+        return (
+          <Chip
+            label={status.charAt(0).toUpperCase() + status.slice(1)}
+            size="small"
+            sx={{
+              backgroundColor: bg,
+              color: color,
+              fontWeight: 600,
+              px: 1.5,
+              borderRadius: "6px",
+              fontSize: "0.75rem",
+              textTransform: "capitalize",
+              cursor: "pointer",
+            }}
+          />
+        );
+      },
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -145,6 +145,8 @@ const DoctorAppointments = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            cursor: "pointer",
+            marginTop:10
           }}
         >
           {" "}

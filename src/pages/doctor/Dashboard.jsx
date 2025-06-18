@@ -17,7 +17,8 @@ import {
   Cell,
 } from "recharts";
 import dashboardBg from "../../assets/dashboard.jpg"; 
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectUserDetail } from "../../features/doctor/doctorSlice";
 
 const totalDoctors = 12;
 const totalPatients = 58;
@@ -92,6 +93,8 @@ const COLORS = ["#ff9800", "#4caf50", "#1976d2", "#d32f2f", "#00acc1"];
 const DoctorDashboard = () => {
    const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const user = useAppSelector(selectUserDetail);
+ 
   
   const reports = [
     {
@@ -154,7 +157,7 @@ const DoctorDashboard = () => {
               fontWeight="bold"
               gutterBottom
             >
-              Welcome, {"userName"}
+              Welcome, {user?.fullname}
             </Typography>
             <Typography variant="subtitle1">
               Here's a quick overview of your hospital statistics
