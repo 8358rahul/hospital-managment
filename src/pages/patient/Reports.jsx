@@ -118,7 +118,7 @@ const PatientBills = () => {
   return (
     <Box sx={{ my: 4 }}>
       <Typography variant="h4" gutterBottom>
-        My Bills
+        My Reports
       </Typography>
 
       <Box
