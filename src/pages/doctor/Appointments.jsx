@@ -12,24 +12,28 @@ import {
   Button,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import SearchIcon from "@mui/icons-material/Search"; 
-import { useAppSelector } from "../../app/hooks";
-import { 
+import SearchIcon from "@mui/icons-material/Search";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
   appointmentsStatus,
-  fetchDoctorAppointments, 
+  fetchDoctorAppointments,
   selectAppointmentsByDoctor,
 } from "../../features/appointment/appointmentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
-
+import { selectDoctor } from "../../features/doctor/doctorSlice";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { selectPatientStatus } from "../../features/patient/patientSlice";
 const DoctorAppointments = () => {
-  const dispatch = useDispatch();
-  const token = useSelector(selectCurrentToken);
+  const dispatch = useAppDispatch(); 
   const appointments = useAppSelector(selectAppointmentsByDoctor);
   const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const user = useAppSelector(selectDoctor);
+  const status = useAppSelector(selectPatientStatus);
+ 
 
   const handleChipClick = (params) => {
     setSelectedAppointment(params.row);
@@ -41,19 +45,19 @@ const DoctorAppointments = () => {
     setSelectedAppointment(null);
   };
 
-  useEffect(() => {
-    if (token) {
-      dispatch(fetchDoctorAppointments({ token, doctor_id: 1 }));
-    }
-  }, [dispatch, token]);
+  useEffect(() => { 
+      dispatch(fetchDoctorAppointments(user?.id));
+   
+  }, [dispatch]);
 
-  const handleUpdateStatus = (newStatus) => {  
+  const handleUpdateStatus = (newStatus) => {
     const data = {
       status: newStatus,
-      id: selectedAppointment.id
+      id: selectedAppointment.id,
+      doctor_id: user?.id,
     };
     dispatch(appointmentsStatus(data));
-      toast.success("Status Updated Successfully");
+    toast.success("Status Updated Successfully");
     handleClose();
     // Add real dispatch or API call here
   };
@@ -74,7 +78,7 @@ const DoctorAppointments = () => {
       headerName: "Status",
       width: 130,
 
-      renderCell: (params) => { 
+      renderCell: (params) => {
         const status = params.value?.toLowerCase();
         let color = "",
           bg = "";
@@ -109,10 +113,26 @@ const DoctorAppointments = () => {
               textTransform: "capitalize",
               cursor: "pointer",
             }}
-            onClick={() => handleChipClick(params)}
           />
         );
       },
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 100,
+      renderCell: (params) => (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {" "}
+          <MoreVertIcon onClick={() => handleChipClick(params)} />
+        </div>
+      ),
     },
   ];
   //  const filteredAppointments = appointments?.filter((a) =>
@@ -192,17 +212,30 @@ const DoctorAppointments = () => {
           },
         }}
       >
-        <DataGrid
-          rows={appointments?.results}
-          columns={columns}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-          }}
-          pageSizeOptions={[10]}
-          getRowId={(row) => row.id}
-          autoHeight
-          disableRowSelectionOnClick
-        />
+        {status === "loading" ? (
+          <Box>
+            {[...Array(10)].map((_, i) => (
+              <Skeleton
+                key={i}
+                height={50}
+                sx={{ mb: 1 }}
+                variant="rectangular"
+              />
+            ))}
+          </Box>
+        ) : (
+          <DataGrid
+            rows={appointments?.results}
+            columns={columns}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            }}
+            pageSizeOptions={[10]}
+            getRowId={(row) => row.id}
+            autoHeight
+            disableRowSelectionOnClick
+          />
+        )}
       </Box>
 
       {/* Status Dialog */}

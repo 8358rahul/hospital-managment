@@ -58,7 +58,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false); 
   const user = useAppSelector(selectDoctor);
   const dispatch = useAppDispatch();
-
+ 
   // Initial values from Redux store
   const initialValues = {
     email: user?.email || "",
@@ -74,12 +74,7 @@ const Profile = () => {
   }; 
  
  
-  useEffect(() => {
-    const getProfile = async () => {
-      await dispatch(fetchDoctor());
-    };
-    getProfile();
-  }, []);
+ 
   const handleSubmit = (values) => {
     console.log("data:", values);
     dispatch(updateDoctor(values));
