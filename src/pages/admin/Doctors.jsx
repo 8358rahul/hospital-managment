@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
    Container,
   Box,
@@ -10,7 +10,10 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
-  IconButton
+  IconButton,
+  useTheme,
+  useMediaQuery,
+  Pagination
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -21,15 +24,31 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { mockDoctors } from '../../utils/mockData';
 import DoctorForm from './DoctorForm';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../app/hooks';
+import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlice';
 
 const DoctorsManagement = () => {
-  const [doctors, setDoctors] = useState(mockDoctors);
+  const doctors = useAppSelector(selectAllDoctors);
+
   const [openDialog, setOpenDialog] = useState(false);
     const [search, setSearch] = useState('');
+      const [page, setPage] = useState(1);
+    
     const [currentDoctor, setCurrentDoctor] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, doctorId: null });
+ const itemsPerPage = 6;
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+   const dispatch = useDispatch();
 
-  
+ 
+    useEffect(() => {
+        const getDoctors = async () => {
+          await dispatch(fetchDoctors());
+        };
+        getDoctors();
+      }, []);
 
   const handleAdd = () => {
     setCurrentDoctor({
@@ -48,7 +67,9 @@ const DoctorsManagement = () => {
     setCurrentDoctor(doctor);
     setOpenDialog(true);
   };
-
+const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   const handleDelete = (id) => {
     setConfirmDelete({ open: true, doctorId: id });
@@ -78,23 +99,23 @@ const DoctorsManagement = () => {
   };
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
+    { field: 'fullname', headerName: 'Name', flex: 1, minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 1.5, minWidth: 150 },
     { field: 'specialization', headerName: 'Specialization', flex: 1, minWidth: 150 },
     { field: 'experience', headerName: 'Experience (years)', flex: 0.6, minWidth: 120 },
-    { field: 'consultationFee', headerName: 'Fee', flex: 0.5, minWidth: 110 },
+    { field: 'consultation_fee', headerName: 'Fee', flex: 0.5, minWidth: 110 },
    {
       field: 'status',
       headerName: 'Status',
       width: 130,
       renderCell: (params) => (
         <Chip
-          label={params.value === 'Active' ? 'Active' : 'Inactive'}
+          label={params.value === 'Active' ? 'Active' : 'Active'}
           size="small"
           onClick={() => handleStatusToggle(params.row.id)}
           sx={{
-            backgroundColor: params.value === 'Active' ? '#c8e6c9' : '#f8d7da',
-            color: params.value === 'Active' ? '#256029' : '#a94442',
+            backgroundColor: params.value === 'Active' ? '#c8e6c9' : '#c8e6c9',
+            color: params.value === 'Active' ? '#256029' : '#256029',
             fontWeight: 600,
             px: 1.5,
             borderRadius: '6px',
@@ -104,24 +125,36 @@ const DoctorsManagement = () => {
           }}
         />
       ),
-    },   {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 0.5,
-      minWidth: 110,
-      sortable: false,
-      renderCell: (params) => (
-        <Box>
-          <IconButton onClick={() => handleEdit(params.row)}>
-            <EditIcon color="primary" />
-          </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon color="error" />
-          </IconButton>
-        </Box>
-      ),
-    },
+    },  
+    //  {
+    //   field: 'actions',
+    //   headerName: 'Actions',
+    //   flex: 0.5,
+    //   minWidth: 110,
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <Box>
+    //       <IconButton onClick={() => handleEdit(params.row)}>
+    //         <EditIcon color="primary" />
+    //       </IconButton>
+    //       {/* <IconButton onClick={() => handleDelete(params.row.id)}>
+    //         <DeleteIcon color="error" />
+    //       </IconButton> */}
+    //     </Box>
+    //   ),
+    // },
   ];
+const filteredDoctors = useMemo(() => {
+  return doctors.filter((doc) =>
+    doc.fullname?.toLowerCase().includes(search.toLowerCase())
+  );
+}, [doctors, search]);
+
+const paginatedDoctors = useMemo(() => {
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return filteredDoctors.slice(startIndex, endIndex);
+}, [filteredDoctors, page]);
 
   return (
     <Container maxWidth="xl" disableGutters>
@@ -168,7 +201,7 @@ const DoctorsManagement = () => {
               ),
             }}
           />
-
+{/* 
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}
            sx={{
               width: {
@@ -180,7 +213,7 @@ const DoctorsManagement = () => {
           >
 
             Add Doctor
-          </Button>
+          </Button> */}
         </Box>
 
         <Box sx={{
@@ -207,7 +240,7 @@ const DoctorsManagement = () => {
             },
           }}>
           <DataGrid
-            rows={doctors}
+            rows={paginatedDoctors}
             columns={columns}
             pageSizeOptions={[10]}
             getRowId={(row) => row.id}
@@ -232,6 +265,16 @@ const DoctorsManagement = () => {
           />
 
         </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+                  <Pagination
+                    count={Math.ceil(paginatedDoctors?.length / itemsPerPage)}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size={isSmallScreen ? 'small' : 'medium'}
+                    shape="rounded"
+                  />
+                </Box>
       </Box>
 
       <DoctorForm

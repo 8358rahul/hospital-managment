@@ -90,7 +90,7 @@ useEffect(() => {
                borderRadius: '6px',
                fontSize: '0.75rem',
                textTransform: 'capitalize',
-               cursor: 'pointer',
+              //  cursor: 'pointer',
              }}
            
            />

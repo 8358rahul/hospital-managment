@@ -116,7 +116,14 @@ const AdminAppointments = () => {
   ];
 
  
-  const allRows = Array.isArray(appointments?.results) ? appointments.results : [];
+ const allRows = useMemo(() => {
+  if (!Array.isArray(appointments?.results)) return [];
+  return appointments.results.map((item) => ({
+    ...item,
+    patientName: item?.patient?.first_name || 'N/A',
+    doctorName: item?.doctor?.first_name || 'N/A',
+  }));
+}, [appointments]);
 
   const filteredRows = useMemo(() => {
     return allRows.filter((row) =>

@@ -43,14 +43,17 @@ export const addNewPatient = createAsyncThunk(
 // 3. Update Patient
 export const updatePatientById = createAsyncThunk(
   'patients/updatePatientById',
-  async (updatedPatient, { getState, rejectWithValue }) => {
-    try {
-      const token = getState().auth.token;
-      const response = await axios.put(`${API_URL}/${updatedPatient.id}`, updatedPatient, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  async ({newPatient, token}, {  rejectWithValue }) => {
+   try {
+      const response = await axios.patch(
+        `${API_URL}/patient/patient_update_profile/`,
+        newPatient,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
