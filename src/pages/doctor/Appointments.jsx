@@ -142,6 +142,7 @@ const DoctorAppointments = () => {
       renderCell: (params) => (
         <div
           style={{
+            marginTop:"10px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
