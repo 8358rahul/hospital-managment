@@ -13,11 +13,11 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectDoctor, shareReport } from "../../features/doctor/doctorSlice";
+import { selectUserDetail, shareReport } from "../../features/doctor/doctorSlice";
 import { toast } from "react-toastify";
 
 const ShareReportForm = ({ patientId, setShareDialog }) => {
-    const user = useAppSelector(selectDoctor);
+    const user = useAppSelector(selectUserDetail);
 
   const [report, setReport] = useState({ 
     document_type: "lab",

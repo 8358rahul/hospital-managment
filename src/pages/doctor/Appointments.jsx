@@ -23,7 +23,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../features/auth/authSlice";
 import { toast } from "react-toastify";
-import { selectDoctor } from "../../features/doctor/doctorSlice";
+import { selectUserDetail } from "../../features/doctor/doctorSlice";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { selectPatientStatus } from "../../features/patient/patientSlice";
 const DoctorAppointments = () => {
@@ -32,7 +32,7 @@ const DoctorAppointments = () => {
   const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const user = useAppSelector(selectDoctor);
+  const user = useAppSelector(selectUserDetail);
   const status = useAppSelector(selectPatientStatus);
 
   const handleChipClick = (params) => {

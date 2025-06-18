@@ -16,8 +16,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import dashboardBg from "../../assets/dashboard.jpg";
-import { fetchDoctor } from "../../features/doctor/doctorSlice";
+import dashboardBg from "../../assets/dashboard.jpg"; 
 import { useAppDispatch } from "../../app/hooks";
 
 const totalDoctors = 12;
@@ -124,12 +123,7 @@ const DoctorDashboard = () => {
 
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const getProfile = async () => {
-      await dispatch(fetchDoctor());
-    };
-    getProfile();
-  }, []);
+
 
 
     return (

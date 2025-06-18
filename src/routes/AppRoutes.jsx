@@ -40,12 +40,23 @@ import SettingsPage from "../pages/Setting";
 import ProfilePage from "../pages/Profile";
 import { useEffect } from "react";
 import Profile from "../pages/doctor/Profile";
+import { fetchUserDetail } from "../features/doctor/doctorSlice";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
   const role = useSelector(selectCurrentRole);
   const dispatch = useDispatch();
+
+      const getProfile = async () => {
+        await dispatch(fetchUserDetail());
+      };
  
+      useEffect(() => { 
+        if(token && role){
+          getProfile();
+        }
+      },[token,dispatch,role]);
+
   useEffect(() => {
     const checkUserIsLoggedIn = () => {
       try {
@@ -84,6 +95,8 @@ const AppRoutes = () => {
         <Route path="reports" element={<AdminReports />} />
         <Route path="reports/generate" element={<GenerateReport />} />
         <Route path="reports/:id" element={<ViewReport />} />
+        <Route path="profile" element={<Profile />} />
+
       </Route>
 
       {/* Doctor Routes */}
@@ -123,8 +136,9 @@ const AppRoutes = () => {
         <Route path="reports/:id" element={<ReportDetails />} />
         <Route path="bills" element={<PatientBills />} />
         <Route path="bills/:id" element={<BillDetails />} />
-        <Route path="*" element={<SettingsPage />} />
-        <Route path="*" element={<ProfilePage />} />
+        {/* <Route path="*" element={<SettingsPage />} />  */}
+        <Route path="profile" element={<Profile />} />
+
       </Route>
 
       {/* Default Route */}

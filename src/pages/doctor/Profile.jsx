@@ -17,11 +17,11 @@ import { Formik, Form, Field, FieldArray } from "formik";
 import { TextField, Select } from "formik-mui";
 import MenuItem from "@mui/material/MenuItem";
 import * as Yup from "yup";
-import {
-  fetchDoctor,
-  selectDoctor,
+import { 
+  selectUserDetail,
   updateDoctor,
 } from "../../features/doctor/doctorSlice"; 
+import { selectCurrentRole } from "../../features/auth/authSlice";
 
 // Validation Schema
 const profileSchema = Yup.object().shape({
@@ -56,7 +56,8 @@ const daysOfWeek = [
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false); 
-  const user = useAppSelector(selectDoctor);
+  const user = useAppSelector(selectUserDetail);
+  const role = useAppSelector(selectCurrentRole)
   const dispatch = useAppDispatch();
  
   // Initial values from Redux store
@@ -75,8 +76,7 @@ const Profile = () => {
  
  
  
-  const handleSubmit = (values) => {
-    console.log("data:", values);
+  const handleSubmit = (values) => { 
     dispatch(updateDoctor(values));
     setIsEditing(false);
   };
@@ -89,7 +89,7 @@ const Profile = () => {
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Doctor Profile
+          My Profile
         </Typography>
 
         <Card variant="outlined">

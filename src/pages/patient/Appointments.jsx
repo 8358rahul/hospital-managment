@@ -25,8 +25,7 @@ import { selectCurrentToken } from '../../features/auth/authSlice';
 const PatientAppointments = () => {
   const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
-  const appointments = useSelector(selectAllAppointments);
- console.log("appointments", appointments)
+  const appointments = useSelector(selectAllAppointments); 
   const status = useSelector(selectAppointmentStatus);
 
   const [currentPage, setCurrentPage] = useState(1);

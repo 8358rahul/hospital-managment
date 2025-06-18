@@ -1,17 +1,20 @@
 import { Menu, MenuItem ,Avatar, Typography, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import { Logout } from '@mui/icons-material';
 
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../app/hooks';
 import { logout, selectCurrentUser } from '../../features/auth/authSlice';
+import { selectUserDetail } from '../../features/doctor/doctorSlice';
 
 
 const PatientMenu = ({ anchorEl, handleClose }) => {
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
-  const user = useAppSelector(selectCurrentUser); // Get the logged-in user's info
-
+  const user = useAppSelector(selectUserDetail); 
+  console.log('user123',user)
+ 
+  const navigation = useNavigate()
   const handleLogout = () => {
     dispatch(logout());
     handleClose();
@@ -59,8 +62,10 @@ const PatientMenu = ({ anchorEl, handleClose }) => {
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
-      <MenuItem>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <MenuItem> 
+             <Box sx={{ display: 'flex', alignItems: 'center' }} onClick={()=>{
+          navigation('profile')
+        }}>
           <Avatar alt={user?.name} src={user?.avatar}>
             {!user?.avatar && getInitials(user?.name)} {/* Show initials if avatar is not available */}
           </Avatar>

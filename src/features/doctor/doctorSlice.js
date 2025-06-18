@@ -3,13 +3,13 @@ import API from '../api';
   
 const initialState = { 
   doctors: [],
-  doctor:{},
+  user:{},
   status: 'idle',
   error: null,
 };
 
-export const fetchDoctor = createAsyncThunk(
-  'doctors/fetchDoctor',
+export const fetchUserDetail = createAsyncThunk(
+  'doctors/fetchUserDetail',
   async (_, { rejectWithValue }) => {
     try { 
        const response = await API.get("/accounts/profile/")
@@ -37,7 +37,7 @@ export const updateDoctor = createAsyncThunk(
   async (updatedDoctor, { rejectWithValue,dispatch }) => {
     try {
        await API.patch('accounts/doctor/doctor_update_profile/', updatedDoctor);
-        dispatch(fetchDoctor())
+        dispatch(fetchUserDetail())
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -82,15 +82,16 @@ const doctorSlice = createSlice({
   reducers: {},
     extraReducers: (builder) => {
     builder
-      // Fetch doctor
-      .addCase(fetchDoctor.pending, (state) => {
+      // Fetch fetchUserDetail
+      .addCase(fetchUserDetail.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchDoctor.fulfilled, (state, action) => {
+      .addCase(fetchUserDetail.fulfilled, (state, action) => { 
+
         state.status = 'succeeded'; 
-        state.doctor = action.payload;
+        state.user = action.payload;
       })
-      .addCase(fetchDoctor.rejected, (state, action) => {
+      .addCase(fetchUserDetail.rejected, (state, action) => {
         state.status = 'failed'; 
       }) 
 
@@ -123,7 +124,9 @@ const doctorSlice = createSlice({
 export const { } = doctorSlice.actions;
 
 export const selectAllDoctors = (state) => state.doctors.doctors;
-export const selectDoctor = (state) =>state.doctors.doctor;
+export const selectUserDetail = (state) =>{ 
+  return state.doctors.user
+};
 export const selectDoctorStatus = (state) => state.doctors.status;
 export const selectDoctorError = (state) => state.doctors.error;
 export const selectDoctorById = (state, id) => 
