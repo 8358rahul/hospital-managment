@@ -16,6 +16,7 @@ import {
   Avatar,
   useMediaQuery,
   useTheme,
+  Stack
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../app/hooks'; 
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
