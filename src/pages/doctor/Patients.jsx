@@ -18,7 +18,6 @@ import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import AddPatientForm from "../admin/AddPatientForm";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ShareIcon from "@mui/icons-material/Share";
 import { useAppSelector } from "../../app/hooks";
@@ -28,38 +27,39 @@ import {
   selectPatientStatus,
 } from "../../features/patient/patientSlice";
 import { useEffect, useState } from "react";
-import { selectCurrentToken } from "../../features/auth/authSlice";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ShareReportForm from "../../components/doctor/ShareReportForm";
+import { useDebounce } from "../../app/useDebounce";
 
 const DoctorPatients = () => {
   const dispatch = useDispatch();
   const patients = useAppSelector(selectAllPatients);
-  const navigation = useNavigate();
   const [search, setSearch] = useState("");
-  const [localPatients, setLocalPatients] = useState(patients);
+  const [localPatients, setLocalPatients] = useState([]);
   const status = useAppSelector(selectPatientStatus);
   const [openDialog, setOpenDialog] = useState(false);
+  const [shareDialog, setShareDialog] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientStatus, setSelectedPatientStatus] = useState("");
-  const [confirmDelete, setConfirmDelete] = useState({
-    open: false,
-    doctorId: null,
-  });
+const debouncedSearch = useDebounce(search, 300);
+
+
+
+useEffect(()=>{
+  setLocalPatients(patients.filter((p) => p.fullname.toLowerCase().includes(debouncedSearch.toLowerCase())))
+},[debouncedSearch])
 
   // Fetch patients on mount
   useEffect(() => {
-    dispatch(fetchPatients());
+    dispatch(fetchPatients()); 
   }, [dispatch]);
 
-  const handleStatusToggle = (id) => {
-    const patient = localPatients.find((p) => p.id === id);
-    if (!patient) return;
-
-    setSelectedPatientId(id);
-    setSelectedPatientStatus(patient.status);
-    setOpenDialog(true);
-  };
+ 
+  useEffect(()=>{
+    setLocalPatients(patients)
+  },[patients])
 
   const handleConfirmStatusChange = () => {
     const updated = localPatients.map((p) =>
@@ -78,11 +78,7 @@ const DoctorPatients = () => {
     setOpenDialog(false);
     setSelectedPatientId(null);
     setSelectedPatientStatus("");
-  };
-
-  //  const filteredPatients = localPatients.filter((p) =>
-  //    p.name.toLowerCase().includes(search.toLowerCase())
-  //  );
+  }; 
   const [addPatientOpen, setAddPatientOpen] = useState(false);
 
   const handleAddPatient = (newPatient) => {
@@ -94,69 +90,56 @@ const DoctorPatients = () => {
     setLocalPatients((prev) => [...prev, newPatientWithId]);
     setAddPatientOpen(false);
   };
-  const handleEdit = (doctor) => {
-    setCurrentDoctor(doctor);
-    setOpenDialog(true);
-  };
 
-  const handleDelete = (id) => {
-    setConfirmDelete({ open: true, doctorId: id });
+  const handleRefresh = () => {
+     dispatch(fetchPatients());
   };
-
-  const confirmDeleteDoctor = () => {
-    setDoctors(
-      doctors.filter((doctor) => doctor.id !== confirmDelete.doctorId)
-    );
-    setConfirmDelete({ open: false, doctorId: null });
-  };
-
-  const handleRefresh = () => {};
 
   const columns = [
-    { field: "name", headerName: "Name", flex: 1, minWidth: 130 },
-    { field: "email", headerName: "Email", flex: 1.5, minWidth: 160 },
-    { field: "age", headerName: "Age", width: 90 },
+    { field: "fullname", headerName: "Name", flex: 1, minWidth: 130, },
+    { field: "email", headerName: "Email", flex: 1.5, minWidth: 160 }, 
     { field: "gender", headerName: "Gender", width: 120 },
-    { field: "bloodType", headerName: "Blood Type", width: 120 },
+    { field: "blood_type", headerName: "Blood Type", width: 120 },
     { field: "phone", headerName: "Phone", flex: 1, minWidth: 150 },
     { field: "address", headerName: "Address", flex: 2, minWidth: 220 },
-    {
-      field: "status",
-      headerName: "Status",
-      width: 130,
-      renderCell: (params) => (
-        <Chip
-          label={params.value === "Active" ? "Active" : "Inactive"}
-          size="small"
-          onClick={() => handleStatusToggle(params.row.id)}
-          sx={{
-            backgroundColor: params.value === "Active" ? "#c8e6c9" : "#f8d7da",
-            color: params.value === "Active" ? "#256029" : "#a94442",
-            fontWeight: 600,
-            px: 1.5,
-            borderRadius: "6px",
-            fontSize: "0.75rem",
-            textTransform: "capitalize",
-            cursor: "pointer",
-          }}
-        />
-      ),
-    },
+    // {
+    //   field: "status",
+    //   headerName: "Status",
+    //   width: 130,
+    //   renderCell: (params) => (
+    //     <Chip
+    //       label={params.value === "Active" ? "Active" : "Inactive"}
+    //       size="small"
+    //       onClick={() => handleStatusToggle(params.row.id)}
+    //       sx={{
+    //         backgroundColor: params.value === "Active" ? "#c8e6c9" : "#f8d7da",
+    //         color: params.value === "Active" ? "#256029" : "#a94442",
+    //         fontWeight: 600,
+    //         px: 1.5,
+    //         borderRadius: "6px",
+    //         fontSize: "0.75rem",
+    //         textTransform: "capitalize",
+    //         cursor: "pointer",
+    //       }}
+    //     />
+    //   ),
+    // },
     {
       field: "actions",
       headerName: "Actions",
       flex: 0.5,
-      minWidth: 110,
+      minWidth: 80,
       sortable: false,
       renderCell: (params) => (
-        <Box>
-          <IconButton onClick={() => handleEdit(params.row)}>
-            <EditIcon color="primary" />
-          </IconButton>
-          <IconButton onClick={() => navigation("/doctor/patients",params)}>
-             <DeleteIcon color="error" />
-           </IconButton>
-        </Box>
+        <IconButton
+          onClick={() =>{
+              setSelectedPatientId(params.row.id);
+            setShareDialog(true)}}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <ShareIcon color="primary" />
+        </IconButton>
       ),
     },
   ];
@@ -247,7 +230,6 @@ const DoctorPatients = () => {
           overflowX: "auto",
           "& .MuiDataGrid-root": {
             backgroundColor: "white",
-            border: "none",
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: "#ffffff",
@@ -280,7 +262,7 @@ const DoctorPatients = () => {
           </Box>
         ) : (
           <DataGrid
-            rows={patients}
+            rows={localPatients}
             columns={columns}
             initialState={{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },
@@ -289,9 +271,6 @@ const DoctorPatients = () => {
             getRowId={(row) => row?.id + new Date().getTime()}
             disableRowSelectionOnClick
             autoHeight
-            sx={{
-              minWidth: "800px", // Set a min width that exceeds container width
-            }}
           />
         )}
       </Box>
@@ -324,6 +303,21 @@ const DoctorPatients = () => {
             Confirm
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={shareDialog}
+        onClose={() => setShareDialog(false)}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogContent>
+          <ShareReportForm
+            patientId={selectedPatientId}
+            setShareDialog={setShareDialog}
+          />
+        </DialogContent>
       </Dialog>
 
       <AddPatientForm

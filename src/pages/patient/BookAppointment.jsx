@@ -33,7 +33,6 @@ const BookAppointment = () => {
    
 
   const handleSubmit = (e ) => { 
- 
     e.preventDefault(); 
     toast('Appointment booked successfully!');
     navigate('/patient/appointments');

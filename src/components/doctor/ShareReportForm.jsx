@@ -1,32 +1,67 @@
-import { Box, Button, Card, CardContent, FormControl, InputLabel, MenuItem, Select, TextField, Typography,Grid } from '@mui/material';
-import { useState } from 'react';  
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  Grid,
+} from "@mui/material";
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectDoctor, shareReport } from "../../features/doctor/doctorSlice";
+import { toast } from "react-toastify";
+
+const ShareReportForm = ({ patientId, setShareDialog }) => {
+    const user = useAppSelector(selectDoctor);
+
+  const [report, setReport] = useState({ 
+    document_type: "lab",
+    content: "",
+    document: [""],
+    appointment: user?.id
+  });
+
+  const dispatch = useAppDispatch();
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files).map((file) => file.name);
+    setReport((prev) => ({ ...prev, document: files }));
+  };
 
  
 
-const ShareReportForm = ({ patientId, onShare }) => {
-  const [report, setReport] = useState({
-    title: '',
-    type: 'lab',
-    content: '',
-    attachments: ['']
-  });
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onShare({
-      patientId,
-      doctorId: '', // Will be set by the parent component
-      date: new Date().toISOString(),
-      ...report,
-      attachments: report.attachments.filter(a => a.trim() !== '')
-    });
-    setReport({
-      title: '',
-      type: 'lab',
-      content: '',
-      attachments: ['']
-    });
-  };
+  try {
+    const resultAction = await dispatch(
+      shareReport({ ...report, id:patientId })
+    );
+
+    if (shareReport.rejected.match(resultAction)) {
+      // ❌ Handle the error (e.g., show toast or dialog)
+      console.error("Error:", resultAction.payload); 
+      toast.error("Failed to share report: " +resultAction.payload?.detail);
+    } else {
+      // ✅ Success
+      setShareDialog(false);
+      setReport({
+        document_type: "lab",
+        content: "",
+        document: [""],
+        appointment: "",
+      });
+    }
+  } catch (error) {
+    console.error("Unexpected Error:", error);
+  }
+};
+
 
   return (
     <Card variant="outlined">
@@ -35,24 +70,28 @@ const ShareReportForm = ({ patientId, onShare }) => {
           Share New Report with Patient
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid container spacing={2} direction="column">
+            {/* <Grid item xs={12}>
               <TextField
                 fullWidth
                 label="Report Title"
                 value={report.title}
-                onChange={(e) => setReport({...report, title: e.target.value})}
+                onChange={(e) =>
+                  setReport({ ...report, title: e.target.value })
+                }
                 required
               />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
+            </Grid> */}
+
+            <Grid item xs={12}>
+              <FormControl fullWidth required>
                 <InputLabel>Report Type</InputLabel>
                 <Select
                   value={report.type}
                   label="Report Type"
-                  onChange={(e) => setReport({...report, type: e.target.value})}
-                  required
+                  onChange={(e) =>
+                    setReport({ ...report, type: e.target.value })
+                  }
                 >
                   <MenuItem value="lab">Lab Results</MenuItem>
                   <MenuItem value="diagnostic">Diagnostic Report</MenuItem>
@@ -61,6 +100,7 @@ const ShareReportForm = ({ patientId, onShare }) => {
                 </Select>
               </FormControl>
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -68,51 +108,33 @@ const ShareReportForm = ({ patientId, onShare }) => {
                 multiline
                 rows={4}
                 value={report.content}
-                onChange={(e) => setReport({...report, content: e.target.value})}
+                onChange={(e) =>
+                  setReport({ ...report, content: e.target.value })
+                }
                 required
               />
             </Grid>
+
             <Grid item xs={12}>
-              <Typography variant="subtitle2" gutterBottom>
-                Attachments (URLs)
-              </Typography>
-              {report.attachments.map((url, index) => (
-                <Box key={index} sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                  <TextField
-                    fullWidth
-                    value={url}
-                    onChange={(e) => {
-                      const newAttachments = [...report.attachments];
-                      newAttachments[index] = e.target.value;
-                      setReport({...report, attachments: newAttachments});
-                    }}
-                    placeholder="https://example.com/report.pdf"
-                  />
-                  {index === report.attachments.length - 1 ? (
-                    <Button
-                      variant="outlined"
-                      onClick={() => setReport({...report, attachments: [...report.attachments, '']})}
-                    >
-                      Add
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => {
-                        const newAttachments = [...report.attachments];
-                        newAttachments.splice(index, 1);
-                        setReport({...report, attachments: newAttachments});
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </Box>
-              ))}
+              <Button variant="outlined" component="label" fullWidth>
+                Upload Attachment(s)
+                <input
+                  type="file"
+                  hidden
+                  multiple
+                  onChange={handleFileChange}
+                />
+              </Button>
+              {report.document?.length > 0 &&
+                report?.document.map((file, idx) => (
+                  <Typography key={idx} variant="body2" mt={0.5}>
+                    📎 {file}
+                  </Typography>
+                ))}
             </Grid>
+
             <Grid item xs={12}>
-              <Button type="submit" variant="contained">
+              <Button type="submit" variant="contained" fullWidth>
                 Share Report
               </Button>
             </Grid>

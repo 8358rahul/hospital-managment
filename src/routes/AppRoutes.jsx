@@ -35,8 +35,7 @@ import PatientRecords from "../pages/patient/Records";
 import PatientReports from "../pages/patient/Reports";
 import ReportDetails from "../pages/patient/ReportDetails";
 import PatientBills from "../pages/patient/Bills";
-import BillDetails from "../pages/patient/BillDetails";
-import PatientDetails from "../pages/doctor/PatientDetails";
+import BillDetails from "../pages/patient/BillDetails"; 
 import SettingsPage from "../pages/Setting";
 import ProfilePage from "../pages/Profile";
 import { useEffect } from "react";
@@ -100,8 +99,7 @@ const AppRoutes = () => {
       >
         <Route index element={<DoctorDashboard />} />
         <Route path="appointments" element={<DoctorAppointments />} />
-        <Route path="patients" element={<DoctorPatients />} />
-        <Route path="patients/:patientId" element={<PatientDetails />} />
+        <Route path="patients" element={<DoctorPatients />} /> 
         <Route path="profile" element={<Profile />} />
       </Route>
 

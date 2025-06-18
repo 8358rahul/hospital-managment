@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Skeleton,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
@@ -26,14 +27,13 @@ import { selectDoctor } from "../../features/doctor/doctorSlice";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { selectPatientStatus } from "../../features/patient/patientSlice";
 const DoctorAppointments = () => {
-  const dispatch = useAppDispatch(); 
+  const dispatch = useAppDispatch();
   const appointments = useAppSelector(selectAppointmentsByDoctor);
   const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const user = useAppSelector(selectDoctor);
   const status = useAppSelector(selectPatientStatus);
- 
 
   const handleChipClick = (params) => {
     setSelectedAppointment(params.row);
@@ -45,9 +45,8 @@ const DoctorAppointments = () => {
     setSelectedAppointment(null);
   };
 
-  useEffect(() => { 
-      dispatch(fetchDoctorAppointments(user?.id));
-   
+  useEffect(() => {
+    dispatch(fetchDoctorAppointments(user?.id));
   }, [dispatch]);
 
   const handleUpdateStatus = (newStatus) => {
@@ -65,8 +64,27 @@ const DoctorAppointments = () => {
   const columns = [
     { field: "date", headerName: "Date", width: 110 },
     { field: "time", headerName: "Time", width: 100 },
-    { field: "patientName", headerName: "Patient", flex: 1, minWidth: 140 },
-    { field: "doctorName", headerName: "Doctor", flex: 1, minWidth: 140 },
+    {
+      field: "patient",
+      headerName: "Patient",
+      flex: 1,
+      minWidth: 140,
+      valueGetter: (params) => { 
+        return  `${params.first_name || ""} ${params.last_name || ""}`.trim()
+        
+      },
+    },
+
+    {
+      field: "doctor",
+      headerName: "Doctor",
+      flex: 1,
+      minWidth: 140,
+      valueGetter: (params) => { 
+                return  `${params.first_name || ""} ${params.last_name || ""}`.trim()
+
+      },
+    },
     {
       field: "reason",
       headerName: "Reason",

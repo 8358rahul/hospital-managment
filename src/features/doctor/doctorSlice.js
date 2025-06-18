@@ -44,6 +44,37 @@ export const updateDoctor = createAsyncThunk(
   }
 );
 
+export const shareReport = createAsyncThunk(
+  'doctors/shareReport',
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const formData = new FormData();
+ 
+
+      
+
+      // Append each field from the `updatedDoctor` object
+      for (const key in data) {
+        if (data[key] !== undefined && data[key] !== null) {
+          formData.append(key, data[key]);
+        }
+      }
+ 
+      // Make the PATCH request using multipart/form-data
+      let result = await API.post(`appointments/send-report-to-patient/${data.id}/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+ 
+      console.log("result", result);
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+
 
 const doctorSlice = createSlice({
   name: 'doctor',
@@ -72,6 +103,18 @@ const doctorSlice = createSlice({
         state.doctors = action.payload?.results;
       })
       .addCase(fetchDoctors.rejected, (state, action) => {
+        state.status = 'failed'; 
+      }) 
+
+            // Share report
+      .addCase(shareReport.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(shareReport.fulfilled, (state, action) => {
+        state.status = 'succeeded'; 
+        state.doctors = action.payload?.results;
+      })
+      .addCase(shareReport.rejected, (state, action) => {
         state.status = 'failed'; 
       }) 
   }
