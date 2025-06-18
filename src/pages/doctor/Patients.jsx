@@ -1,5 +1,4 @@
-import {
-  Box,
+import {  Box,
   Button,
   TextField,
   Typography,
@@ -146,77 +145,62 @@ useEffect(()=>{
 
   return (
     <Box
-      sx={{
-        width: "100%",
-        px: { xs: 1, sm: 2, lg: 4 },
-        py: 4,
-        boxSizing: "border-box",
-        maxWidth: "100%",
-      }}
-    >
-      <Typography
-        variant="h5"
-        fontWeight="bold"
-        gutterBottom
-        sx={{ textAlign: { xs: "center", sm: "left" } }}
+        sx={{
+          width: '100%',
+          px: { xs: 1, sm: 2, lg: 4 },
+          py: 4,
+          boxSizing: 'border-box',
+          maxWidth: '100%'
+        }}
       >
-        Patients Management
-      </Typography>
-
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        spacing={2}
-        justifyContent="space-between"
-        alignItems={{ xs: "stretch", md: "center" }}
-        mb={2}
-        flexWrap="wrap"
-      >
-        <TextField
-          variant="outlined"
-          size="small"
-          placeholder="Search by name"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{
-            width: { xs: "100%", sm: "300px" },
-            backgroundColor: "#fff",
-          }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{ width: { xs: "100%", sm: "auto" } }}
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ textAlign: { xs: 'center', sm: 'left' } }}
         >
-          <Button
+          Patients Management
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            mb: 2,
+            flexWrap: 'wrap',
+          }}
+        >
+          <TextField
             variant="outlined"
-            startIcon={<RefreshIcon />}
-            onClick={handleRefresh}
-            fullWidth={true}
+            size="small"
+            placeholder="Search by name"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             sx={{
-              width: {
-                xs: "100%",
-                sm: "auto",
-              },
+              width: { xs: '100%', sm: '300px' },
+              backgroundColor: '#fff',
             }}
-          >
-            Refresh
-          </Button>
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+          />
+
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             sx={{
               width: {
-                xs: "100%",
-                sm: "auto",
-                background: "linear-gradient(90deg, #2196f3, #2196f3)",
-              },
+                xs: '100%', sm: 'auto',
+                background: 'linear-gradient(90deg, #2196f3, #2196f3)',
+
+              }
             }}
             onClick={() => setAddPatientOpen(true)}
           >
@@ -268,12 +252,11 @@ useEffect(()=>{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },
             }}
             pageSizeOptions={[10]}
-            getRowId={(row) => row?.id + new Date().getTime()}
+            getRowId={(row) => row.id}
             disableRowSelectionOnClick
             autoHeight
           />
-        )}
-      </Box>
+        </Box>
 
       {/* Confirmation Dialog */}
       <Dialog
@@ -320,12 +303,12 @@ useEffect(()=>{
         </DialogContent>
       </Dialog>
 
-      <AddPatientForm
-        open={addPatientOpen}
-        onClose={() => setAddPatientOpen(false)}
-        onSave={handleAddPatient}
-      />
-    </Box>
+        <AddPatientForm
+          open={addPatientOpen}
+          onClose={() => setAddPatientOpen(false)}
+          onSave={handleAddPatient}
+        />
+      </Box>
   );
 };
 

@@ -12,10 +12,14 @@ import {
   Container,
   IconButton,
   Pagination,
+  Skeleton,
+  Stack
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import RefreshIcon from "@mui/icons-material/Refresh";
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -35,11 +39,13 @@ const AdminPatients = () => {
   const dispatch = useAppDispatch();
   const token = useSelector(selectCurrentToken);
   const patients = useAppSelector(selectAllPatients);
+  const status = useAppSelector(selectAllPatients);
 
   const [search, setSearch] = useState('');
   const [localPatients, setLocalPatients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
+const [editPatient, setEditPatient] = useState(null);
 
   const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
@@ -156,24 +162,25 @@ const AdminPatients = () => {
     //     />
     //   ),
     // },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 0.5,
-      sortable: false,
-      renderCell: (params) => (
-        <Box>
-          <IconButton onClick={() => {}}>
-            <EditIcon color="primary" />
-          </IconButton>
-          {/* <IconButton onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon color="error" />
-          </IconButton> */}
-        </Box>
-      ),
-    },
+    // {
+    //   field: 'actions',
+    //   headerName: 'Actions',
+    //   flex: 0.5,
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <Box>
+    //       {/* <IconButton onClick={() => {}}>
+    //         <EditIcon color="primary" />
+    //       </IconButton> */}
+    //       {/* <IconButton onClick={() => handleDelete(params.row.id)}>
+    //         <DeleteIcon color="error" />
+    //       </IconButton> */}
+    //     </Box>
+    //   ),
+    // },
   ];
 
+  const handleRefresh = () => {};
   return (
     <Container maxWidth="xl" disableGutters>
       <Box sx={{ px: { xs: 1, sm: 2 }, py: 4, width: '100%' }}>
@@ -181,7 +188,7 @@ const AdminPatients = () => {
           Patients Management
         </Typography>
 
-        <Box
+        <Stack
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
@@ -206,15 +213,41 @@ const AdminPatients = () => {
               ),
             }}
           />
+          <Stack
+          direction="row"
+          spacing={2}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+            fullWidth={true}
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "auto",
+              },
+            }}
+          >
+            Refresh
+          </Button>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            sx={{ width: { xs: '100%', sm: 'auto' } }}
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "auto",
+                background: "linear-gradient(90deg, #2196f3, #2196f3)",
+              },
+            }}
             onClick={() => setAddPatientOpen(true)}
           >
             Add Patient
           </Button>
-        </Box>
+        </Stack>
+        </Stack>
 
         <Box
           sx={{
@@ -239,6 +272,19 @@ const AdminPatients = () => {
             },
           }}
         >
+
+          {status === "loading" ? (
+          <Box>
+            {[...Array(10)].map((_, i) => (
+              <Skeleton
+                key={i}
+                height={50}
+                sx={{ mb: 1 }}
+                variant="rectangular"
+              />
+            ))}
+          </Box>
+        ) : (
           <DataGrid
             rows={paginated}
             columns={columns}
@@ -247,6 +293,7 @@ const AdminPatients = () => {
             disableRowSelectionOnClick
             hideFooter
           />
+            )}
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>

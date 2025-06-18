@@ -135,10 +135,10 @@ const AdminAppointments = () => {
   const paginatedRows = useMemo(() => {
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-    return allRows.slice(start, end);
-  }, [allRows, currentPage]);
+    return filteredRows.slice(start, end);
+  }, [filteredRows, currentPage]);
 
-  const totalPages = Math.ceil(allRows.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
  return (
     <Container maxWidth="xl" disableGutters>
