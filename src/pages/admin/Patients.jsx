@@ -40,6 +40,7 @@ const AdminPatients = () => {
   const [localPatients, setLocalPatients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
+const [editPatient, setEditPatient] = useState(null);
 
   const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
@@ -156,22 +157,22 @@ const AdminPatients = () => {
     //     />
     //   ),
     // },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 0.5,
-      sortable: false,
-      renderCell: (params) => (
-        <Box>
-          <IconButton onClick={() => {}}>
-            <EditIcon color="primary" />
-          </IconButton>
-          {/* <IconButton onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon color="error" />
-          </IconButton> */}
-        </Box>
-      ),
-    },
+    // {
+    //   field: 'actions',
+    //   headerName: 'Actions',
+    //   flex: 0.5,
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <Box>
+    //       {/* <IconButton onClick={() => {}}>
+    //         <EditIcon color="primary" />
+    //       </IconButton> */}
+    //       {/* <IconButton onClick={() => handleDelete(params.row.id)}>
+    //         <DeleteIcon color="error" />
+    //       </IconButton> */}
+    //     </Box>
+    //   ),
+    // },
   ];
 
   return (

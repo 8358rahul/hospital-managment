@@ -18,8 +18,8 @@ import ReportPopup from './ReportPopup';
 import { useState } from 'react';
 
 const reportTypes = [
-  { type: 'Financial', description: 'Track revenue, expenses and profits.' },
-  { type: 'Inventory', description: 'Monitor stock and inventory levels.' },
+  // { type: 'Financial', description: 'Track revenue, expenses and profits.' },
+  // { type: 'Inventory', description: 'Monitor stock and inventory levels.' },
   { type: 'Patient', description: 'View patient statistics and history.' },
   { type: 'Appointment', description: 'Manage appointment records.' },
 ];

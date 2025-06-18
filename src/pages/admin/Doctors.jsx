@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-   Container,
+  Container,
   Box,
   Button,
   TextField,
@@ -32,23 +32,23 @@ const DoctorsManagement = () => {
   const doctors = useAppSelector(selectAllDoctors);
 
   const [openDialog, setOpenDialog] = useState(false);
-    const [search, setSearch] = useState('');
-      const [page, setPage] = useState(1);
-    
-    const [currentDoctor, setCurrentDoctor] = useState(null);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+
+  const [currentDoctor, setCurrentDoctor] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, doctorId: null });
- const itemsPerPage = 6;
+  const itemsPerPage = 6;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
- 
-    useEffect(() => {
-        const getDoctors = async () => {
-          await dispatch(fetchDoctors());
-        };
-        getDoctors();
-      }, []);
+
+  useEffect(() => {
+    const getDoctors = async () => {
+      await dispatch(fetchDoctors());
+    };
+    getDoctors();
+  }, []);
 
   const handleAdd = () => {
     setCurrentDoctor({
@@ -67,7 +67,7 @@ const DoctorsManagement = () => {
     setCurrentDoctor(doctor);
     setOpenDialog(true);
   };
-const handlePageChange = (event, value) => {
+  const handlePageChange = (event, value) => {
     setPage(value);
   };
 
@@ -104,7 +104,7 @@ const handlePageChange = (event, value) => {
     { field: 'specialization', headerName: 'Specialization', flex: 1, minWidth: 150 },
     { field: 'experience', headerName: 'Experience (years)', flex: 0.6, minWidth: 120 },
     { field: 'consultation_fee', headerName: 'Fee', flex: 0.5, minWidth: 110 },
-   {
+    {
       field: 'status',
       headerName: 'Status',
       width: 130,
@@ -125,7 +125,7 @@ const handlePageChange = (event, value) => {
           }}
         />
       ),
-    },  
+    },
     //  {
     //   field: 'actions',
     //   headerName: 'Actions',
@@ -144,17 +144,33 @@ const handlePageChange = (event, value) => {
     //   ),
     // },
   ];
-const filteredDoctors = useMemo(() => {
-  return doctors.filter((doc) =>
-    doc.fullname?.toLowerCase().includes(search.toLowerCase())
-  );
-}, [doctors, search]);
+  const filteredDoctors = useMemo(() => {
+    return doctors.filter((doc) =>
+      doc.fullname?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [doctors, search]);
 
-const paginatedDoctors = useMemo(() => {
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  return filteredDoctors.slice(startIndex, endIndex);
-}, [filteredDoctors, page]);
+  const paginatedDoctors = useMemo(() => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredDoctors.slice(startIndex, endIndex);
+  }, [filteredDoctors, page]);
+
+
+  if (status === 'loading') {
+    return (
+      <Box
+        sx={{
+          height: '80vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress size={50} color="primary" />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="xl" disableGutters>
@@ -174,15 +190,15 @@ const paginatedDoctors = useMemo(() => {
           Doctors Management
         </Typography>
 
-        <Box  sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-            mb: 2,
-            flexWrap: 'wrap',
-          }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 2,
+          mb: 2,
+          flexWrap: 'wrap',
+        }}>
           <TextField
             variant="outlined"
             size="small"
@@ -201,7 +217,7 @@ const paginatedDoctors = useMemo(() => {
               ),
             }}
           />
-{/* 
+          {/* 
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}
            sx={{
               width: {
@@ -217,28 +233,28 @@ const paginatedDoctors = useMemo(() => {
         </Box>
 
         <Box sx={{
-            width: '100%',
-            overflowX: 'auto',
-            '& .MuiDataGrid-root': {
-              backgroundColor: 'white',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#ffffff',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              borderBottom: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              borderRight: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-cell': {
-              fontSize: '14px',
-              borderRight: '1px solid #e0e0e0',
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: '1px solid #f0f0f0',
-            },
-          }}>
+          width: '100%',
+          overflowX: 'auto',
+          '& .MuiDataGrid-root': {
+            backgroundColor: 'white',
+          },
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: '#ffffff',
+            fontWeight: 'bold',
+            fontSize: '16px',
+            borderBottom: '1px solid #e0e0e0',
+          },
+          '& .MuiDataGrid-columnHeader': {
+            borderRight: '1px solid #e0e0e0',
+          },
+          '& .MuiDataGrid-cell': {
+            fontSize: '14px',
+            borderRight: '1px solid #e0e0e0',
+          },
+          '& .MuiDataGrid-row': {
+            borderBottom: '1px solid #f0f0f0',
+          },
+        }}>
           <DataGrid
             rows={paginatedDoctors}
             columns={columns}
@@ -265,16 +281,16 @@ const paginatedDoctors = useMemo(() => {
           />
 
         </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-                  <Pagination
-                    count={Math.ceil(paginatedDoctors?.length / itemsPerPage)}
-                    page={page}
-                    onChange={handlePageChange}
-                    color="primary"
-                    size={isSmallScreen ? 'small' : 'medium'}
-                    shape="rounded"
-                  />
-                </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+          <Pagination
+            count={Math.ceil(paginatedDoctors?.length / itemsPerPage)}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+            size={isSmallScreen ? 'small' : 'medium'}
+            shape="rounded"
+          />
+        </Box>
       </Box>
 
       <DoctorForm
@@ -283,7 +299,7 @@ const paginatedDoctors = useMemo(() => {
         doctor={currentDoctor}
         onSave={handleSave}
       />
-          <Dialog open={confirmDelete.open} onClose={cancelDelete}>
+      <Dialog open={confirmDelete.open} onClose={cancelDelete}>
         <DialogContent>
           <Typography>Are you sure you want to delete this doctor?</Typography>
         </DialogContent>
