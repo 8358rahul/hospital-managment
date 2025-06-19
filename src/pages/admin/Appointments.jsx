@@ -141,7 +141,7 @@ const AdminAppointments = () => {
   const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
  return (
-    <Container maxWidth="xl" disableGutters>
+    // <Container maxWidth="xl" disableGutters>
       <Box sx={{ width: '100%', px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Appointment Management
@@ -272,7 +272,7 @@ const AdminAppointments = () => {
           token={token}
         />
       </Box>
-    </Container>
+    // </Container>
   );
 };
 

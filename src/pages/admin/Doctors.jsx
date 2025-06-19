@@ -30,14 +30,14 @@ import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlic
 
 const DoctorsManagement = () => {
   const doctors = useAppSelector(selectAllDoctors);
-
+console.log("doctors", doctors)
   const [openDialog, setOpenDialog] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
   const [currentDoctor, setCurrentDoctor] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, doctorId: null });
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const dispatch = useDispatch();

@@ -75,16 +75,16 @@ const DoctorAppointments = () => {
       },
     },
 
-    {
-      field: "doctor",
-      headerName: "Doctor",
-      flex: 1,
-      minWidth: 140,
-      valueGetter: (params) => { 
-                return  `${params.first_name || ""} ${params.last_name || ""}`.trim()
+    // {
+    //   field: "doctor",
+    //   headerName: "Doctor",
+    //   flex: 1,
+    //   minWidth: 140,
+    //   valueGetter: (params) => { 
+    //             return  `${params.first_name || ""} ${params.last_name || ""}`.trim()
 
-      },
-    },
+    //   },
+    // },
     {
       field: "reason",
       headerName: "Reason",
