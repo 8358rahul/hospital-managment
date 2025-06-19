@@ -1,15 +1,19 @@
 import { Menu, MenuItem, Avatar, Typography, Box } from '@mui/material';
 import { Logout } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux'; 
 import { logout } from '../../features/auth/authSlice';
 import { useAppSelector } from '../../app/hooks';
 import { selectCurrentUser } from '../../features/auth/authSlice';
 
-const AdminMenu = ({ anchorEl, handleClose }) => {
+const AdminMenu = ({ anchorEl, handleClose, user }) => {
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
-  const user = useAppSelector(selectCurrentUser); // Get the logged-in user's info
+  const navigate = useNavigate();
+
+  const handleRoleClick = () => {
+    navigate('profile'); // Update with your actual profile route
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -60,13 +64,13 @@ const AdminMenu = ({ anchorEl, handleClose }) => {
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       <MenuItem>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }} onClick={handleRoleClick}>
           <Avatar alt={user?.name} src={user?.avatar}>
-            {!user?.avatar && getInitials(user?.name)} {/* Show initials if avatar is not available */}
+            {!user?.avatar && getInitials(user?.first_name)} {/* Show initials if avatar is not available */}
           </Avatar>
           <Box sx={{ ml: 1 }}>
             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-              {user?.name || 'User'}
+              {user?.first_name || 'User'}
             </Typography>
             <Typography variant="caption" color="textSecondary">
               {user?.email || 'user@example.com'}

@@ -11,8 +11,12 @@ import {
   Button,
   CircularProgress,
   Container,
-  Pagination
+  Pagination,
+  Stack,
+  Skeleton
 } from '@mui/material';
+import RefreshIcon from "@mui/icons-material/Refresh";
+
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
@@ -72,6 +76,9 @@ const AdminAppointments = () => {
     }
   };
 
+  const handleRefresh = () => {
+        dispatch(fetchAppointments());
+      };
   const columns = [
     { field: 'date', headerName: 'Date', width: 110 },
     { field: 'time', headerName: 'Time', width: 100 },
@@ -147,43 +154,68 @@ const AdminAppointments = () => {
           Appointment Management
         </Typography>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-            mb: 2,
-            flexWrap: 'wrap',
-          }}
-        >
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="Search by name"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
-            sx={{ width: { xs: '100%', sm: '300px' }, backgroundColor: '#fff' }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
-
-        {status === 'loading' ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
+         <Stack
+               direction={{ xs: "column", md: "row" }}
+               spacing={2}
+               justifyContent="space-between"
+               alignItems={{ xs: "stretch", md: "center" }}
+               mb={2}
+               flexWrap="wrap"
+             >
+               <TextField
+                 variant="outlined"
+                 size="small"
+                 placeholder="Search by name"
+                 value={search}
+                 onChange={(e) => setSearch(e.target.value)}
+                 sx={{
+                   width: { xs: "100%", sm: "300px" },
+                   backgroundColor: "#fff",
+                 }}
+                 InputProps={{
+                   startAdornment: (
+                     <InputAdornment position="start">
+                       <SearchIcon color="action" />
+                     </InputAdornment>
+                   ),
+                 }}
+               />
+               <Stack
+                 direction="row"
+                 spacing={2}
+                 sx={{ width: { xs: "100%", sm: "auto" } }}
+               >
+                 <Button
+                   variant="outlined"
+                   startIcon={<RefreshIcon />}
+                   onClick={handleRefresh}
+                   fullWidth={true}
+                   sx={{
+                     width: {
+                       xs: "100%",
+                       sm: "auto",
+                     },
+                   }}
+                 >
+                   Refresh
+                 </Button>
+                 {/* <Button
+                   variant="contained"
+                   startIcon={<AddIcon />}
+                   sx={{
+                     width: {
+                       xs: "100%",
+                       sm: "auto",
+                       background: "linear-gradient(90deg, #2196f3, #2196f3)",
+                     },
+                   }}
+                   onClick={() => setAddPatientOpen(true)}
+                 >
+                   Add Patient
+                 </Button> */}
+               </Stack>
+             </Stack>
+     
             <Box
                sx={{
             width: '100%',
@@ -209,6 +241,18 @@ const AdminAppointments = () => {
               borderBottom: '1px solid #f0f0f0',
             }}}
             >
+              {status === "loading" ? (
+            <Box>
+              {[...Array(10)].map((_, i) => (
+                <Skeleton
+                  key={i}
+                  height={50}
+                  sx={{ mb: 1 }}
+                  variant="rectangular"
+                />
+              ))}
+            </Box>
+          ) : (
               <DataGrid
                 rows={paginatedRows}
                 columns={columns}
@@ -216,7 +260,25 @@ const AdminAppointments = () => {
                 autoHeight
                 disableRowSelectionOnClick
                 hideFooter
+                sx={{
+                backgroundColor: '#fff',
+                border: '1px solid #e0e0e0',
+                '& .MuiDataGrid-cell': {
+                  borderBottom: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#f5f5f5',
+                  borderBottom: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+                  borderRight: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeader:last-of-type, & .MuiDataGrid-cell:last-of-type': {
+                  borderRight: 'none',
+                },
+              }}
               />
+              )}
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
@@ -227,8 +289,7 @@ const AdminAppointments = () => {
                 color="primary"
               />
             </Box>
-          </>
-        )}
+        
 
         {/* Status Dialog */}
         <Dialog open={openDialog} onClose={handleClose} maxWidth="xs" fullWidth>

@@ -22,8 +22,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-import AddPatientForm from './AddPatientForm';
+import AddPatientForm from '../admin/AddPatientForm';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -31,6 +30,7 @@ import {
   fetchPatients,
   addNewPatient,
   deletePatientById,
+  selectPatientStatus,
 } from '../../features/patient/patientSlice';
 import { useSelector } from 'react-redux';
 import { selectCurrentToken } from '../../features/auth/authSlice';
@@ -39,7 +39,7 @@ const AdminPatients = () => {
   const dispatch = useAppDispatch();
   const token = useSelector(selectCurrentToken);
   const patients = useAppSelector(selectAllPatients);
-  const status = useAppSelector(selectAllPatients);
+  const status = useAppSelector(selectPatientStatus);
 
   const [search, setSearch] = useState('');
   const [localPatients, setLocalPatients] = useState([]);
@@ -117,7 +117,7 @@ const AdminPatients = () => {
   const cancelDelete = () => setConfirmDelete({ open: false, patientId: null });
 
   const filtered = useMemo(() => {
-    return localPatients.filter((p) =>
+    return localPatients?.filter((p) =>
       p.fullname?.toLowerCase().includes(search.toLowerCase())
     );
   }, [localPatients, search]);
@@ -180,7 +180,10 @@ const AdminPatients = () => {
     // },
   ];
 
-  const handleRefresh = () => { };
+  const handleRefresh = () => {
+      dispatch(fetchPatients());
+    
+   };
   return (
     // <Container maxWidth="xl" disableGutters>
     <Box sx={{

@@ -13,7 +13,9 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
-  Pagination
+  Pagination,
+  Skeleton,
+  Stack
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -21,16 +23,18 @@ import { DataGrid } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 import { mockDoctors } from '../../utils/mockData';
 import DoctorForm from './DoctorForm';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../app/hooks';
-import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlice';
+import { fetchDoctors, selectAllDoctors, selectDoctorStatus } from '../../features/doctor/doctorSlice';
 
 const DoctorsManagement = () => {
   const doctors = useAppSelector(selectAllDoctors);
-console.log("doctors", doctors)
+  const status = useAppSelector(selectDoctorStatus);
+
   const [openDialog, setOpenDialog] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -63,7 +67,7 @@ console.log("doctors", doctors)
     setOpenDialog(true);
   };
 
-  const handleEdit = (doctor) => {
+  const handleEdit = (doPagector) => {
     setCurrentDoctor(doctor);
     setOpenDialog(true);
   };
@@ -98,6 +102,9 @@ console.log("doctors", doctors)
     setOpenDialog(false);
   };
 
+    const handleRefresh = () => {
+      dispatch(fetchDoctors());
+    };
   const columns = [
     { field: 'fullname', headerName: 'Name', flex: 1, minWidth: 150 },
     { field: 'email', headerName: 'Email', flex: 1.5, minWidth: 150 },
@@ -145,7 +152,7 @@ console.log("doctors", doctors)
     // },
   ];
   const filteredDoctors = useMemo(() => {
-    return doctors.filter((doc) =>
+    return doctors?.filter((doc) =>
       doc.fullname?.toLowerCase().includes(search.toLowerCase())
     );
   }, [doctors, search]);
@@ -153,33 +160,22 @@ console.log("doctors", doctors)
   const paginatedDoctors = useMemo(() => {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredDoctors.slice(startIndex, endIndex);
+    return filteredDoctors?.slice(startIndex, endIndex);
   }, [filteredDoctors, page]);
 
 
-  if (status === 'loading') {
-    return (
-      <Box
-        sx={{
-          height: '80vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <CircularProgress size={50} color="primary" />
-      </Box>
-    );
-  }
+
 
   return (
     <Container maxWidth="xl" disableGutters>
       <Box
         sx={{
-          px: { xs: 1, sm: 2, lg: 0 },
-          py: 4,
-          width: '100%',
-        }}
+        width: "100%",
+        px: { xs: 1, sm: 2, lg: 4 },
+        py: 4,
+        boxSizing: "border-box",
+        maxWidth: "100%",
+      }}
       >
         <Typography
           variant="h5"
@@ -190,47 +186,67 @@ console.log("doctors", doctors)
           Doctors Management
         </Typography>
 
-        <Box sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 2,
-          mb: 2,
-          flexWrap: 'wrap',
-        }}>
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="Search by name"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            sx={{
-              width: { xs: '100%', sm: '300px' },
-              backgroundColor: '#fff',
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="action" />
-                </InputAdornment>
-              ),
-            }}
-          />
-          {/* 
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}
-           sx={{
-              width: {
-                xs: '100%', sm: 'auto',
-                background: 'linear-gradient(90deg, #2196f3, #2196f3)',
-
-              }
-            }}
-          >
-
-            Add Doctor
-          </Button> */}
-        </Box>
+       <Stack
+               direction={{ xs: "column", md: "row" }}
+               spacing={2}
+               justifyContent="space-between"
+               alignItems={{ xs: "stretch", md: "center" }}
+               mb={2}
+               flexWrap="wrap"
+             >
+               <TextField
+                 variant="outlined"
+                 size="small"
+                 placeholder="Search by name"
+                 value={search}
+                 onChange={(e) => setSearch(e.target.value)}
+                 sx={{
+                   width: { xs: "100%", sm: "300px" },
+                   backgroundColor: "#fff",
+                 }}
+                 InputProps={{
+                   startAdornment: (
+                     <InputAdornment position="start">
+                       <SearchIcon color="action" />
+                     </InputAdornment>
+                   ),
+                 }}
+               />
+               <Stack
+                 direction="row"
+                 spacing={2}
+                 sx={{ width: { xs: "100%", sm: "auto" } }}
+               >
+                 <Button
+                   variant="outlined"
+                   startIcon={<RefreshIcon />}
+                   onClick={handleRefresh}
+                   fullWidth={true}
+                   sx={{
+                     width: {
+                       xs: "100%",
+                       sm: "auto",
+                     },
+                   }}
+                 >
+                   Refresh
+                 </Button>
+                 {/* <Button
+                   variant="contained"
+                   startIcon={<AddIcon />}
+                   sx={{
+                     width: {
+                       xs: "100%",
+                       sm: "auto",
+                       background: "linear-gradient(90deg, #2196f3, #2196f3)",
+                     },
+                   }}
+                   onClick={() => setAddPatientOpen(true)}
+                 >
+                   Add Patient
+                 </Button> */}
+               </Stack>
+             </Stack>
 
         <Box sx={{
           width: '100%',
@@ -239,11 +255,11 @@ console.log("doctors", doctors)
             backgroundColor: 'white',
           },
           '& .MuiDataGrid-columnHeaders': {
-             backgroundColor: '#cbebe2',
-              fontWeight: 'bold',
-              color:'black',
-              fontSize: '18px',
-              borderBottom: '1px solid #e0e0e0',
+            backgroundColor: '#cbebe2',
+            fontWeight: 'bold',
+            color: 'black',
+            fontSize: '18px',
+            borderBottom: '1px solid #e0e0e0',
           },
           '& .MuiDataGrid-columnHeader': {
             borderRight: '1px solid #e0e0e0',
@@ -256,31 +272,43 @@ console.log("doctors", doctors)
             borderBottom: '1px solid #f0f0f0',
           },
         }}>
-          <DataGrid
-            rows={paginatedDoctors}
-            columns={columns}
-            pageSizeOptions={[10]}
-            getRowId={(row) => row.id}
-            autoHeight
-            sx={{
-              backgroundColor: '#fff',
-              border: '1px solid #e0e0e0',
-              '& .MuiDataGrid-cell': {
-                borderBottom: '1px solid #e0e0e0',
-              },
-              '& .MuiDataGrid-columnHeaders': {
-                backgroundColor: '#f5f5f5',
-                borderBottom: '1px solid #e0e0e0',
-              },
-              '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
-                borderRight: '1px solid #e0e0e0',
-              },
-              '& .MuiDataGrid-columnHeader:last-of-type, & .MuiDataGrid-cell:last-of-type': {
-                borderRight: 'none',
-              },
-            }}
-          />
-
+          {status === "loading" ? (
+            <Box>
+              {[...Array(10)].map((_, i) => (
+                <Skeleton
+                  key={i}
+                  height={50}
+                  sx={{ mb: 1 }}
+                  variant="rectangular"
+                />
+              ))}
+            </Box>
+          ) : (
+            <DataGrid
+              rows={paginatedDoctors}
+              columns={columns}
+              pageSizeOptions={[10]}
+              getRowId={(row) => row.id}
+              autoHeight
+              sx={{
+                backgroundColor: '#fff',
+                border: '1px solid #e0e0e0',
+                '& .MuiDataGrid-cell': {
+                  borderBottom: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#f5f5f5',
+                  borderBottom: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+                  borderRight: '1px solid #e0e0e0',
+                },
+                '& .MuiDataGrid-columnHeader:last-of-type, & .MuiDataGrid-cell:last-of-type': {
+                  borderRight: 'none',
+                },
+              }}
+            />
+          )}
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
           <Pagination
