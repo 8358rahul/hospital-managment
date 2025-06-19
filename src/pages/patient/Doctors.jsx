@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,62 +16,64 @@ import {
   Avatar,
   useMediaQuery,
   useTheme,
-  Stack
-} from '@mui/material';
-import { useAppDispatch, useAppSelector } from '../../app/hooks'; 
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import { fetchDoctors, selectAllDoctors } from '../../features/doctor/doctorSlice';
-import { selectCurrentToken } from '../../features/auth/authSlice';
-import { addNewAppointment, fetchAppointments } from '../../features/appointment/appointmentSlice';
-import { toast } from 'react-toastify';
- 
-const PatientDoctors = () => {
-    const token = useAppSelector(selectCurrentToken);
+  Stack,
+} from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import {
+  fetchDoctors,
+  selectAllDoctors,
+  selectUserDetail,
+} from "../../features/doctor/doctorSlice";
+import { selectCurrentToken } from "../../features/auth/authSlice";
+import {
+  addNewAppointment,
+  fetchAppointments,
+} from "../../features/appointment/appointmentSlice";
+import { toast } from "react-toastify";
+
+const PatientDoctors = () => { 
   const doctors = useAppSelector(selectAllDoctors);
- 
+  const user = useAppSelector(selectUserDetail) 
   const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  console.log("ssss", selectedDoctor)
-   const [appointmentData, setAppointmentData] = useState({
-    doctor:null,
   
-    date: '',
-    time: '',
-    reason: '',
-    patient: '', // added patient field
-  }); 
-console.log("appointmentData", appointmentData)
+  const [appointmentData, setAppointmentData] = useState({
+    doctor: null,
+    patient: user.id,
+    date: "",
+    time: "",
+    reason: "", 
+  });
   const itemsPerPage = 6;
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-   const dispatch = useAppDispatch();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const dispatch = useAppDispatch();
 
-   
-    useEffect(() => {
-      const getDoctors = async () => {
-        await dispatch(fetchDoctors());
-      };
-      getDoctors();
-    }, []);
+  useEffect(() => {
+    const getDoctors = async () => {
+      await dispatch(fetchDoctors());
+    };
+    getDoctors();
+  }, []);
 
   const handlePageChange = (event, value) => {
     setPage(value);
   };
 
-const handleOpenDialog = (doctor) => {
-  setSelectedDoctor(doctor);
-  setAppointmentData((prev) => ({
-    ...prev,
-    doctor: doctor.id, // ensure the doctor ID is set
-  }));
-  setOpenDialog(true);
-};
-
+  const handleOpenDialog = (doctor) => {
+    setSelectedDoctor(doctor);
+    setAppointmentData((prev) => ({
+      ...prev,
+      doctor: doctor.id, 
+    }));
+    setOpenDialog(true);
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setAppointmentData({ date: '', time: '', reason: '' });
+    setAppointmentData({ date: "", time: "", reason: "",doctor:null });
   };
 
   const handleChange = (e) => {
@@ -79,38 +81,32 @@ const handleOpenDialog = (doctor) => {
     setAppointmentData((prev) => ({ ...prev, [name]: value }));
   };
 
-   const handleSubmitAppointment = async () => {
-    if(appointmentData.date === '' || appointmentData.time === '' || appointmentData.reason === '') {
-      toast.error('Please fill in all the fields.');
+  const handleSubmitAppointment = async () => {
+    if (
+      appointmentData.date === "" ||
+      appointmentData.time === "" ||
+      appointmentData.reason === ""
+    ) {
+      toast.error("Please fill in all the fields.");
       return;
-    }
-    try {
-      await dispatch(
-        addNewAppointment({
-          newAppointment: {
-            ...appointmentData,
-            // doctor: selectedDoctor?.id,
-          },
-          token,
-        })
-      ).unwrap();
-        toast.success("Appointment Booked Successfully");
+    } 
+        dispatch(addNewAppointment({ ...appointmentData, doctor: selectedDoctor?.id }))
+
+      toast.success("Appointment Booked Successfully");
       handleCloseDialog();
-    } catch (error) {
-      console.error('Booking failed:', error);
-      alert('Failed to book appointment.');
-    }
+    
   };
 
-    const displayedDoctors = doctors.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const displayedDoctors = doctors.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
-
- 
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 5 }}>
         <Typography
-          variant={isSmallScreen ? 'h5' : 'h4'}
+          variant={isSmallScreen ? "h5" : "h4"}
           fontWeight="bold"
           align="center"
           mb={4}
@@ -118,26 +114,48 @@ const handleOpenDialog = (doctor) => {
           Our Expert Doctors
         </Typography>
 
-        <Grid container spacing={4} alignItems={'center'} justifyContent={'center'} >
+        <Grid
+          container
+          spacing={4}
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
           {displayedDoctors.map((doctor) => (
-            <Grid item xs={12} sm={6} md={4} key={doctor.id} width={"300px"} height={"350px"} >
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={doctor.id}
+              width={"300px"}
+              height={"350px"}
+            >
               <Card
                 sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                   borderRadius: 4,
                   boxShadow: 4,
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
                     boxShadow: 6,
                   },
                 }}
               >
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 3 }}>
-                  <Avatar sx={{ bgcolor: '#1976d2', width: 70, height: 70, mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    pt: 3,
+                  }}
+                >
+                  <Avatar
+                    sx={{ bgcolor: "#1976d2", width: 70, height: 70, mb: 2 }}
+                  >
                     <LocalHospitalIcon fontSize="large" />
                   </Avatar>
                   <Typography variant="h6" fontWeight="bold">
@@ -150,13 +168,15 @@ const handleOpenDialog = (doctor) => {
 
                 <CardContent sx={{ px: 3, pt: 0 }}>
                   <Typography variant="body2" gutterBottom>
-                    <strong>Qualifications:</strong> {doctor.qualifications?.join(', ')}
+                    <strong>Qualifications:</strong>{" "}
+                    {doctor.qualifications?.join(", ")}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     <strong>Experience:</strong> {doctor.experience} years
                   </Typography>
                   <Typography variant="body2" gutterBottom>
-                    <strong>Consultation Fee:</strong> ${doctor.consultation_fee}
+                    <strong>Consultation Fee:</strong> $
+                    {doctor.consultation_fee}
                   </Typography>
                   <Button
                     variant="contained"
@@ -172,20 +192,25 @@ const handleOpenDialog = (doctor) => {
           ))}
         </Grid>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
           <Pagination
             count={Math.ceil(doctors.length / itemsPerPage)}
             page={page}
             onChange={handlePageChange}
             color="primary"
-            size={isSmallScreen ? 'small' : 'medium'}
+            size={isSmallScreen ? "small" : "medium"}
             shape="rounded"
           />
         </Box>
       </Box>
 
       {/* Appointment Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>
           Book Appointment with <strong>{selectedDoctor?.name}</strong>
         </DialogTitle>

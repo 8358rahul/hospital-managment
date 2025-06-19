@@ -154,11 +154,7 @@ const Profile = () => {
                 onSubmit={handleSubmit}
                 enableReinitialize
               >
-                {({ values, isSubmitting, isValid, dirty,touched,errors }) => {
-                      console.log("errors:", errors);
-  console.log("touched:", touched);
-  console.log("dirty:", dirty);
-  console.log("isValid:", isValid);
+                {({ values, isSubmitting, isValid, dirty,touched,errors }) => { 
                   return (
                     <Form>
                       <Grid container spacing={3}>

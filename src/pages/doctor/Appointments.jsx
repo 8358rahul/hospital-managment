@@ -11,6 +11,7 @@ import {
   DialogActions,
   Button,
   Skeleton,
+  Stack,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
@@ -19,21 +20,39 @@ import {
   appointmentsStatus,
   fetchDoctorAppointments,
   selectAppointmentsByDoctor,
+  selectAppointmentStatus,
 } from "../../features/appointment/appointmentSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentToken } from "../../features/auth/authSlice";
+import RefreshIcon from "@mui/icons-material/Refresh";
+
 import { toast } from "react-toastify";
 import { selectUserDetail } from "../../features/doctor/doctorSlice";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { selectPatientStatus } from "../../features/patient/patientSlice";
+import { useDebounce } from "../../app/useDebounce";
 const DoctorAppointments = () => {
   const dispatch = useAppDispatch();
   const appointments = useAppSelector(selectAppointmentsByDoctor);
   const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [localAppointments, setLocalAppointments] = useState([]);
   const user = useAppSelector(selectUserDetail);
-  const status = useAppSelector(selectPatientStatus);
+  const status = useAppSelector(selectAppointmentStatus);
+  const debouncedSearch = useDebounce(search, 300);
+
+  useEffect(() => {
+    setLocalAppointments(
+      appointments?.results?.filter((p) =>
+        p.patient?.first_name.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+    );
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    setLocalAppointments(appointments?.results);
+  }, [appointments]);
 
   const handleChipClick = (params) => {
     setSelectedAppointment(params.row);
@@ -67,29 +86,27 @@ const DoctorAppointments = () => {
     {
       field: "patient",
       headerName: "Patient",
-      flex: 1,
-      minWidth: 140,
-      valueGetter: (params) => { 
-        return  `${params.first_name || ""} ${params.last_name || ""}`.trim()
-        
+      flex: 0.5,
+      minWidth: 100,
+      valueGetter: (params) => {
+        return `${params.first_name || ""} ${params.last_name || ""}`.trim();
       },
     },
 
-    {
-      field: "doctor",
-      headerName: "Doctor",
-      flex: 1,
-      minWidth: 140,
-      valueGetter: (params) => { 
-                return  `${params.first_name || ""} ${params.last_name || ""}`.trim()
-
-      },
-    },
+    // {
+    //   field: "doctor",
+    //   headerName: "Doctor",
+    //   flex: 1,
+    //   minWidth: 140,
+    //   valueGetter: (params) => {
+    //     return `${params.first_name || ""} ${params.last_name || ""}`.trim();
+    //   },
+    // },
     {
       field: "reason",
       headerName: "Reason",
       flex: 1.2,
-      minWidth: 140,
+      minWidth: 100,
     },
     {
       field: "status",
@@ -142,12 +159,12 @@ const DoctorAppointments = () => {
       renderCell: (params) => (
         <div
           style={{
-            marginTop:"10px",
+            marginTop: "10px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             cursor: "pointer",
-            marginTop:10
+            marginTop: "10px",
           }}
         >
           {" "}
@@ -156,10 +173,6 @@ const DoctorAppointments = () => {
       ),
     },
   ];
-  //  const filteredAppointments = appointments?.filter((a) =>
-  //    a.patientName?.toLowerCase().includes(search.toLowerCase()) ||
-  //    a.doctorName?.toLowerCase().includes(search.toLowerCase())
-  //  );
 
   return (
     <Box
@@ -180,16 +193,13 @@ const DoctorAppointments = () => {
         Appointment Management
       </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 2,
-          mb: 2,
-          flexWrap: "wrap",
-        }}
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={2}
+        justifyContent="space-between"
+        alignItems={{ xs: "stretch", md: "center" }}
+        mb={2}
+        flexWrap="wrap"
       >
         <TextField
           variant="outlined"
@@ -197,7 +207,10 @@ const DoctorAppointments = () => {
           placeholder="Search by name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          sx={{ width: { xs: "100%", sm: "300px" }, backgroundColor: "#fff" }}
+          sx={{
+            width: { xs: "100%", sm: "300px" },
+            backgroundColor: "#fff",
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -206,7 +219,29 @@ const DoctorAppointments = () => {
             ),
           }}
         />
-      </Box>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={() => {
+              dispatch(fetchDoctorAppointments(user?.id));
+            }}
+            fullWidth={true}
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "auto",
+              },
+            }}
+          >
+            Refresh
+          </Button>
+        </Stack>
+      </Stack>
 
       <Box
         sx={{
@@ -246,7 +281,7 @@ const DoctorAppointments = () => {
           </Box>
         ) : (
           <DataGrid
-            rows={appointments?.results}
+            rows={localAppointments}
             columns={columns}
             initialState={{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },

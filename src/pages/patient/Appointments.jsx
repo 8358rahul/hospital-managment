@@ -71,7 +71,7 @@ const PatientAppointments = () => {
   const columns = [
     { field: 'date', headerName: 'Date', width: 110 },
     { field: 'time', headerName: 'Time', width: 100 },
-    { field: 'patientName', headerName: 'Patient', flex: 1, minWidth: 140 },
+    { field: 'patientName', headerName: 'Patient',   minWidth: 140 },
     { field: 'doctorName', headerName: 'Doctor', flex: 1, minWidth: 140 },
     {
       field: 'reason',

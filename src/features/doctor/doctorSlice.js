@@ -6,6 +6,7 @@ const initialState = {
   user:{},
   status: 'idle',
   error: null,
+  appointments:[],
 };
 
 export const fetchUserDetail = createAsyncThunk(
@@ -13,6 +14,18 @@ export const fetchUserDetail = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try { 
        const response = await API.get("/accounts/profile/")
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+
+export const fetchAppointmentById = createAsyncThunk(
+  'appoinments/fetchAppointmentById',
+  async (id, { rejectWithValue }) => {
+    try { 
+       const response = await API.get(`/appointments/by-patient/${id}/`)
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -61,7 +74,7 @@ export const shareReport = createAsyncThunk(
       }
  
       // Make the PATCH request using multipart/form-data
-      let result = await API.post(`appointments/send-report-to-patient/${data.id}/`, formData, {
+      let result = await API.post(`appointments/send-report-to-patient/${data.appointment}/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -118,6 +131,18 @@ const doctorSlice = createSlice({
       .addCase(shareReport.rejected, (state, action) => {
         state.status = 'failed'; 
       }) 
+
+             // patient appoinment
+      .addCase(fetchAppointmentById.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAppointmentById.fulfilled, (state, action) => { 
+        state.status = 'succeeded'; 
+        state.appointments = action.payload;
+      })
+      .addCase(fetchAppointmentById.rejected, (state, action) => {
+        state.status = 'failed'; 
+      }) 
   }
 });
 
@@ -127,6 +152,7 @@ export const selectAllDoctors = (state) => state.doctors.doctors;
 export const selectUserDetail = (state) =>{ 
   return state.doctors.user
 };
+export const selectAppointments = (state) => state.doctors.appointments;
 export const selectDoctorStatus = (state) => state.doctors.status;
 export const selectDoctorError = (state) => state.doctors.error;
 export const selectDoctorById = (state, id) => 

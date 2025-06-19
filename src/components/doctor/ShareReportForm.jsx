@@ -11,13 +11,14 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectUserDetail, shareReport } from "../../features/doctor/doctorSlice";
-import { toast } from "react-toastify";
+import { selectUserDetail, shareReport,fetchAppointmentById, selectAppointments } from "../../features/doctor/doctorSlice";
+import { toast } from "react-toastify"; 
 
 const ShareReportForm = ({ patientId, setShareDialog }) => {
     const user = useAppSelector(selectUserDetail);
+    const dispatch = useAppDispatch();
 
   const [report, setReport] = useState({ 
     document_type: "lab",
@@ -26,13 +27,18 @@ const ShareReportForm = ({ patientId, setShareDialog }) => {
     appointment: user?.id
   });
 
-  const dispatch = useAppDispatch();
+const appoinments = useAppSelector(selectAppointments)
+console.log('appoinments',appoinments)
+ 
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files).map((file) => file.name);
     setReport((prev) => ({ ...prev, document: files }));
   };
-
+useEffect(()=>{
+   dispatch(fetchAppointmentById(patientId))
+ 
+},[patientId])
  
 
 const handleSubmit = async (e) => {
@@ -40,7 +46,7 @@ const handleSubmit = async (e) => {
 
   try {
     const resultAction = await dispatch(
-      shareReport({ ...report, id:patientId })
+      shareReport(report)
     );
 
     if (shareReport.rejected.match(resultAction)) {

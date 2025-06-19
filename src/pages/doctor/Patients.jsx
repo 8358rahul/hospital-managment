@@ -43,23 +43,24 @@ const DoctorPatients = () => {
   const [shareDialog, setShareDialog] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientStatus, setSelectedPatientStatus] = useState("");
-const debouncedSearch = useDebounce(search, 300);
+  const debouncedSearch = useDebounce(search, 300);
 
-
-
-useEffect(()=>{
-  setLocalPatients(patients.filter((p) => p.fullname.toLowerCase().includes(debouncedSearch.toLowerCase())))
-},[debouncedSearch])
+  useEffect(() => {
+    setLocalPatients(
+      patients.filter((p) =>
+        p.fullname.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+    );
+  }, [debouncedSearch]);
 
   // Fetch patients on mount
   useEffect(() => {
-    dispatch(fetchPatients()); 
+    dispatch(fetchPatients());
   }, [dispatch]);
 
- 
-  useEffect(()=>{
-    setLocalPatients(patients)
-  },[patients])
+  useEffect(() => {
+    setLocalPatients(patients);
+  }, [patients]);
 
   const handleConfirmStatusChange = () => {
     const updated = localPatients.map((p) =>
@@ -78,7 +79,7 @@ useEffect(()=>{
     setOpenDialog(false);
     setSelectedPatientId(null);
     setSelectedPatientStatus("");
-  }; 
+  };
   const [addPatientOpen, setAddPatientOpen] = useState(false);
 
   const handleAddPatient = (newPatient) => {
@@ -92,12 +93,12 @@ useEffect(()=>{
   };
 
   const handleRefresh = () => {
-     dispatch(fetchPatients());
+    dispatch(fetchPatients());
   };
 
   const columns = [
-    { field: "fullname", headerName: "Name", flex: 1, minWidth: 130, },
-    { field: "email", headerName: "Email", flex: 1.5, minWidth: 160 }, 
+    { field: "fullname", headerName: "Name", flex: 1, minWidth: 130 },
+    { field: "email", headerName: "Email", flex: 1.5, minWidth: 160 },
     { field: "gender", headerName: "Gender", width: 120 },
     { field: "blood_type", headerName: "Blood Type", width: 120 },
     { field: "phone", headerName: "Phone", flex: 1, minWidth: 150 },
@@ -130,18 +131,21 @@ useEffect(()=>{
       flex: 0.5,
       minWidth: 80,
       sortable: false,
-      renderCell: (params) => (
+      renderCell: (params) => { 
+        
+        return (
         <IconButton
-          onClick={() =>{
-              setSelectedPatientId(params.row.id);
-            setShareDialog(true)}}
+          onClick={() => {
+            setSelectedPatientId(params?.row?.id);
+            setShareDialog(true);
+          }}
           alignItems="center"
           justifyContent="center"
         >
           <ShareIcon color="primary" />
         </IconButton>
-      ),
-    },
+      )
+    }},
   ];
 
   return (

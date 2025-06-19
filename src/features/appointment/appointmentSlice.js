@@ -54,17 +54,10 @@ export const fetchDoctorAppointments = createAsyncThunk(
 
 export const addNewAppointment = createAsyncThunk(
   'appointments/add',
-  async ({ newAppointment, token }, { rejectWithValue }) => {
+  async ( newAppointment, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/appointments/book/`,
-        newAppointment,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = API.post(`${API_URL}/appointments/book/`, newAppointment)
+      
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
