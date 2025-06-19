@@ -75,7 +75,7 @@ const AddPatientForm = ({ open, onClose, token }) => {
         {({ isSubmitting }) => (
           <Form>
             <DialogContent>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, }}>
                 <Field
                   component={TextField}
                   name="fullname"

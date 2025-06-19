@@ -8,6 +8,8 @@ import billingReducer from '../features/billing/billingSlice';
 import reportReducer from '../features/report/reportSlice';
 import patientReportReducer from '../features/patientReport/patientReportSlice';
 import adminDashboardReducer from "../features/adminDashboard/adminDasboardSlice"
+import adminReportReducer from "../features/adminDashboard/adminReportSlice"
+
 
 const store = configureStore({
   reducer: {
@@ -19,7 +21,8 @@ const store = configureStore({
     billing: billingReducer,
     report: reportReducer,
     patientReport: patientReportReducer,
-    adminDashboard:adminDashboardReducer
+    adminDashboard:adminDashboardReducer,
+    adminReport: adminReportReducer,
 
   },
 });

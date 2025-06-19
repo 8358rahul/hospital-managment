@@ -6,8 +6,7 @@ import {
   selectCurrentToken,
 } from "../features/auth/authSlice";
 import AdminLayout from "../layouts/AdminLayout";
-import DoctorLayout from "../layouts/DoctorLayout";
-import PatientLayout from "../layouts/PatientLayout";
+
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import NotFound from "../pages/NotFound";
@@ -104,7 +103,7 @@ const AppRoutes = () => {
         path="/doctor"
         element={
           token && role === "doctor" ? (
-            <DoctorLayout />
+            <AdminLayout />
           ) : (
             <Navigate to="/login" />
           )
@@ -121,7 +120,7 @@ const AppRoutes = () => {
         path="/patient"
         element={
           token && role === "patient" ? (
-            <PatientLayout />
+            <AdminLayout />
           ) : (
             <Navigate to="/login" />
           )

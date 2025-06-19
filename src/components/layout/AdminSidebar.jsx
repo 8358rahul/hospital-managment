@@ -7,19 +7,21 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar
+  Toolbar,
 } from '@mui/material';
+
 import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   MedicalServices as MedicalServicesIcon,
   CalendarToday as CalendarTodayIcon,
   ExitToApp as ExitToAppIcon,
-  Assessment as AssessmentIcon
+  Assessment as AssessmentIcon,
 } from '@mui/icons-material';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectCurrentRole } from '../../features/auth/authSlice';
 import { NavLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../../features/auth/authSlice';
 import hospitalLogo from "../../assets/1_AFo1fCc4zToskBIkRZU82g.webp";
 
 const drawerWidth = 240;
@@ -36,8 +38,33 @@ const navItemStyles = {
   },
 };
 
+// Sidebar config for each role
+const sidebarConfig = {
+  admin: [
+    { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
+    { label: 'Patients', icon: <PeopleIcon />, path: '/admin/patients' },
+    { label: 'Doctors', icon: <MedicalServicesIcon />, path: '/admin/doctors' },
+    { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
+    { label: 'Appointments', icon: <CalendarTodayIcon />, path: '/admin/appointments' },
+  ],
+  doctor: [
+    { label: 'Dashboard', icon: <DashboardIcon />, path: '/doctor' },
+    { label: 'Appointments', icon: <CalendarTodayIcon />, path: '/doctor/appointments' },
+    { label: 'Patients', icon: <PeopleIcon />, path: '/doctor/patients' },
+  ],
+  patient: [
+    { label: 'Dashboard', icon: <DashboardIcon />, path: '/patient' },
+    { label: 'Doctor', icon: <PeopleIcon />, path: '/patient/doctors' },
+    { label: 'Appointments', icon: <CalendarTodayIcon />, path: '/patient/appointments' },
+    { label: 'Bills', icon: <CalendarTodayIcon />, path: '/patient/bills' },
+    { label: 'Medical Reports', icon: <CalendarTodayIcon />, path: '/patient/reports' },
+  ],
+};
+
 const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
   const dispatch = useDispatch();
+  const role = useSelector(selectCurrentRole);
+  
 
   const handleLogout = () => {
     dispatch(logout());
@@ -57,40 +84,14 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
       <Divider />
       <Box sx={{ px: 2, overflow: 'auto' }}>
         <List>
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={NavLink} to="/admin" sx={navItemStyles} end>
-              <ListItemIcon><DashboardIcon /></ListItemIcon>
-              <ListItemText primary="Dashboard" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={NavLink} to="/admin/patients" sx={navItemStyles}>
-              <ListItemIcon><PeopleIcon /></ListItemIcon>
-              <ListItemText primary="Patients" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={NavLink} to="/admin/doctors" sx={navItemStyles}>
-              <ListItemIcon><MedicalServicesIcon /></ListItemIcon>
-              <ListItemText primary="Doctors" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={NavLink} to="/admin/reports" sx={navItemStyles}>
-              <ListItemIcon><AssessmentIcon /></ListItemIcon>
-              <ListItemText primary="Reports" />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding sx={{ mb: 1 }}>
-            <ListItemButton component={NavLink} to="/admin/appointments" sx={navItemStyles}>
-              <ListItemIcon><CalendarTodayIcon /></ListItemIcon>
-              <ListItemText primary="Appointments" />
-            </ListItemButton>
-          </ListItem>
+          {sidebarConfig[role]?.map((item) => (
+            <ListItem disablePadding sx={{ mb: 1 }} key={item.path}>
+              <ListItemButton component={NavLink} to={item.path} sx={navItemStyles} end>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
 
         <Divider sx={{ my: 2 }} />
@@ -114,7 +115,7 @@ const AdminSidebar = ({ mobileOpen, handleDrawerToggle }) => {
         variant="permanent"
         sx={{
           display: { xs: 'none', sm: 'block' },
-          width: drawerWidth, 
+          width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
