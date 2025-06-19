@@ -100,7 +100,7 @@ const DoctorPatients = () => {
     { field: "fullname", headerName: "Name", flex: 1, minWidth: 130 },
     { field: "email", headerName: "Email", flex: 1.5, minWidth: 160 },
     { field: "gender", headerName: "Gender", width: 120 },
-    { field: "blood_type", headerName: "Blood Type", width: 120 },
+    { field: "blood_type", headerName: "Blood Group", width: 120 },
     { field: "phone", headerName: "Phone", flex: 1, minWidth: 150 },
     { field: "address", headerName: "Address", flex: 2, minWidth: 220 },
     // {
