@@ -11,8 +11,7 @@ import { selectUserDetail } from '../../features/doctor/doctorSlice';
 const PatientMenu = ({ anchorEl, handleClose }) => {
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
-  const user = useAppSelector(selectUserDetail); 
-  console.log('user123',user)
+  const user = useAppSelector(selectUserDetail);  
  
   const navigation = useNavigate()
   const handleLogout = () => {

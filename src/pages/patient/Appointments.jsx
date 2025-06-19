@@ -12,36 +12,45 @@ import {
   Container,
   Button,
   CircularProgress,
-} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import SearchIcon from '@mui/icons-material/Search';
+  Stack,
+  Skeleton,
+} from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 
-import { useAppSelector } from '../../app/hooks';
-import { fetchAppointments, fetchPatientAppointments, selectAppointmentsByPatient, selectAppointmentStatus } from '../../features/appointment/appointmentSlice';
-import { selectAllAppointments } from '../../features/appointment/appointmentSlice';
-import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentToken } from '../../features/auth/authSlice';
+import { useAppSelector } from "../../app/hooks";
+import {
+  fetchAppointments,
+  fetchPatientAppointments,
+  selectAppointmentsByPatient,
+  selectAppointmentStatus,
+} from "../../features/appointment/appointmentSlice";
+import { selectAllAppointments } from "../../features/appointment/appointmentSlice";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentToken } from "../../features/auth/authSlice";
+import SearchIcon from "@mui/icons-material/Search";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { selectUserDetail } from "../../features/doctor/doctorSlice";
 
 const PatientAppointments = () => {
   const dispatch = useDispatch();
   const token = useSelector(selectCurrentToken);
   const appointments = useSelector(selectAllAppointments);
 
-  const status = useSelector(selectAppointmentStatus);
-
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [addPatientOpen, setAddPatientOpen] = useState(false);
+  const user = useAppSelector(selectUserDetail);
+  const status = useAppSelector(selectAppointmentStatus);
+  const getAppoinments = async () => {
+    dispatch(fetchPatientAppointments());
+  };
   useEffect(() => {
-    if (token) {
-      dispatch(fetchPatientAppointments({ token, "patient_id": 5 }));
-    }
-  }, [dispatch, token]);
-
+    getAppoinments();
+  }, [dispatch]);
 
   const handleChipClick = (params) => {
     setSelectedAppointment(params.row);
@@ -54,7 +63,9 @@ const PatientAppointments = () => {
   };
 
   const handleUpdateStatus = (newStatus) => {
-    alert(`Updated status to ${newStatus} for appointment ID: ${selectedAppointment.id}`);
+    alert(
+      `Updated status to ${newStatus} for appointment ID: ${selectedAppointment.id}`
+    );
     handleClose();
     // Add real dispatch or API call here
   };
@@ -64,33 +75,40 @@ const PatientAppointments = () => {
       await dispatch(addNewAppointment(newPatient)).unwrap();
       setAddPatientOpen(false);
     } catch (err) {
-      console.error('Failed to add appointment:', err);
+      console.error("Failed to add appointment:", err);
     }
   };
 
   const columns = [
-    { field: 'date', headerName: 'Date', width: 110 },
-    { field: 'time', headerName: 'Time', width: 100 },
-    { field: 'patientName', headerName: 'Patient',   minWidth: 140 },
-    { field: 'doctorName', headerName: 'Doctor', flex: 1, minWidth: 140 },
+    { field: "date", headerName: "Date", width: 110 },
+    { field: "time", headerName: "Time", width: 100 },
     {
-      field: 'reason',
-      headerName: 'Reason',
+      field: "patient",
+      headerName: "Patient",
+      minWidth: 140,
+      valueGetter: (params) => {
+        return `${params.first_name || ""} ${params.last_name || ""}`.trim();
+      },
+    },
+    { field: "doctor_name", headerName: "Doctor", flex: 1, minWidth: 140 },
+    {
+      field: "reason",
+      headerName: "Reason",
       flex: 1.2,
       minWidth: 140,
     },
     {
-      field: 'status',
-      headerName: 'Status',
+      field: "status",
+      headerName: "Status",
       width: 130,
       renderCell: (params) => {
         const status = params.value?.toLowerCase();
         const colorMap = {
-          approved: ['#256029', '#c8e6c9'],
-          pending: ['#856404', '#fff3cd'],
-          rejected: ['#a94442', '#f8d7da'],
+          approved: ["#256029", "#c8e6c9"],
+          pending: ["#856404", "#fff3cd"],
+          rejected: ["#a94442", "#f8d7da"],
         };
-        const [color, bg] = colorMap[status] || ['#000', '#e0e0e0'];
+        const [color, bg] = colorMap[status] || ["#000", "#e0e0e0"];
         return (
           <Chip
             label={status.charAt(0).toUpperCase() + status.slice(1)}
@@ -100,31 +118,30 @@ const PatientAppointments = () => {
               color: color,
               fontWeight: 600,
               px: 1.5,
-              borderRadius: '6px',
-              fontSize: '0.75rem',
+              borderRadius: "6px",
+              fontSize: "0.75rem",
               // cursor: 'pointer',
             }}
           />
         );
       },
     },
-
   ];
-
 
   const allRows = useMemo(() => {
     if (!Array.isArray(appointments?.results)) return [];
     return appointments.results.map((item) => ({
       ...item,
-      patientName: item?.patient?.first_name || 'N/A',
-      doctorName: item?.doctor?.first_name || 'N/A',
+      patientName: item?.patient?.first_name || "N/A",
+      doctorName: item?.doctor?.first_name || "N/A",
     }));
   }, [appointments]);
 
   const filteredRows = useMemo(() => {
-    return allRows.filter((row) =>
-      row.patientName?.toLowerCase().includes(search.toLowerCase()) ||
-      row.doctorName?.toLowerCase().includes(search.toLowerCase())
+    return allRows.filter(
+      (row) =>
+        row.patientName?.toLowerCase().includes(search.toLowerCase()) ||
+        row.doctorName?.toLowerCase().includes(search.toLowerCase())
     );
   }, [allRows, search]);
 
@@ -138,32 +155,29 @@ const PatientAppointments = () => {
 
   return (
     <Container maxWidth="xl" disableGutters>
-      <Box sx={{ width: '100%', px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
+      <Box sx={{ width: "100%", px: { xs: 1, sm: 2, lg: 4 }, py: 4 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Appointment Management
         </Typography>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-            mb: 2,
-            flexWrap: 'wrap',
-          }}
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={2}
+          justifyContent="space-between"
+          alignItems={{ xs: "stretch", md: "center" }}
+          mb={2}
+          flexWrap="wrap"
         >
           <TextField
             variant="outlined"
             size="small"
             placeholder="Search by name"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{
+              width: { xs: "100%", sm: "300px" },
+              backgroundColor: "#fff",
             }}
-            sx={{ width: { xs: '100%', sm: '300px' }, backgroundColor: '#fff' }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -172,60 +186,86 @@ const PatientAppointments = () => {
               ),
             }}
           />
-        </Box>
-
-        {status === 'loading' ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <Box
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
+            <Button
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              onClick={() => {
+                getAppoinments();
+              }}
+              fullWidth={true}
               sx={{
-                width: '100%',
-                overflowX: 'auto',
-                '& .MuiDataGrid-root': {
-                  backgroundColor: 'white',
+                width: {
+                  xs: "100%",
+                  sm: "auto",
                 },
-                '& .MuiDataGrid-columnHeaders': {
-                  backgroundColor: '#cbebe2',
-                  fontWeight: 'bold',
-                  color: 'black',
-                  fontSize: '18px',
-                  borderBottom: '1px solid #e0e0e0',
-                },
-                '& .MuiDataGrid-columnHeader': {
-                  borderRight: '1px solid #e0e0e0',
-                },
-                '& .MuiDataGrid-cell': {
-                  fontSize: '14px',
-                  borderRight: '1px solid #e0e0e0',
-                },
-                '& .MuiDataGrid-row': {
-                  borderBottom: '1px solid #f0f0f0',
-                }
               }}
             >
-              <DataGrid
-                rows={paginatedRows}
-                columns={columns}
-                getRowId={(row) => row.id}
-                autoHeight
-                disableRowSelectionOnClick
-                hideFooter
-              />
+              Refresh
+            </Button>
+          </Stack>
+        </Stack>
+        <Box
+          sx={{
+            width: "100%",
+            overflowX: "auto",
+            "& .MuiDataGrid-root": {
+              backgroundColor: "white",
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "#cbebe2",
+              fontWeight: "bold",
+              color: "black",
+              fontSize: "18px",
+              borderBottom: "1px solid #e0e0e0",
+            },
+            "& .MuiDataGrid-columnHeader": {
+              borderRight: "1px solid #e0e0e0",
+            },
+            "& .MuiDataGrid-cell": {
+              fontSize: "14px",
+              borderRight: "1px solid #e0e0e0",
+            },
+            "& .MuiDataGrid-row": {
+              borderBottom: "1px solid #f0f0f0",
+            },
+          }}
+        >
+          {status === "loading" ? (
+            <Box>
+              {[...Array(10)].map((_, i) => (
+                <Skeleton
+                  key={i}
+                  height={50}
+                  sx={{ mb: 1 }}
+                  variant="rectangular"
+                />
+              ))}
             </Box>
+          ) : (
+            <DataGrid
+              rows={paginatedRows}
+              columns={columns}
+              getRowId={(row) => row.id}
+              autoHeight
+              disableRowSelectionOnClick
+              hideFooter
+            />
+          )}
+        </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={(e, value) => setCurrentPage(value)}
-                color="primary"
-              />
-            </Box>
-          </>
-        )}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(e, value) => setCurrentPage(value)}
+            color="primary"
+          />
+        </Box>
 
         {/* Status Dialog */}
         <Dialog open={openDialog} onClose={handleClose} maxWidth="xs" fullWidth>
@@ -238,31 +278,45 @@ const PatientAppointments = () => {
               Current Status: {selectedAppointment?.status}
             </Typography>
           </DialogContent>
-          <DialogActions sx={{ justifyContent: 'space-between', p: 2 }}>
-            {selectedAppointment?.status === 'Pending' && (
+          <DialogActions sx={{ justifyContent: "space-between", p: 2 }}>
+            {selectedAppointment?.status === "Pending" && (
               <>
-                <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => handleUpdateStatus("Approved")}
+                >
                   Approve
                 </Button>
-                <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleUpdateStatus("Rejected")}
+                >
                   Reject
                 </Button>
               </>
             )}
-            {selectedAppointment?.status === 'Approved' && (
-              <Button variant="outlined" color="error" onClick={() => handleUpdateStatus('Rejected')}>
+            {selectedAppointment?.status === "Approved" && (
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => handleUpdateStatus("Rejected")}
+              >
                 Mark as Rejected
               </Button>
             )}
-            {selectedAppointment?.status === 'Rejected' && (
-              <Button variant="contained" color="success" onClick={() => handleUpdateStatus('Approved')}>
+            {selectedAppointment?.status === "Rejected" && (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => handleUpdateStatus("Approved")}
+              >
                 Re-Approve
               </Button>
             )}
           </DialogActions>
         </Dialog>
-
-
       </Box>
     </Container>
   );

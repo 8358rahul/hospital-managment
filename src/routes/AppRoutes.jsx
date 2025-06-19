@@ -30,14 +30,11 @@ import DoctorPatients from "../pages/doctor/Patients";
 import PatientDashboard from "../pages/patient/Dashboard";
 import PatientDoctors from "../pages/patient/Doctors";
 import PatientAppointments from "../pages/patient/Appointments";
-import BookAppointment from "../pages/patient/BookAppointment";
-import PatientRecords from "../pages/patient/Records";
+import BookAppointment from "../pages/patient/BookAppointment"; 
 import PatientReports from "../pages/patient/Reports";
 import ReportDetails from "../pages/patient/ReportDetails";
 import PatientBills from "../pages/patient/Bills";
-import BillDetails from "../pages/patient/BillDetails"; 
-import SettingsPage from "../pages/Setting";
-import ProfilePage from "../pages/Profile";
+import BillDetails from "../pages/patient/BillDetails";  
 import { useEffect } from "react";
 import Profile from "../pages/doctor/Profile";
 import { fetchUserDetail } from "../features/doctor/doctorSlice";
@@ -130,8 +127,7 @@ const AppRoutes = () => {
         <Route index element={<PatientDashboard />} />
         <Route path="doctors" element={<PatientDoctors />} />
         <Route path="appointments" element={<PatientAppointments />} />
-        <Route path="book-appointment" element={<BookAppointment />} />
-        <Route path="records" element={<PatientRecords />} />
+        <Route path="book-appointment" element={<BookAppointment />} /> 
         <Route path="reports" element={<PatientReports />} />
         <Route path="reports/:id" element={<ReportDetails />} />
         <Route path="bills" element={<PatientBills />} />

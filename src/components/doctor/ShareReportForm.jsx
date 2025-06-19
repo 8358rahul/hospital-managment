@@ -5,148 +5,153 @@ import {
   CardContent,
   FormControl,
   InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   Typography,
   Grid,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectUserDetail, shareReport,fetchAppointmentById, selectAppointments } from "../../features/doctor/doctorSlice";
-import { toast } from "react-toastify"; 
+import {
+  selectUserDetail,
+  shareReport,
+  fetchAppointmentById,
+  selectAppointments,
+} from "../../features/doctor/doctorSlice";
+import { toast } from "react-toastify";
+import { Formik, Form, Field, FieldArray } from "formik";
+import { TextField, Select } from "formik-mui";
+import * as Yup from "yup";
+import MenuItem from "@mui/material/MenuItem";
 
-const ShareReportForm = ({ patientId, setShareDialog }) => {
-    const user = useAppSelector(selectUserDetail);
-    const dispatch = useAppDispatch();
-
-  const [report, setReport] = useState({ 
+const ShareReportForm = ({ patientId, setShareDialog }) => { 
+  const dispatch = useAppDispatch(); 
+  const initialValues = {
     document_type: "lab",
     content: "",
     document: [""],
-    appointment: user?.id
+    appointment: "",
+  };
+
+  const validationSchema = Yup.object({
+    document_type: Yup.string().required("Required"),
+    content: Yup.string().required("Required"),
+    document: Yup.array().min(1, "Please upload at least one file"),
+    appointment: Yup.string().required("Required"),
   });
 
-const appoinments = useAppSelector(selectAppointments)
-console.log('appoinments',appoinments)
- 
+  const appoinments = useAppSelector(selectAppointments);
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files).map((file) => file.name);
-    setReport((prev) => ({ ...prev, document: files }));
-  };
-useEffect(()=>{
-   dispatch(fetchAppointmentById(patientId))
- 
-},[patientId])
- 
+  useEffect(() => {
+    dispatch(fetchAppointmentById(patientId));
+  }, [patientId]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const resultAction = await dispatch(
-      shareReport(report)
-    );
-
+  const handleSubmit = async (values, { setSubmitting }) => { 
+     const resultAction = await dispatch(shareReport(values)); 
     if (shareReport.rejected.match(resultAction)) {
-      // ❌ Handle the error (e.g., show toast or dialog)
-      console.error("Error:", resultAction.payload); 
-      toast.error("Failed to share report: " +resultAction.payload?.detail);
+      console.error("Error:", resultAction.payload);
+      toast.error("Failed to share report: " + resultAction.payload?.detail);
     } else {
-      // ✅ Success
+      toast.success("Report shared successfully!");
       setShareDialog(false);
-      setReport({
-        document_type: "lab",
-        content: "",
-        document: [""],
-        appointment: "",
-      });
     }
-  } catch (error) {
-    console.error("Unexpected Error:", error);
-  }
-};
-
+  };
 
   return (
     <Card variant="outlined">
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          Share New Report with Patient
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <Grid container spacing={2} direction="column">
-            {/* <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Report Title"
-                value={report.title}
-                onChange={(e) =>
-                  setReport({ ...report, title: e.target.value })
-                }
-                required
-              />
-            </Grid> */}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnMount
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Share New Report with Patient
+              </Typography> 
+                <Grid container spacing={2} direction="column">
+                  <Field
+                    component={Select}
+                    name="appointment"
+                    label="Appoinment"
+                    required
+                    fullWidth
+                  >
+                    {appoinments.map((item) => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.reason}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                  <Field
+                    component={Select}
+                    name="document_type"
+                    label="Report Type"
+                    fullWidth
+                    required
+                  > 
+                    <MenuItem value="medical_record">Medical Record</MenuItem>
+                    <MenuItem value="report">Report</MenuItem>
+                    <MenuItem value="receipt">Receipt</MenuItem>
+                  </Field>
 
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Report Type</InputLabel>
-                <Select
-                  value={report.type}
-                  label="Report Type"
-                  onChange={(e) =>
-                    setReport({ ...report, type: e.target.value })
-                  }
-                >
-                  <MenuItem value="lab">Lab Results</MenuItem>
-                  <MenuItem value="diagnostic">Diagnostic Report</MenuItem>
-                  <MenuItem value="prescription">Prescription</MenuItem>
-                  <MenuItem value="summary">Visit Summary</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+                  <Field
+                    component={TextField}
+                    name="content"
+                    label="Content"
+                    rows={4}
+                    fullWidth
+                    margin="normal"
+                    required
+                  />
+                  <Grid item xs={12}>
+                    <Field name="document">
+                      {({ form }) => (
+                        <>
+                          <Button
+                            variant="outlined"
+                            component="label"
+                            fullWidth
+                          >
+                            Upload Attachment(s)
+                            <input
+                              type="file"
+                              hidden
+                              multiple
+                              onChange={(event) => {
+                                const files = Array.from(
+                                  event.currentTarget.files
+                                );
+                                form.setFieldValue("document", files);
+                              }}
+                            />
+                          </Button>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Report Content"
-                multiline
-                rows={4}
-                value={report.content}
-                onChange={(e) =>
-                  setReport({ ...report, content: e.target.value })
-                }
-                required
-              />
-            </Grid>
+                          {/* Show file names if uploaded */}
+                          {form.values.document?.length > 0 && (
+                            <Box mt={1}>
+                              {form.values.document.map((file, idx) => (
+                                <Typography key={idx} variant="body2">
+                                  📎 {file.name}
+                                </Typography>
+                              ))}
+                            </Box>
+                          )}
+                        </>
+                      )}
+                    </Field>
+                  </Grid>
 
-            <Grid item xs={12}>
-              <Button variant="outlined" component="label" fullWidth>
-                Upload Attachment(s)
-                <input
-                  type="file"
-                  hidden
-                  multiple
-                  onChange={handleFileChange}
-                />
-              </Button>
-              {report.document?.length > 0 &&
-                report?.document.map((file, idx) => (
-                  <Typography key={idx} variant="body2" mt={0.5}>
-                    📎 {file}
-                  </Typography>
-                ))}
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" fullWidth>
-                Share Report
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </CardContent>
+                  <Grid item xs={12}>
+                    <Button type="submit" variant="contained" fullWidth>
+                      Share Report
+                    </Button>
+                  </Grid>
+                </Grid> 
+            </CardContent>
+          </Form>
+        )}
+      </Formik>
     </Card>
   );
 };

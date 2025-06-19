@@ -12,12 +12,11 @@ import {
   Paper,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { useAppSelector } from '../../app/hooks';
-import { selectBillsByPatient } from '../../features/billing/billingSlice';
+import { useAppSelector } from '../../app/hooks'; 
 
 const PatientBills = () => {
   const { user } = useAppSelector((state) => state.auth);
-  const bills = useAppSelector((state) => selectBillsByPatient(state, user?.id || ''));
+  const bills = []
   const [selectedBill, setSelectedBill] = useState(null);
   const [open, setOpen] = useState(false);
 

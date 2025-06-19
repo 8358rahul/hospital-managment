@@ -38,9 +38,7 @@ const billingSlice = createSlice({
 
 export const { setBills, addBill, updateBillStatus, setLoading, setError } = billingSlice.actions;
 
-export const selectAllBills = (state) => state.billing.bills;
-export const selectBillsByPatient = (state, patientId) => 
-  state.billing.bills.filter(bill => bill.patientId === patientId);
+export const selectAllBills = (state) => state.billing.bills; 
 export const selectBillById = (state, id) => 
   state.billing.bills.find(bill => bill.id === id);
 

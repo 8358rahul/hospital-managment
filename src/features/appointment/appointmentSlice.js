@@ -23,15 +23,10 @@ export const fetchAppointments = createAsyncThunk(
 
 export const fetchPatientAppointments = createAsyncThunk(
   'appointments/fetchByPatient',
-  async ({ token, patient_id }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/appointments/appointments/?patient_id=${patient_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await API.get(
+        `${API_URL}/appointments/appointments/` 
       );
       return response.data;
     } catch (err) {
