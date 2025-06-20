@@ -1,5 +1,5 @@
-import { createSlice, } from '@reduxjs/toolkit'; 
- 
+import { createAsyncThunk, createSlice, } from '@reduxjs/toolkit'; 
+import API from '../api';
 
  
 
@@ -9,37 +9,43 @@ const initialState = {
   error: null,
 };
 
+export const fetchBills = createAsyncThunk(
+  'billing/fetchBills',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await API.get("/billing/patient/dashboard-bills/")
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+)
+
 const billingSlice = createSlice({
   name: 'billing',
   initialState,
   reducers: {
-    setBills: (state, action) => {
-      state.bills = action.payload;
-      state.status = 'succeeded';
-    },
-    addBill: (state, action) => {
-      state.bills.push(action.payload);
-    },
-    updateBillStatus: (state, action) => {
-      const index = state.bills.findIndex(bill => bill.id === action.payload.id);
-      if (index !== -1) {
-        state.bills[index].status = action.payload.status;
-      }
-    },
-    setLoading: (state, action ) => {
-      state.status = action.payload;
-    },
-    setError: (state, action ) => {
-      state.error = action.payload;
-      state.status = 'failed';
-    },
+ 
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchBills.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchBills.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.bills = action.payload;
+      })
+      .addCase(fetchBills.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
   },
 });
 
-export const { setBills, addBill, updateBillStatus, setLoading, setError } = billingSlice.actions;
+export const {  } = billingSlice.actions;
 
-export const selectAllBills = (state) => state.billing.bills; 
-export const selectBillById = (state, id) => 
-  state.billing.bills.find(bill => bill.id === id);
+export const selectAllBills = (state) => state.billing.bills;  
+export const selectAllBillsStatus = (state) => state.billing.status;
 
 export default billingSlice.reducer;

@@ -45,6 +45,8 @@ const PatientAppointments = () => {
   const [addPatientOpen, setAddPatientOpen] = useState(false);
   const user = useAppSelector(selectUserDetail);
   const status = useAppSelector(selectAppointmentStatus);
+
+  
   const getAppoinments = async () => {
     dispatch(fetchPatientAppointments());
   };

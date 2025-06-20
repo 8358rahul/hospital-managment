@@ -42,7 +42,10 @@ export default function ProfilePage() {
       <Paper elevation={3} sx={{ p: 4 }}>
         <Box display="flex" justifyContent="center" mb={3}>
           <Avatar sx={{ width: 100, height: 100 }}>
-            {profile.fullName.split(" ").map((n) => n[0]).join("")}
+            {profile.fullName
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
           </Avatar>
         </Box>
 
@@ -99,11 +102,13 @@ export default function ProfilePage() {
                   disabled={!editMode}
                   select
                 >
-                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
+                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(
+                    (type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    )
+                  )}
                 </TextField>
               </Grid>
 

@@ -16,12 +16,11 @@ const ShareBillPage = () => {
     navigate(-1);
   };
 
-  const handleSubmitBill = (billData) => {
-    console.log('Shared Bill:', billData);
+  const handleSubmitBill = (billData) => { 
     dispatch(createBill(billData));
     toast.success('Bill shared successfully!');
     // You can send billData to your API here
-    // navigate('/doctor/patients');
+    navigate('/doctor/patients');
   };
 
   return<AddBillForm

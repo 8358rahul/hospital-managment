@@ -56,6 +56,17 @@ export const updateDoctor = createAsyncThunk(
     }
   }
 );
+export const addDoctor = createAsyncThunk(
+  "doctors/addDoctor",
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      await API.post("adminpanel/admin/create-doctor/", data);
+      dispatch(fetchDoctors());
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 export const createBill = createAsyncThunk(
   "doctors/createBill",
   async (data, { rejectWithValue }) => {

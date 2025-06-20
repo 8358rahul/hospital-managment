@@ -4,8 +4,7 @@ import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'; 
-import AppRoutes from './routes/AppRoutes';
-import { initializeMockData } from './utils/initializeMockData';
+import AppRoutes from './routes/AppRoutes'; 
   import { ToastContainer } from 'react-toastify';
 import store from './app/store';
 
@@ -34,13 +33,7 @@ const theme = createTheme({
     },
   },
 });
-
-
-
-
-
-// Initialize mock data
-initializeMockData();
+ 
 
 function App() {
   return (

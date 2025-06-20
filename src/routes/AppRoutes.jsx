@@ -12,39 +12,37 @@ import Register from "../pages/auth/Register";
 import NotFound from "../pages/NotFound";
 
 // Admin Pages
-import AdminDashboard from "../pages/admin/Dashboard";
-import AdminPatients from "../pages/admin/Patients";
-import AdminDoctors from "../pages/admin/Doctors";
 import AdminAppointments from "../pages/admin/Appointments";
-import AdminReports from "../pages/admin/Reports";
+import AdminDashboard from "../pages/admin/Dashboard";
+import AdminDoctors from "../pages/admin/Doctors";
 import GenerateReport from "../pages/admin/GenerateReport";
+import AdminPatients from "../pages/admin/Patients";
+import AdminReports from "../pages/admin/Reports";
 import ViewReport from "../pages/admin/ViewReport";
 
 // Doctor Pages
-import DoctorDashboard from "../pages/doctor/Dashboard";
 import DoctorAppointments from "../pages/doctor/Appointments";
+import DoctorDashboard from "../pages/doctor/Dashboard";
 import DoctorPatients from "../pages/doctor/Patients";
 
 // Patient Pages
-import PatientDashboard from "../pages/patient/Dashboard";
-import PatientDoctors from "../pages/patient/Doctors";
-import PatientAppointments from "../pages/patient/Appointments"; 
-import PatientReports from "../pages/patient/Reports";
-import ReportDetails from "../pages/patient/ReportDetails";
-import PatientBills from "../pages/patient/Bills";
-import BillDetails from "../pages/patient/BillDetails";
 import { useEffect } from "react";
-import Profile from "../pages/doctor/Profile";
 import { fetchUserDetail } from "../features/doctor/doctorSlice";
 import Forgot from "../pages/auth/Forgot";
 import ShareBillPage from "../pages/doctor/AddBillForm";
+import Profile from "../pages/doctor/Profile";
+import PatientAppointments from "../pages/patient/Appointments";
+import PatientBills from "../pages/patient/Bills";
+import PatientDashboard from "../pages/patient/Dashboard";
+import PatientDoctors from "../pages/patient/Doctors";
+import ReportDetails from "../pages/patient/ReportDetails";
+import PatientReports from "../pages/patient/Reports";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
   const role = useSelector(selectCurrentRole);
   const dispatch = useDispatch();
 
- 
   const getProfile = async () => {
     await dispatch(fetchUserDetail());
   };
@@ -95,7 +93,7 @@ const AppRoutes = () => {
         <Route path="reports" element={<AdminReports />} />
         <Route path="reports/generate" element={<GenerateReport />} />
         <Route path="reports/:id" element={<ViewReport />} />
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile" element={<Profile />} />  
       </Route>
 
       {/* Doctor Routes */}
@@ -113,7 +111,8 @@ const AppRoutes = () => {
         <Route path="appointments" element={<DoctorAppointments />} />
         <Route path="patients" element={<DoctorPatients />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="sharebill/:id" element={<ShareBillPage />} />
+        <Route path="sharebill/:id" element={<ShareBillPage />} /> 
+
       </Route>
 
       {/* Patient Routes */}
@@ -129,11 +128,10 @@ const AppRoutes = () => {
       >
         <Route index element={<PatientDashboard />} />
         <Route path="doctors" element={<PatientDoctors />} />
-        <Route path="appointments" element={<PatientAppointments />} /> 
+        <Route path="appointments" element={<PatientAppointments />} />
         <Route path="reports" element={<PatientReports />} />
         <Route path="reports/:id" element={<ReportDetails />} />
         <Route path="bills" element={<PatientBills />} />
-        <Route path="bills/:id" element={<BillDetails />} />
         {/* <Route path="*" element={<SettingsPage />} />  */}
         <Route path="profile" element={<Profile />} />
       </Route>
@@ -143,6 +141,7 @@ const AppRoutes = () => {
         path="/"
         element={<Navigate to={token ? `/${role}` : "/login"} />}
       />
+
 
       {/* Not Found Route */}
       <Route path="*" element={<NotFound />} />
