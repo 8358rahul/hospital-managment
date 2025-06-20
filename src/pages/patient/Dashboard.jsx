@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Card,
@@ -16,6 +16,12 @@ import BloodtypeIcon from '@mui/icons-material/Bloodtype';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
 import dashboardBg from '../../assets/dashboard.jpg';
+import { selectCurrentToken } from '../../features/auth/authSlice';
+import { selectUserDetail } from '../../features/doctor/doctorSlice';
+import { selectDoctorDashboardData } from '../../features/doctorDashboard/doctorDashboardSlice';
+import { fetchPatientDashboard, selectPatientDashboardData, selectPatientDashboardStatus } from '../../features/patientDashboard/patientDashboardSlice';
+import { useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 const DashboardCard = ({ title, count, icon, color }) => {
   return (
@@ -58,8 +64,23 @@ const DashboardCard = ({ title, count, icon, color }) => {
 };
 
 const PatientDashboard = () => {
+    const token = useSelector(selectCurrentToken);
+
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const dispatch = useAppDispatch();
+
+  const user = useAppSelector(selectUserDetail);
+  const patinetDashboardData = useAppSelector(selectPatientDashboardData);
+  console.log("Patient Dashboard Data:", patinetDashboardData);
+  const dashboardStatus = useAppSelector(selectPatientDashboardStatus);
+
+  useEffect(() => {
+    // if (dashboardStatus === "idle" && user?.token) {
+      dispatch(fetchPatientDashboard(token));
+    // }
+  }, [dispatch]);
+
 
   const totalDoctors = 12;
   const totalAppointments = 25;
@@ -72,40 +93,40 @@ const PatientDashboard = () => {
   const dashboardItems = [
     {
       title: 'Available Doctors',
-      count: totalDoctors,
+      count: patinetDashboardData?.total_doctors || 0,
       icon: <LocalHospitalIcon fontSize="large" />,
       color: '#1976d2',
     },
     {
       title: 'Total Appointments',
-      count: totalAppointments,
+      count: patinetDashboardData?.total_appointments,
       icon: <EventNoteIcon fontSize="large" />,
       color: '#ed6c02',
     },
     {
       title: 'Total Requests',
-      count: totalRequests,
+      count: patinetDashboardData?.total_pending_requests,
       icon: <HelpOutlineIcon fontSize="large" />,
       color: '#d32f2f',
     },
     {
       title: 'Blood Group',
-      count: bloodGroup,
+      count: patinetDashboardData?.your_blood_group ||0,
       icon: <BloodtypeIcon fontSize="large" />,
       color: '#9c27b0',
     },
-    {
-      title: 'Heart Beats',
-      count: heartBeats,
-      icon: <FavoriteIcon fontSize="large" />,
-      color: '#e91e63',
-    },
-    {
-      title: 'Weight',
-      count: weight,
-      icon: <MonitorWeightIcon fontSize="large" />,
-      color: '#009688',
-    },
+    // {
+    //   title: 'Heart Beats',
+    //   count: heartBeats,
+    //   icon: <FavoriteIcon fontSize="large" />,
+    //   color: '#e91e63',
+    // },
+    // {
+    //   title: 'Weight',
+    //   count: weight,
+    //   icon: <MonitorWeightIcon fontSize="large" />,
+    //   color: '#009688',
+    // },
   ];
 
   return (

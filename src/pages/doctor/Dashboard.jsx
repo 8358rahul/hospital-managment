@@ -19,6 +19,9 @@ import {
 import dashboardBg from "../../assets/dashboard.jpg"; 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectUserDetail } from "../../features/doctor/doctorSlice";
+import { fetchDoctorDashboard, selectDoctorDashboardData, selectDoctorDashboardStatus } from "../../features/doctorDashboard/doctorDashboardSlice";
+import { useSelector } from "react-redux";
+import { selectCurrentToken } from "../../features/auth/authSlice";
 
 const totalDoctors = 12;
 const totalPatients = 58;
@@ -37,7 +40,7 @@ const dashboardItems = [
     count: totalPatients,
     icon: <PeopleIcon fontSize="large" />,
     color: "#4caf50",
-  },
+  }, 
   {
     title: "Total Requests",
     count: 25,
@@ -91,45 +94,86 @@ const DashboardCard = ({ title, count, icon, color }) => {
 const COLORS = ["#ff9800", "#4caf50", "#1976d2", "#d32f2f", "#00acc1"];
 
 const DoctorDashboard = () => {
-   const theme = useTheme();
-    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+   const token = useSelector(selectCurrentToken);
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const dispatch = useAppDispatch();
+
   const user = useAppSelector(selectUserDetail);
- 
+  const dashboardData = useAppSelector(selectDoctorDashboardData);
   
+  const dashboardStatus = useAppSelector(selectDoctorDashboardStatus);
+
+  useEffect(() => {
+    // if (dashboardStatus === "idle" && user?.token) {
+      dispatch(fetchDoctorDashboard(token));
+    // }
+  }, [dispatch]);
+
+  if (dashboardStatus === "loading") {
+    return <Typography align="center" mt={10}>Loading Dashboard...</Typography>;
+  }
+
+  const dashboardItems = [
+    // {
+    //   title: "Total Doctors",
+    //   count: dashboardData?.total_doctors ?? 0,
+    //   icon: <PeopleIcon fontSize="large" />,
+    //   color: "#1976d2",
+    // },
+    {
+      title: "Total Patients",
+      count: dashboardData?.total_patients ?? 0,
+      icon: <PeopleIcon fontSize="large" />,
+      color: "#4caf50",
+    },
+    {
+      title: "Total Appointments",
+      count: dashboardData?.total_appointments ?? 0,
+      icon: <EventNoteIcon fontSize="large" />,
+      color: "#ff9800",
+    },
+    {
+      title: "Pending Appointments",
+      count: dashboardData?.total_pending_requests ?? 0,
+      icon: <HelpOutlineIcon fontSize="large" />,
+      color: "#d32f2f",
+    },
+  ];
+
+  const todayAppointments = dashboardData?.today_appointment_status
+    ? Object.entries(dashboardData.today_appointment_status).map(([key, value]) => ({
+        name: key.charAt(0).toUpperCase() + key.slice(1),
+        value,
+      }))
+    : [];
+
+  const doctorSpecializationChart = dashboardData?.doctor_by_specialization?.map((item) => ({
+    name: item.specialization || "Unknown",
+    value: item.count,
+  })) ?? [];
+
   const reports = [
     {
-      title: "Patient Report",
-      data: [
-        { name: "Week 1", Last: 1, Current: 1 },
-        { name: "Week 2", Last: 30, Current: 35 },
-        { name: "Week 3", Last: 40, Current: 50 },
-        { name: "Week 4", Last: 45, Current: 60 },
-      ],
+      title: "Weekly Patients",
+      data: dashboardData?.weekly_unique_patients?.map((entry, i, arr) => ({
+        name: `Week ${i + 1}`,
+        // Last: i > 0 ? arr[i - 1]?.unique_patients : 0,
+        Current: entry.unique_patients,
+      })) ?? [],
       color: ["#2e7d32", "#81c784"],
     },
     {
-      title: "Appointment Report",
-      data: [
-        { name: "Week 1", Last: 1, Current: 1 },
-        { name: "Week 2", Last: 15, Current: 18 },
-        { name: "Week 3", Last: 20, Current: 25 },
-        { name: "Week 4", Last: 22, Current: 30 },
-      ],
+      title: "Weekly Appointments",
+      data: dashboardData?.weekly_appointments?.map((entry, i, arr) => ({
+        name: `Week ${i + 1}`,
+        // Last: i > 0 ? arr[i - 1]?.appointment_count : 0,
+        Current: entry.appointment_count,
+      })) ?? [],
       color: ["#d32f2f", "#ef9a9a"],
     },
-  ];
-
-  const todayAppointments = [
-    { name: "Completed", value: 10 },
-    { name: "Pending", value: 8 },
-  ];
-
-  const dispatch = useAppDispatch();
-
-
-
-
-    return (
+  ];    return (
       <Box
         sx={{
           backgroundImage: `linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.9)), url(${dashboardBg})`,
@@ -235,12 +279,12 @@ const DoctorDashboard = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line
+                  {/* <Line
                     type="monotone"
                     dataKey="Last"
                     stroke={chart.color[0]}
                     strokeWidth={2}
-                  />
+                  /> */}
                   <Line
                     type="monotone"
                     dataKey="Current"
