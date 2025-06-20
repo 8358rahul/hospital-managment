@@ -12,6 +12,7 @@ import {
   IconButton,
   Stack,
   Skeleton,
+  Popover,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -34,6 +35,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import ShareReportForm from "../../components/doctor/ShareReportForm";
 import { useDebounce } from "../../app/useDebounce";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import ArticleIcon from "@mui/icons-material/Article";
 
 const DoctorPatients = () => {
   const dispatch = useDispatch();
@@ -47,8 +51,17 @@ const DoctorPatients = () => {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPatientStatus, setSelectedPatientStatus] = useState("");
   const debouncedSearch = useDebounce(search, 300);
+  const navigation = useNavigate()
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const [allList,setAllList] = useState(false)
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+  const [allList, setAllList] = useState(false);
   useEffect(() => {
     setLocalPatients(
       patients.filter((p) =>
@@ -63,10 +76,9 @@ const DoctorPatients = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if(allList)setLocalPatients(allpatients)
-    else setLocalPatients(patients) 
-
-  }, [patients,allpatients,allList]);
+    if (allList) setLocalPatients(allpatients);
+    else setLocalPatients(patients);
+  }, [patients, allpatients, allList]);
 
   const handleConfirmStatusChange = () => {
     const updated = localPatients.map((p) =>
@@ -99,7 +111,7 @@ const DoctorPatients = () => {
   };
 
   const handleRefresh = () => {
-    if(allList)dispatch(fetchAllPatients())
+    if (allList) dispatch(fetchAllPatients());
     else dispatch(fetchPatients());
   };
 
@@ -132,27 +144,30 @@ const DoctorPatients = () => {
     //     />
     //   ),
     // },
-   !allList&& {
+    !allList && {
       field: "actions",
       headerName: "Actions",
       flex: 0.5,
       minWidth: 80,
       sortable: false,
-      renderCell: (params) => { 
-        
+      renderCell: (params) => {
         return (
-        <IconButton
-          onClick={() => {
-            setSelectedPatientId(params?.row?.id);
-            setShareDialog(true);
-          }}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <ShareIcon color="primary" />
-        </IconButton>
-      )
-    }},
+          <IconButton
+            alignitems="center"
+            justifycontent="center"
+            aria-describedby={id}
+            variant="contained"
+            onClick={(event) => {
+              setAnchorEl(event.currentTarget);
+
+              setSelectedPatientId(params?.row?.id);
+            }}
+          >
+            <ShareIcon color="primary" />
+          </IconButton>
+        );
+      },
+    },
   ];
 
   return (
@@ -233,8 +248,8 @@ const DoctorPatients = () => {
           >
             Add Patient
           </Button>
-             <Button
-            variant="contained" 
+          <Button
+            variant="contained"
             sx={{
               width: {
                 xs: "100%",
@@ -243,17 +258,16 @@ const DoctorPatients = () => {
               },
             }}
             onClick={() => {
-              if(allList){
-                setAllList(false)
-                dispatch(fetchPatients()) 
-              }else{
-                setAllList(true)
-                dispatch(fetchAllPatients()) 
-
+              if (allList) {
+                setAllList(false);
+                dispatch(fetchPatients());
+              } else {
+                setAllList(true);
+                dispatch(fetchAllPatients());
               }
             }}
           >
-          {allList ? "View Patients" : "View All Patients"}
+            {allList ? "View Patients" : "View All Patients"}
           </Button>
         </Stack>
       </Stack>
@@ -352,6 +366,48 @@ const DoctorPatients = () => {
           />
         </DialogContent>
       </Dialog>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        PaperProps={{
+          sx: { p: 2, width: 200 },
+        }}
+      >
+        <Typography variant="subtitle2" sx={{ mb: 1 }}>
+          Share Options
+        </Typography>
+
+        <Stack spacing={1}>
+          <Button
+            variant="outlined"
+            startIcon={<ReceiptIcon />}
+            onClick={() => {
+              navigation(`/doctor/sharebill/${selectedPatientId}`);
+            }}
+            fullWidth
+          >
+            Share Bill
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<ArticleIcon />}
+            onClick={() => setShareDialog(true)}
+            fullWidth
+          >
+            Share Report
+          </Button>
+        </Stack>
+      </Popover>
 
       <AddPatientForm
         open={addPatientOpen}

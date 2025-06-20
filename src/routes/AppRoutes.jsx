@@ -37,6 +37,7 @@ import { useEffect } from "react";
 import Profile from "../pages/doctor/Profile";
 import { fetchUserDetail } from "../features/doctor/doctorSlice";
 import Forgot from "../pages/auth/Forgot";
+import ShareBillPage from "../pages/doctor/AddBillForm";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
@@ -112,6 +113,7 @@ const AppRoutes = () => {
         <Route path="appointments" element={<DoctorAppointments />} />
         <Route path="patients" element={<DoctorPatients />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="sharebill/:id" element={<ShareBillPage />} />
       </Route>
 
       {/* Patient Routes */}

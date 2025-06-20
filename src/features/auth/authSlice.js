@@ -101,7 +101,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.token = action.payload.access;
         state.user = action.payload.user;
-        state.role = action.payload.role;
+        state.role = action.payload.role? action.payload.role : "patient";
         localStorage.setItem("user", JSON.stringify(action?.payload));
         state.error = action.payload;
       })

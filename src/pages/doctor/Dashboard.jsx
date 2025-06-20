@@ -139,7 +139,7 @@ const DoctorDashboard = () => {
           py: { xs: 4, sm: 6 },
         }}
       >
-        <Container maxWidth="lg" alignItems='center' justifyContent='center'>
+        <Container maxWidth="lg" alignitems='center' justifycontent='center'>
           {/* Welcome Banner */}
           <Card
             sx={{

@@ -56,6 +56,16 @@ export const updateDoctor = createAsyncThunk(
     }
   }
 );
+export const createBill = createAsyncThunk(
+  "doctors/createBill",
+  async (data, { rejectWithValue }) => {
+    try {
+      await API.post("/billing/create/", data); 
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
 
 export const shareReport = createAsyncThunk(
   "doctors/shareReport",
@@ -149,6 +159,16 @@ const doctorSlice = createSlice({
         state.appointments = action.payload;
       })
       .addCase(fetchAppointmentById.rejected, (state, action) => {
+        state.status = "failed";
+      })
+      // create bill  
+      .addCase(createBill.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createBill.fulfilled, (state, action) => {
+        state.status = "succeeded"; 
+      })
+      .addCase(createBill.rejected, (state, action) => {
         state.status = "failed";
       });
   },
