@@ -97,7 +97,7 @@ const AdminAppointments = () => {
       renderCell: (params) => {
         const status = params.value?.toLowerCase();
         const colorMap = {
-          approved: ['#256029', '#c8e6c9'],
+          accepted: ['#256029', '#c8e6c9'],
           pending: ['#856404', '#fff3cd'],
           rejected: ['#a94442', '#f8d7da'],
         };
@@ -128,7 +128,7 @@ const AdminAppointments = () => {
   return appointments.results.map((item) => ({
     ...item,
     patientName: item?.patient?.first_name || 'N/A',
-    doctorName: item?.doctor?.first_name || 'N/A',
+    doctorName: item?.doctor_name || 'N/A',
   }));
 }, [appointments]);
 
