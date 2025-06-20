@@ -15,12 +15,12 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { loginUser } from '../../features/auth/authSlice';
+import { forgotPassword, loginUser } from '../../features/auth/authSlice';
 import loginImage from '../../assets/loginImage.svg';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const Login = () => {
+const Forgot = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState('');
@@ -29,20 +29,21 @@ const Login = () => {
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: '',
+      new_password: '',
+      confirm_password: '',
     },
     validationSchema: Yup.object({
       email: Yup.string().email('Invalid email address').required('Email is required'),
-      password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+      new_password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+      confirm_password: Yup.string().oneOf([Yup.ref('new_password'), null], 'Passwords must match').required('Confirm Password is required'),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitError('');
       try {
-        const result = await dispatch(loginUser(values));
-        if (loginUser.fulfilled.match(result)) {
-          const { role } = result.payload;
-          toast.success("Login success");
-          navigate(`/${role}`);
+        const result = await dispatch(forgotPassword(values));
+        if (forgotPassword.fulfilled.match(result)) { 
+          navigate('/login');
+          toast.success("Login success"); 
         } else {
           setSubmitError(result.payload || 'Login failed');
         }
@@ -88,7 +89,7 @@ const Login = () => {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign In
+              Reset Password
             </Typography>
 
             <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3, width: '100%' }}>
@@ -108,23 +109,22 @@ const Login = () => {
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
               />
-
-              <TextField
+                     <TextField
                 fullWidth
                 label={
                   <Box component="span">
-                    Password <Box component="span" sx={{ color: 'red' }}>*</Box>
+                    New Password <Box component="span" sx={{ color: 'red' }}>*</Box>
                   </Box>
                 }
-                name="password"
-                id="password"
+                name="new_password"
+                id="new_password"
                 type={showPassword ? 'text' : 'password'}
                 margin="normal"
-                value={formik.values.password}
+                value={formik.values.new_password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.password && Boolean(formik.errors.password)}
-                helperText={formik.touched.password && formik.errors.password}
+                error={formik.touched.new_password && Boolean(formik.errors.new_password)}
+                helperText={formik.touched.new_password && formik.errors.new_password}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -134,14 +134,34 @@ const Login = () => {
                     </InputAdornment>
                   ),
                 }}
-              />
-                   <Typography color="primary" variant="body2" sx={{  
-                      mt: 1,
-                      cursor: 'pointer',
-                    }}>
-                 Forgot password? <Link href="/forgot">Reset Password</Link>
-                </Typography>
+              /> 
 
+              <TextField
+                fullWidth
+                label={
+                  <Box component="span">
+                    Confirm Password <Box component="span" sx={{ color: 'red' }}>*</Box>
+                  </Box>
+                }
+                name="confirm_password"
+                id="confirm_password"
+                type={showPassword ? 'text' : 'password'}
+                margin="normal"
+                value={formik.values.confirm_password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.confirm_password && Boolean(formik.errors.confirm_password)}
+                helperText={formik.touched.confirm_password && formik.errors.confirm_password}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              /> 
 
               {submitError && (
                 <Typography color="error" variant="body2" sx={{ mt: 1 }}>
@@ -157,12 +177,12 @@ const Login = () => {
                 sx={{ mt: 3, mb: 2, py: 1.3, borderRadius: 2 }}
                 disabled={formik.isSubmitting}
               >
-                {formik.isSubmitting ? 'Signing in...' : 'Sign In'}
+                {formik.isSubmitting ? 'Signing in...' : 'Submit'}
               </Button>
 
               <Box textAlign="center">
-                <Link href="/register" variant="body2">
-                  Don&apos;t have an account? Sign Up
+                <Link href="/login" variant="body2"> 
+                Back to login 
                 </Link>
               </Box>
             </Box>
@@ -173,4 +193,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Forgot;

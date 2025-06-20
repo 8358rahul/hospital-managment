@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import API from '../api';
 
 const API_URL = import.meta.env.VITE_API_URL; // Adjust endpoint if needed
@@ -12,6 +12,17 @@ export const fetchPatients = createAsyncThunk(
   async ( _, { rejectWithValue }) => {
     try {
       const response = await API.get(`${API_URL}/adminpanel/patients_list/`);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+export const fetchAllPatients = createAsyncThunk(
+  'patients/fetchAllPatients',
+  async ( _, { rejectWithValue }) => {
+    try {
+      const response = await API.get(`${API_URL}/adminpanel/admin/patients/`);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -82,6 +93,7 @@ export const deletePatientById = createAsyncThunk(
 // Initial state
 const initialState = {
   patients: [],
+  allPatients: [],
   status: 'idle',
   error: null,
 };
@@ -103,6 +115,18 @@ const patientSlice = createSlice({
         state.patients = action.payload;
       })
       .addCase(fetchPatients.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      // Fetch all patients
+      .addCase(fetchAllPatients.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAllPatients.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.allPatients = action.payload;
+      })
+      .addCase(fetchAllPatients.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
@@ -137,6 +161,7 @@ const patientSlice = createSlice({
 
 // Selectors
 export const selectAllPatients = (state) => state.patients.patients;
+export const allPatients = (state) => state.patients.allPatients;
 export const selectPatientStatus = (state) => state.patients.status;
 export const selectPatientError = (state) => state.patients.error;
 export const selectPatientById = (state, id) =>

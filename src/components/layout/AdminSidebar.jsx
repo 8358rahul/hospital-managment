@@ -44,7 +44,7 @@ const sidebarConfig = {
     { label: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
     { label: 'Patients', icon: <PeopleIcon />, path: '/admin/patients' },
     { label: 'Doctors', icon: <MedicalServicesIcon />, path: '/admin/doctors' },
-    { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
+    // { label: 'Reports', icon: <AssessmentIcon />, path: '/admin/reports' },
     { label: 'Appointments', icon: <CalendarTodayIcon />, path: '/admin/appointments' },
   ],
   doctor: [

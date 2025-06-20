@@ -103,12 +103,26 @@ const PatientAppointments = () => {
       width: 130,
       renderCell: (params) => {
         const status = params.value?.toLowerCase();
-        const colorMap = {
-          approved: ["#256029", "#c8e6c9"],
-          pending: ["#856404", "#fff3cd"],
-          rejected: ["#a94442", "#f8d7da"],
-        };
-        const [color, bg] = colorMap[status] || ["#000", "#e0e0e0"];
+         // status is "accepted", "pending", or "rejected"
+        let color = "",
+          bg = "";
+        switch (status) {
+          case "accepted":
+            color = "#256029";
+            bg = "#c8e6c9";
+            break;
+          case "pending":
+            color = "#856404";
+            bg = "#fff3cd";
+            break;
+          case "rejected":
+            color = "#a94442";
+            bg = "#f8d7da";
+            break;
+          default:
+            color = "#000";
+            bg = "#e0e0e0";
+        }
         return (
           <Chip
             label={status.charAt(0).toUpperCase() + status.slice(1)}

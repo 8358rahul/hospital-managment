@@ -1,19 +1,18 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL; // ✅ Works with Vite
-
 
 // Initial state
 const initialState = {
   user: null,
-  token: localStorage.getItem('token') || null,
+  token: localStorage.getItem("token") || null,
   role: null,
-  status: 'idle',
+  status: "idle",
   error: null,
 };
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+  "auth/loginUser",
   async ({ email, password }, thunkAPI) => {
     try {
       const response = await axios.post(`${API_URL}/accounts/login/`, {
@@ -21,11 +20,25 @@ export const loginUser = createAsyncThunk(
         password,
       });
 
-     return response.data; 
-    
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || 'Login failed'
+        error.response?.data?.message || "Login failed"
+      );
+    }
+  }
+);
+
+export const forgotPassword = createAsyncThunk(
+  "auth/ForgotPassword",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/accounts/direct-password-reset/`, data);
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Login failed"
       );
     }
   }
@@ -33,82 +46,97 @@ export const loginUser = createAsyncThunk(
 
 // Async thunk for register
 export const registerUser = createAsyncThunk(
-  'auth/registerUser',
+  "auth/registerUser",
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/accounts/register/`, userData);
+      const response = await axios.post(
+        `${API_URL}/accounts/register/`,
+        userData
+      );
       const { token, user, role } = response.data;
 
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
       return { token, user, role };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration failed');
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Registration failed"
+      );
     }
   }
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.role = null;
-      state.status = 'idle';
+      state.status = "idle";
       state.error = null;
-      localStorage.removeItem('user');
-
-    }, 
+      localStorage.removeItem("user");
+    },
     setError: (state, action) => {
       state.error = action.payload;
-      state.status = 'failed';
+      state.status = "failed";
     },
     setLoading: (state, action) => {
       state.status = action.payload;
     },
-    alreadyLoggedIn:(state,action)=>{
-        state.token = action.payload.access;
-        state.user = action.payload.user;
-        state.role = action.payload.role;  
-        localStorage.setItem("user",JSON.stringify(action?.payload)) 
-    }
+    alreadyLoggedIn: (state, action) => {
+      state.token = action.payload.access;
+      state.user = action.payload.user;
+      state.role = action.payload.role;
+      localStorage.setItem("user", JSON.stringify(action?.payload));
+    },
   },
   extraReducers: (builder) => {
     builder
       // loginUser
       .addCase(loginUser.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.token = action.payload.access;
         state.user = action.payload.user;
-        state.role = action.payload.role;  
-        localStorage.setItem("user",JSON.stringify(action?.payload))
+        state.role = action.payload.role;
+        localStorage.setItem("user", JSON.stringify(action?.payload));
         state.error = action.payload;
       })
 
       // registerUser
       .addCase(registerUser.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-        state.role = action.payload.role;
-        state.status = 'succeeded';
+      .addCase(registerUser.fulfilled, (state, action) => { 
+        state.status = "succeeded";
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
+        state.error = action.payload;
+      })
+
+      // forgot password
+      .addCase(forgotPassword.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.status = "succeeded";
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.status = "failed";
         state.error = action.payload;
       });
   },
 });
 
 // Action exports
-export const { logout, setError, setLoading ,alreadyLoggedIn} = authSlice.actions;
+export const { logout, setError, setLoading, alreadyLoggedIn } =
+  authSlice.actions;
 
 // Selector exports
 export const selectCurrentUser = (state) => state.auth.user;

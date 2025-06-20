@@ -31,6 +31,8 @@ import {
   addNewPatient,
   deletePatientById,
   selectPatientStatus,
+  fetchAllPatients,
+  allPatients, 
 } from '../../features/patient/patientSlice';
 import { useSelector } from 'react-redux';
 import { selectCurrentToken } from '../../features/auth/authSlice';
@@ -38,11 +40,12 @@ import { selectCurrentToken } from '../../features/auth/authSlice';
 const AdminPatients = () => {
   const dispatch = useAppDispatch();
   const token = useSelector(selectCurrentToken);
-  const patients = useAppSelector(selectAllPatients);
+  const patients = useAppSelector(allPatients);
   const status = useAppSelector(selectPatientStatus);
 
   const [search, setSearch] = useState('');
   const [localPatients, setLocalPatients] = useState([]);
+ 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
   const [editPatient, setEditPatient] = useState(null);
@@ -55,8 +58,8 @@ const AdminPatients = () => {
   const [addPatientOpen, setAddPatientOpen] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchPatients(token));
-  }, [dispatch, token]);
+    dispatch(fetchAllPatients());
+  }, [dispatch]);
 
   useEffect(() => {
     setLocalPatients(patients);
@@ -181,7 +184,7 @@ const AdminPatients = () => {
   ];
 
   const handleRefresh = () => {
-      dispatch(fetchPatients());
+      dispatch(fetchAllPatients());
     
    };
   return (
@@ -257,6 +260,7 @@ const AdminPatients = () => {
           >
             Add Patient
           </Button>
+          
         </Stack>
       </Stack>
 

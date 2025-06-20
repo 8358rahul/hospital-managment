@@ -22,6 +22,8 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ShareIcon from "@mui/icons-material/Share";
 import { useAppSelector } from "../../app/hooks";
 import {
+  allPatients,
+  fetchAllPatients,
   fetchPatients,
   selectAllPatients,
   selectPatientStatus,
@@ -36,6 +38,7 @@ import { useDebounce } from "../../app/useDebounce";
 const DoctorPatients = () => {
   const dispatch = useDispatch();
   const patients = useAppSelector(selectAllPatients);
+  const allpatients = useAppSelector(allPatients);
   const [search, setSearch] = useState("");
   const [localPatients, setLocalPatients] = useState([]);
   const status = useAppSelector(selectPatientStatus);
@@ -45,6 +48,7 @@ const DoctorPatients = () => {
   const [selectedPatientStatus, setSelectedPatientStatus] = useState("");
   const debouncedSearch = useDebounce(search, 300);
 
+  const [allList,setAllList] = useState(false)
   useEffect(() => {
     setLocalPatients(
       patients.filter((p) =>
@@ -59,8 +63,10 @@ const DoctorPatients = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setLocalPatients(patients);
-  }, [patients]);
+    if(allList)setLocalPatients(allpatients)
+    else setLocalPatients(patients) 
+
+  }, [patients,allpatients,allList]);
 
   const handleConfirmStatusChange = () => {
     const updated = localPatients.map((p) =>
@@ -93,7 +99,8 @@ const DoctorPatients = () => {
   };
 
   const handleRefresh = () => {
-    dispatch(fetchPatients());
+    if(allList)dispatch(fetchAllPatients())
+    else dispatch(fetchPatients());
   };
 
   const columns = [
@@ -125,7 +132,7 @@ const DoctorPatients = () => {
     //     />
     //   ),
     // },
-    {
+   !allList&& {
       field: "actions",
       headerName: "Actions",
       flex: 0.5,
@@ -225,6 +232,28 @@ const DoctorPatients = () => {
             onClick={() => setAddPatientOpen(true)}
           >
             Add Patient
+          </Button>
+             <Button
+            variant="contained" 
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "auto",
+                background: "linear-gradient(90deg, #2196f3, #2196f3)",
+              },
+            }}
+            onClick={() => {
+              if(allList){
+                setAllList(false)
+                dispatch(fetchPatients()) 
+              }else{
+                setAllList(true)
+                dispatch(fetchAllPatients()) 
+
+              }
+            }}
+          >
+          {allList ? "View Patients" : "View All Patients"}
           </Button>
         </Stack>
       </Stack>

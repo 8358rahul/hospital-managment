@@ -1,61 +1,57 @@
-import React, { useEffect, useState } from "react";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import {
+  Avatar,
   Box,
   Button,
   Card,
   CardContent,
   Container,
-  Grid,
-  Typography,
-  Pagination,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  InputAdornment,
+  Pagination,
+  Skeleton,
+  Stack,
   TextField,
-  Avatar,
+  Typography,
   useMediaQuery,
   useTheme,
-  Stack,
-  InputAdornment,
-  Skeleton,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import RefreshIcon from "@mui/icons-material/Refresh";
 
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   fetchDoctors,
   selectAllDoctors,
   selectDoctorStatus,
   selectUserDetail,
 } from "../../features/doctor/doctorSlice";
-import { selectCurrentToken } from "../../features/auth/authSlice";
-import SearchIcon from "@mui/icons-material/Search";
-
-import {
-  addNewAppointment,
-  fetchAppointments,
-} from "../../features/appointment/appointmentSlice";
+ 
 import { toast } from "react-toastify";
 import { useDebounce } from "../../app/useDebounce";
+import { addNewAppointment } from "../../features/appointment/appointmentSlice";
+import * as Yup from "yup"; 
+import { Form, Formik } from "formik";
 
 const PatientDoctors = () => {
   const doctors = useAppSelector(selectAllDoctors);
   const user = useAppSelector(selectUserDetail);
   const [page, setPage] = useState(1);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [search, setSearch] = useState("");
   const isLoading = useAppSelector(selectDoctorStatus) === "loading";
-   
-  const [appointmentData, setAppointmentData] = useState({
-    doctor: null,
-    patient: user.id,
-    date: "",
-    time: "",
-    reason: "",
+
+  const appointmentSchema = Yup.object().shape({
+    date: Yup.string().required("Date is required"),
+    time: Yup.string().required("Time is required"),
+    reason: Yup.string().required("Reason is required"),
   });
+
   const itemsPerPage = 6;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -63,19 +59,17 @@ const PatientDoctors = () => {
   const [filteredDoctors, setFilteredDoctors] = useState(doctors);
   const debouncedSearch = useDebounce(search, 300);
 
-
   useEffect(() => {
-     setFilteredDoctors(doctors)
+    setFilteredDoctors(doctors);
   }, [doctors]);
 
-    useEffect(() => {
-      setFilteredDoctors(
-        doctors?.filter((p) =>
-          p?.fullname.toLowerCase().includes(debouncedSearch.toLowerCase())
-        )
-      );
-    }, [debouncedSearch]);
-
+  useEffect(() => {
+    setFilteredDoctors(
+      doctors?.filter((p) =>
+        p?.fullname.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+    );
+  }, [debouncedSearch]);
 
   const getDoctors = async () => {
     await dispatch(fetchDoctors());
@@ -88,40 +82,10 @@ const PatientDoctors = () => {
     setPage(value);
   };
 
-  const handleOpenDialog = (doctor) => {
-    setSelectedDoctor(doctor);
-    setAppointmentData((prev) => ({
-      ...prev,
-      doctor: doctor.id,
-    }));
-    setOpenDialog(true);
-  };
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setAppointmentData({ date: "", time: "", reason: "", doctor: null });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAppointmentData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmitAppointment = async () => {
-    if (
-      appointmentData.date === "" ||
-      appointmentData.time === "" ||
-      appointmentData.reason === ""
-    ) {
-      toast.error("Please fill in all the fields.");
-      return;
-    }
-    dispatch(
-      addNewAppointment({ ...appointmentData, doctor: selectedDoctor?.id })
-    );
-
-    toast.success("Appointment Booked Successfully");
-    handleCloseDialog();
   };
 
   const displayedDoctors = filteredDoctors.slice(
@@ -132,7 +96,7 @@ const PatientDoctors = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" gutterBottom>
-          Our Expert Doctors
+        Our Expert Doctors
       </Typography>
       <Stack
         direction={{ xs: "column", md: "row" }}
@@ -309,7 +273,10 @@ const PatientDoctors = () => {
                       variant="contained"
                       fullWidth
                       sx={{ mt: 2 }}
-                      onClick={() => handleOpenDialog(doctor)}
+                      onClick={() => {
+                        setSelectedDoctor(doctor); 
+                        setOpenDialog(true);
+                      }}
                     >
                       Book Appointment
                     </Button>
@@ -338,45 +305,100 @@ const PatientDoctors = () => {
         maxWidth="sm"
       >
         <DialogTitle>
-          Book Appointment with <strong>{selectedDoctor?.name}</strong>
+          Book Appointment with <strong>{selectedDoctor?.fullname}</strong>
         </DialogTitle>
         <DialogContent dividers>
-          <Box display="flex" flexDirection="column" gap={2} py={1}>
-            <TextField
-              label="Appointment Date"
-              type="date"
-              name="date"
-              value={appointmentData.date}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-            />
-            <TextField
-              label="Preferred Time"
-              type="time"
-              name="time"
-              value={appointmentData.time}
-              onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-            />
-            <TextField
-              label="Reason for Visit"
-              name="reason"
-              value={appointmentData.reason}
-              onChange={handleChange}
-              multiline
-              rows={3}
-              fullWidth
-            />
-          </Box>
+          <Formik
+            initialValues={{
+              date: "",
+              time: "",
+              reason: "",
+
+            }}
+            validationSchema={appointmentSchema}
+            onSubmit={(values, { setSubmitting, resetForm }) => {
+              dispatch(
+                addNewAppointment({
+                  ...values,
+                  doctor: selectedDoctor?.id,
+                  patient: user.id,
+                })
+              );
+              toast.success("Appointment Booked Successfully");
+              handleCloseDialog();
+              resetForm();
+              setSubmitting(false);
+            }}
+          >
+            {({
+              values,
+              handleChange,
+              errors,
+              touched,
+              handleBlur,
+              isSubmitting,
+            }) => (
+              <Form>
+                <DialogContent dividers>
+                  <Box display="flex" flexDirection="column" gap={2} py={1}>
+                    <TextField
+                      label="Appointment Date"
+                      type="date"
+                      name="date"
+                      value={values.date}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.date && Boolean(errors.date)}
+                      helperText={touched.date && errors.date}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Preferred Time"
+                      type="time"
+                      name="time"
+                      value={values.time}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.time && Boolean(errors.time)}
+                      helperText={touched.time && errors.time}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Reason for Visit"
+                      name="reason"
+                      value={values.reason}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.reason && Boolean(errors.reason)}
+                      helperText={touched.reason && errors.reason}
+                      multiline
+                      rows={3}
+                      fullWidth
+                    />
+                  </Box>
+                </DialogContent>
+
+                <Box display="flex" justifyContent="flex-end" p={2}>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    Book Appointment
+                  </Button>
+                </Box>
+              </Form>
+            )}
+          </Formik>
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button variant="contained" onClick={handleSubmitAppointment}>
             Confirm
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </Container>
   );

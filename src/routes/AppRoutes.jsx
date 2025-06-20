@@ -28,35 +28,36 @@ import DoctorPatients from "../pages/doctor/Patients";
 // Patient Pages
 import PatientDashboard from "../pages/patient/Dashboard";
 import PatientDoctors from "../pages/patient/Doctors";
-import PatientAppointments from "../pages/patient/Appointments";
-import BookAppointment from "../pages/patient/BookAppointment"; 
+import PatientAppointments from "../pages/patient/Appointments"; 
 import PatientReports from "../pages/patient/Reports";
 import ReportDetails from "../pages/patient/ReportDetails";
 import PatientBills from "../pages/patient/Bills";
-import BillDetails from "../pages/patient/BillDetails";  
+import BillDetails from "../pages/patient/BillDetails";
 import { useEffect } from "react";
 import Profile from "../pages/doctor/Profile";
 import { fetchUserDetail } from "../features/doctor/doctorSlice";
+import Forgot from "../pages/auth/Forgot";
 
 const AppRoutes = () => {
   const token = useSelector(selectCurrentToken);
   const role = useSelector(selectCurrentRole);
   const dispatch = useDispatch();
 
-      const getProfile = async () => {
-        await dispatch(fetchUserDetail());
-      };
  
-      useEffect(() => { 
-        if(token && role){
-          getProfile();
-        }
-      },[token,dispatch,role]);
+  const getProfile = async () => {
+    await dispatch(fetchUserDetail());
+  };
+
+  useEffect(() => {
+    if (token && role) {
+      getProfile();
+    }
+  }, [token, dispatch, role]);
 
   useEffect(() => {
     const checkUserIsLoggedIn = () => {
       try {
-        const user = localStorage.getItem("user"); 
+        const user = localStorage.getItem("user");
         dispatch(alreadyLoggedIn(JSON.parse(user)));
       } catch (error) {
         console.log(error);
@@ -77,6 +78,8 @@ const AppRoutes = () => {
         element={!token || !role ? <Register /> : <Navigate to={`/${role}`} />}
       />
 
+      <Route path="/forgot" element={<Forgot />} />
+
       {/* Admin Routes */}
       <Route
         path="/admin"
@@ -92,7 +95,6 @@ const AppRoutes = () => {
         <Route path="reports/generate" element={<GenerateReport />} />
         <Route path="reports/:id" element={<ViewReport />} />
         <Route path="profile" element={<Profile />} />
-
       </Route>
 
       {/* Doctor Routes */}
@@ -108,7 +110,7 @@ const AppRoutes = () => {
       >
         <Route index element={<DoctorDashboard />} />
         <Route path="appointments" element={<DoctorAppointments />} />
-        <Route path="patients" element={<DoctorPatients />} /> 
+        <Route path="patients" element={<DoctorPatients />} />
         <Route path="profile" element={<Profile />} />
       </Route>
 
@@ -125,15 +127,13 @@ const AppRoutes = () => {
       >
         <Route index element={<PatientDashboard />} />
         <Route path="doctors" element={<PatientDoctors />} />
-        <Route path="appointments" element={<PatientAppointments />} />
-        <Route path="book-appointment" element={<BookAppointment />} /> 
+        <Route path="appointments" element={<PatientAppointments />} /> 
         <Route path="reports" element={<PatientReports />} />
         <Route path="reports/:id" element={<ReportDetails />} />
         <Route path="bills" element={<PatientBills />} />
         <Route path="bills/:id" element={<BillDetails />} />
         {/* <Route path="*" element={<SettingsPage />} />  */}
         <Route path="profile" element={<Profile />} />
-
       </Route>
 
       {/* Default Route */}

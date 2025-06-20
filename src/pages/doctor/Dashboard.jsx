@@ -100,7 +100,7 @@ const DoctorDashboard = () => {
     {
       title: "Patient Report",
       data: [
-        { name: "Week 1", Last: 20, Current: 25 },
+        { name: "Week 1", Last: 1, Current: 1 },
         { name: "Week 2", Last: 30, Current: 35 },
         { name: "Week 3", Last: 40, Current: 50 },
         { name: "Week 4", Last: 45, Current: 60 },
@@ -110,7 +110,7 @@ const DoctorDashboard = () => {
     {
       title: "Appointment Report",
       data: [
-        { name: "Week 1", Last: 10, Current: 12 },
+        { name: "Week 1", Last: 1, Current: 1 },
         { name: "Week 2", Last: 15, Current: 18 },
         { name: "Week 3", Last: 20, Current: 25 },
         { name: "Week 4", Last: 22, Current: 30 },
